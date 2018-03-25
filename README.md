@@ -1,6 +1,6 @@
-# config-doc
+# mac-config-doc
 
-This repository holds a set of scripts that are designed to make documenting up your configuration incredibly simple.
+This set of scripts are designed to make documenting up your Mac configuration incredibly simple.
 
 For instructions, check the top of each script.
 
@@ -20,4 +20,4 @@ For instructions, check the top of each script.
 1. `gem` -> `gem_list.txt`
 1. `pip3` -> `pip3_list.txt`
 1. `pip` -> `pip_list.txt`
-1. _Mac Only_: Everything in the system `Applications` dir -> `applications_list.txt`
+1. Everything in the system `Applications` dir -> `applications_list.txt`
