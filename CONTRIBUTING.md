@@ -1,4 +1,4 @@
-## Thank you so much for contributing.
+## Thank you for contributing!
 
 **Please follow these steps.**
 
