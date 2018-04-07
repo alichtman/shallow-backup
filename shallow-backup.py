@@ -16,7 +16,7 @@ def splash_screen():
 "            dP                dP dP                              dP                         dP                         \n" +
 "            88                88 88                              88                         88                         \n" +
 "   ,d8888'  88d888b. .d8888b. 88 88 .d8888b. dP  dP  dP          88d888b. .d8888b. .d8888b. 88  .dP  dP    dP 88d888b. \n" +
-"   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88 88888888 88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
+"   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88   8888   88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
 "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'          88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
 "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P           88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
 "                                                                                                              88		\n" +
@@ -107,7 +107,11 @@ def cli(complete, dotfiles, installs, v):
 	splash_screen()
 
 	# create text_backup dir
-	sp.run("mkdir text_backup", shell=True, stdout=sp.PIPE)
+	if not os.path.exists("text_backup"):
+		sp.run("mkdir text_backup", shell=True, stdout=sp.PIPE)
+	else:
+		print(Fore.RED + Style.BRIGHT + "ERROR: directory `text_backup` already exists in this folder.")
+		sys.exit()
 
 	selection = ""
 
