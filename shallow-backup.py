@@ -12,15 +12,22 @@ from constants import Constants
 
 def splash_screen():
 
-	# TODO splash
-	pass
+	print(Fore.YELLOW + Style.BRIGHT + "\n" +
+"            dP                dP dP                              dP                         dP                         \n" +
+"            88                88 88                              88                         88                         \n" +
+"   ,d8888'  88d888b. .d8888b. 88 88 .d8888b. dP  dP  dP          88d888b. .d8888b. .d8888b. 88  .dP  dP    dP 88d888b. \n" +
+"   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88 88888888 88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
+"         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'          88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
+"   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P           88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
+"                                                                                                              88		\n" +
+"                                                                                                              dP		\n" + Style.RESET_ALL)
 
 
 def backup_prompt():
 	"""Use pick library to prompt user with choice of what to backup."""
 	questions = [ inquirer.List('choice',
-	                            message=Fore.BLUE + "What would you like to backup?" + Fore.YELLOW,
-	                            choices=[' Dotfiles', ' Installs'],
+	                            message=Fore.BLUE + "What would you like to backup?" + Fore.RED,
+	                            choices=[' Dotfiles', ' Installs', ' All'],
 	                            ),
 		]
 
@@ -32,20 +39,19 @@ def backup_prompt():
 def backup_dotfiles():
 	"""Creates `dotfiles` directory and places copies of dotfiles there."""
 
-	sp.run("mkdir dotfiles", shell=True, stdout=sp.PIPE)
+	sp.run("mkdir text_backup/dotfiles", shell=True, stdout=sp.PIPE)
 
+	source_dest = [
+		"/.pypirc text_backup/dotfiles/pypirc.txt",
+		"/.zshrc text_backup/dotfiles/zshrc.txt",
+		"/.bashrc text_backup/dotfiles/bashrc.txt",
+		"/.ssh text_backup/dotfiles/ssh",
+		"/.vim text_backup/dotfiles/vim"
+	]
 
 	home_path = os.path.expanduser('~')
 
-	command_suffixes = [
-		"/.pypirc ./dotfiles/pypirc.txt",
-		"/.zshrc ./dotfiles/zshrc.txt",
-		"/.bashrc ./dotfiles/bashrc.txt",
-		"/.ssh ./dotfiles/ssh",
-		"/.vim ./dotfiles/vim"
-	]
-
-	for x in command_suffixes:
+	for x in source_dest:
 		# directory copy
 		if ".ssh" in x or ".vim" in x:
 			command = "cp -R " + home_path + x
@@ -59,8 +65,7 @@ def backup_dotfiles():
 
 def backup_installs():
 	"""Creates `installs` directory and places install list text files there."""
-
-	sp.run("mkdir installs", shell=True, stdout=sp.PIPE)
+	sp.run("mkdir text_backup/installs", shell=True, stdout=sp.PIPE)
 
 	command_list = [
 		"brew",
@@ -71,17 +76,17 @@ def backup_installs():
 	]
 
 	for x in command_list:
-		command = x + " list > installs/" + x + "_list.txt"
+		command = x + " list > text_backup/installs/" + x.replace(" ", "_") + "_list.txt"
+		print("CMD", command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 	# special case for system installs
-	sp.run("ls /Applications/ > installs/applications_list.txt", stdout=sp.PIPE)
+	sp.run("ls /Applications/ > text_backup/installs/applications_list.txt", shell=True, stdout=sp.PIPE)
 
 
 ######
 # CLI
 ######
-
 
 # custom help options
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '-help'])
@@ -101,34 +106,33 @@ def cli(complete, dotfiles, installs, v):
 
 	splash_screen()
 
-	# if any CL options, process those
-	if complete or dotfiles or installs:
+	# create text_backup dir
+	sp.run("mkdir text_backup", shell=True, stdout=sp.PIPE)
 
-		# Complete backup, set everything to true.
-		if complete:
-			dotfiles, installs = True
+	selection = ""
 
-		if dotfiles:
-			backup_dotfiles()
-
-		if installs:
-			backup_installs()
-
-	# no command line options, pick an option
-	else:
+	# No CL options, input in terminal
+	if not complete and not dotfiles and not installs:
 		selection = backup_prompt()
 
-		if selection == "dotfiles":
-			backup_dotfiles()
-		if selection == "installs":
-			backup_installs()
+	# CL options
+	else:
+		if complete:
+			selection = "all"
+		if dotfiles:
+			selection = "dotfiles"
+		if installs:
+			selection = "installs"
 
-def main():
-	selection = backup_prompt()
-
-	if selection is "dotfiles":
+	# Control Flow
+	if selection == "all":
 		backup_dotfiles()
-	if selection is "installs":
+		backup_installs()
+
+	elif selection == "dotfiles":
+		backup_dotfiles()
+
+	elif selection == "installs":
 		backup_installs()
 
 
