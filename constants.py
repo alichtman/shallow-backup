@@ -1,6 +1,6 @@
 class Constants:
 	PROJECT_NAME='shallowBackup'
-	VERSION='0.1'
+	VERSION='0.2'
 	AUTHOR_GITHUB='alichtman'
 	AUTHOR_FULL_NAME='Aaron Lichtman'
 	DESCRIPTION="Easily create text documentation of installed applications, dotfiles, and more."

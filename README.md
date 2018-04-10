@@ -33,10 +33,10 @@ Just run `$ package_manager install package_manager_list.txt`.
 
 For example, `$ brew install brew_list.txt` would reinstall all brew packages listed in `brew_list.txt`.
 
-**What can I back up?**
+**What can I document?**
 ---
 
-**dotfiles**
+**Dotfiles**
 
 Copies the following files into a nested `dotfiles` directory.
 
@@ -45,7 +45,7 @@ Copies the following files into a nested `dotfiles` directory.
 1. `.vim`
 1. `.zshrc`
 
-**installs**
+**Package/Application Install Lists**
 
 Creates install lists for the following package managers in a nested `installs` directory.
 
@@ -56,7 +56,7 @@ Creates install lists for the following package managers in a nested `installs` 
 1. `pip`
 1. System `Applications` directory
 
-**fonts**
+**Installed Fonts**
 
 Creates a list of fonts from `~/Library/Fonts` in a nested `fonts` directory.
 
