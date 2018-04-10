@@ -39,7 +39,7 @@ def backup_prompt():
 	"""Use pick library to prompt user with choice of what to backup."""
 	questions = [ inquirer.List('choice',
 	                            message=Fore.BLUE + "What would you like to backup?" + Fore.RED,
-	                            choices=[' Dotfiles', ' Installs', ' All'],
+	                            choices=[' Dotfiles', ' Installs', ' Fonts', ' All'],
 	                            ),
 		]
 
@@ -92,8 +92,13 @@ def backup_installs(path):
 	]
 
 	for x in command_list:
-		# replace takes care of the space in "brew cask"
-		command = x + " list > {}/".format(path) + x.replace(" ", "_") + "_list.txt"
+		command = ""
+
+		if " " not in x:
+			command = x + " list > {}/".format(path) + "_list.txt"
+		else:
+			command = x + " list > {}/".format(path) + x.replace(" ", "_") + "_list.txt"
+
 		print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
@@ -101,10 +106,19 @@ def backup_installs(path):
 	sp.run("ls /Applications/ > {}/applications_list.txt".format(path), shell=True, stdout=sp.PIPE)
 
 
-def backup_all(installs_path, dotfiles_path):
+def backup_fonts(path):
+
+	overwrite_make_dir(path)
+
+	command = "ls /Library/Fonts > {}/installed_fonts.txt".format(path)
+	sp.run(command, shell=True, stdout=sp.PIPE)
+
+
+def backup_all(installs_path, dotfiles_path, fonts_path):
 	"""Complete backup"""
 	backup_dotfiles(dotfiles_path)
 	backup_installs(installs_path)
+	backup_fonts(fonts_path)
 
 
 ######
@@ -116,10 +130,11 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '-help'])
 
 @click.command(context_settings=CONTEXT_SETTINGS)
 @click.option('-complete', is_flag=True, default=False, help="Backup everything.")
-@click.option('-dotfiles', is_flag=True, default=False, help="Create backup folder of dotfiles.")
-@click.option('-installs', is_flag=True, default=False, help="Create backup text files of app install lists.")
+@click.option('-dotfiles', is_flag=True, default=False, help="Create backup of dotfiles.")
+@click.option('-fonts',    is_flag=True, default=False, help="Create backup of installed fonts.")
+@click.option('-installs', is_flag=True, default=False, help="Create backup of installs.")
 @click.option('-v', 	   is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, installs, v):
+def cli(complete, dotfiles, installs, fonts, v):
 	"""Easily create text documentation of installed applications, dotfiles, and more."""
 
 	# Print version information
@@ -149,7 +164,7 @@ def cli(complete, dotfiles, installs, v):
 			with open('config.ini', 'w') as configfile:
 				config.write(configfile)
 
-			print("Abs path:", path)
+			# print("Abs path:", path)
 
 		# Edge case: User has shallow_backup dir that was not created by this program (or by an older version of this program)
 		else:
@@ -158,22 +173,25 @@ def cli(complete, dotfiles, installs, v):
 
 	# path is not "". Use absolute path in config file.
 	else:
-		print(Fore.GREEN + Style.BRIGHT + "Reading config file to get `shallow_backup` directory path.")
+		print(Fore.GREEN + Style.BRIGHT + "Reading config file to get `shallow_backup` directory path." + Style.RESET_ALL, end="\n\n")
 
 	dotfiles_path = os.path.join(path, "dotfiles")
 	installs_path = os.path.join(path, "installs")
+	fonts_path = os.path.join(path, "fonts")
 
-	print("Dots:", dotfiles_path)
-	print("Installs:", installs_path)
+	# print("Dots:", dotfiles_path)
+	# print("Installs:", installs_path)
 
 	# Command line options
-	if complete or dotfiles or installs:
+	if complete or dotfiles or installs or fonts:
 		if complete:
-			backup_all(dotfiles_path, installs_path)
+			backup_all(dotfiles_path, installs_path, fonts_path)
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path)
 		elif installs:
 			backup_installs(installs_path)
+		elif fonts:
+			backup_fonts(fonts_path)
 
 		return
 
@@ -182,12 +200,13 @@ def cli(complete, dotfiles, installs, v):
 		selection = backup_prompt()
 
 		if selection == "all":
-			backup_all(dotfiles_path, installs_path)
+			backup_all(dotfiles_path, installs_path, fonts_path)
 		elif selection == "dotfiles":
 			backup_dotfiles(dotfiles_path)
 		elif selection == "installs":
 			backup_installs(installs_path)
-
+		elif selection == "fonts":
+			backup_fonts(fonts_path)
 		return
 
 
