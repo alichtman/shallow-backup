@@ -1,20 +1,18 @@
 # shallow-backup
 
-`shallow-backup` is a CLI designed to make documenting Mac configurations incredibly simple.
+`shallow-backup` is designed to make it incredibly simple for developers to document their Mac configurations.
 
-**INSERT DEMO HERE**
+**TODO: INSERT DEMO HERE**
 
-`shallow-backup` gets up-to-date copies of your `dotfiles` and gathers package and application install lists in text files.
-
-**Remember to back up these output directories!**
-
-To reinstall applications from the lists created, just run `$ package_manager install package_manager_list.txt`, where `package-manager` is a variable defined by the user. Additionally, you will get up-to-date versions of the packages when you reinstall. Reinstalling is as easy as `$ brew install brew_list.txt`.
+`shallow-backup` makes copies of your `dotfiles`, package and application install lists, and font lists in `.txt` format.
 
 #### Example Use Case
+---
 
-Instead of backing up your brew/npm/pip/etc library in a system image, which may occupy GBs of space, use `shallow-backup` to create lists of the packages installed, which will occupy only KBs and can be transported much more easily.
+Instead of backing up your `brew` / `npm` / `pip` / `whatever package manager` library in a system image, which may occupy GBs of space, use `shallow-backup` to create lists of the packages installed, which takes up minimal space and can be easily distributed, saved, or transported.
 
 #### Usage
+---
 
 ```
 Usage: shallow-backup.py [OPTIONS]
@@ -29,9 +27,18 @@ Options:
   -help, -h  Show this message and exit.
 ```
 
+**Reinstalling is easy!**
+
+Just run `$ package_manager install package_manager_list.txt`.
+
+For example, `$ brew install brew_list.txt` would reinstall all brew packages listed in `brew_list.txt`.
+
+**What can I back up?**
+---
+
 **dotfiles**
 
-Creates copies of the following files in a nested `dotfiles` directory.
+Copies the following files into a nested `dotfiles` directory.
 
 1. `.pypirc`
 1. `.ssh `
@@ -40,7 +47,7 @@ Creates copies of the following files in a nested `dotfiles` directory.
 
 **installs**
 
-Documents install lists in text files in a nested `installs` directory.
+Creates install lists for the following package managers in a nested `installs` directory.
 
 1. `brew`
 1. `brew cask`
@@ -49,8 +56,22 @@ Documents install lists in text files in a nested `installs` directory.
 1. `pip`
 1. System `Applications` directory
 
-#### Installation
+**fonts**
 
-1. Pip (Coming soon!)
-2. Github Releases (Coming soon!)
-3. Homebrew (Coming soon!)
+Creates a list of fonts from `~/Library/Fonts` in a nested `fonts` directory.
+
+**Installation Options**
+---
+
+1. Install with [`pip`](https://pypi.org/project/shallowBackup/)
+    + `$ pip install shallowBackup`
+    + `$ shallowBackup`
+
+2. Download the `shallowBackup` binary from Releases tab.
+
+**How to Contribute**
+---
+
+1. Clone repo and create a new branch: `$ git checkout https://github.com/alichtman/shallowBackup -b name_for_new_branch`.
+2. Make changes and test
+3. Submit Pull Request with comprehensive description of changes
