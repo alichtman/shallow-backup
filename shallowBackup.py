@@ -107,11 +107,34 @@ def backup_installs(path):
 
 
 def backup_fonts(path):
+	"""Creates list of all .ttf and .otf files in ~/Library/Fonts"""
 
 	overwrite_make_dir(path)
 
-	command = "ls /Library/Fonts > {}/installed_fonts.txt".format(path)
+	font_list_path = "{}/installed_fonts.txt".format(path)
+	print(font_list_path)
+
+	command = "ls ~/Library/Fonts > " + font_list_path
 	sp.run(command, shell=True, stdout=sp.PIPE)
+
+	fonts = []
+
+	print(Fore.GREEN + "Only including '.otf' and '.ttf' filetypes." + Style.RESET_ALL)
+
+	# read list of fonts
+	with open(font_list_path,"r") as f:
+		fonts = f.readlines()
+
+	# TODO: Better way to do this.
+	# clear that file
+	os.remove(font_list_path)
+
+	with open(font_list_path, "w") as f:
+		for font in fonts:
+			if ".otf" in font or ".ttf" in font:
+				f.write("{}".format(font))
+			else:
+				print("Skipped:", font.strip())
 
 
 def backup_all(installs_path, dotfiles_path, fonts_path):
