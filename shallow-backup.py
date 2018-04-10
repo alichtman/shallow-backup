@@ -61,6 +61,7 @@ def backup_dotfiles(path):
 		"/.vim {}/vim".format(path)
 	]
 
+	# assumes dotfiles are stored in home directory
 	home_path = os.path.expanduser('~')
 
 	for x in source_dest:
@@ -69,6 +70,8 @@ def backup_dotfiles(path):
 			command = "cp -R " + home_path + x
 			print(command)
 			sp.run(command, shell=True, stdout=sp.PIPE)
+
+		# file copy
 		else:
 			command = "cp " + home_path + x
 			print(command)
@@ -91,7 +94,7 @@ def backup_installs(path):
 	for x in command_list:
 		# replace takes care of the space in "brew cask"
 		command = x + " list > {}/".format(path) + x.replace(" ", "_") + "_list.txt"
-		print("CMD", command)
+		print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 	# special case for system installs
