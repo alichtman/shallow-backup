@@ -28,18 +28,18 @@ setup(
     # For a list of valid classifiers, see
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[  # Optional
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
+
+        'Environment :: MacOS X',
 
         'Intended Audience :: Developers',
         'Intended Audience :: End Users/Desktop',
         'Intended Audience :: System Administrators',
 
         'Topic :: System :: Installation/Setup',
-        'Topic :: System :: Logging',
-        'Topic :: System :: Monitoring',
-        'Topic :: System :: Networking',
-        'Topic :: System :: Networking :: Firewalls',
+        'Topic :: System :: Archiving :: Backup',
         'Topic :: System :: Operating System',
+        'Topic :: Documentation',
         'Topic :: Utilities',
 
         'Operating System :: MacOS',
@@ -58,7 +58,7 @@ setup(
     # project page. What does your project relate to?
     #
     # Note that this is a string of words separated by whitespace, not a list.
-    keywords='backup system dotfiles install list configuration',  # Optional
+    keywords='backup documentation system dotfiles install list configuration',  # Optional
 
     # Just want to distribute a single Python file, so using `py_modules`
     # argument as follows, which will expect a file called
@@ -88,10 +88,11 @@ setup(
     #
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
-    entry_points='''
-        [console_scripts]
-        shallow-backup=shallow-backup:cli
-    ''',
+    entry_points={
+        'console_scripts': [
+            'shallowBackup = shallowBackup:cli'
+        ]
+    },
 
     # List additional URLs that are relevant to your project as a dict.
     #
