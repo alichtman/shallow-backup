@@ -1,14 +1,17 @@
-# shallowBackup
+# shallow-backup
 # alichtman
 
 import os
+from os.path import expanduser
 import sys
-import click
 import shutil
-import inquirer
 import configparser
 import subprocess as sp
+
+import click
+import inquirer
 from colorama import Fore, Style
+
 from constants import Constants
 
 
@@ -24,16 +27,31 @@ def splash_screen():
 "                                                                                                         88		\n" +
 "                                                                                                         dP		\n" + Style.RESET_ALL)
 
-def overwrite_make_dir(path):
-	"""Make destination dir if it doesn't exist. Overwrite if it does."""
+def make_dir_warn_overwrite(path):
+	"""Make destination dir if path doesn't exist. Warn if it does."""
 
 	if not os.path.exists(path):
 		print(Fore.GREEN + path, "was created." + Style.RESET_ALL)
 		os.makedirs(path)
 	else:
-		shutil.rmtree(path)
-		os.makedirs(path)
-		print(Fore.RED + path, "was removed and an updated directory was created." + Style.RESET_ALL)
+		# If confirmed, remove directory and recreate it. If not, exit program.
+		questions = [ inquirer.List('choice',
+	                            message=Fore.RED + "WARNING: {} will be overwritten. Is that okay?".format(path) + Fore.BLUE,
+	                            choices=[' YES', ' NO'],
+	                            ),
+		]
+
+		answers = inquirer.prompt(questions)
+
+		print(Style.RESET_ALL)
+
+		if answers.get('choice').strip().lower() == 'no':
+			sys.exit()
+		else:
+			shutil.rmtree(path)
+			os.makedirs(path)
+			print(Fore.RED + path, "was removed and an updated directory was created." + Style.RESET_ALL)
+
 
 def backup_prompt():
 	"""Use pick library to prompt user with choice of what to backup."""
@@ -51,7 +69,7 @@ def backup_prompt():
 def backup_dotfiles(path):
 	"""Creates `dotfiles` directory and places copies of dotfiles there."""
 
-	overwrite_make_dir(path)
+	make_dir_warn_overwrite(path)
 
 	source_dest = [
 		"/.pypirc {}/pypirc.txt".format(path),
@@ -81,7 +99,7 @@ def backup_dotfiles(path):
 def backup_installs(path):
 	"""Creates `installs` directory and places install list text files there."""
 
-	overwrite_make_dir(path)
+	make_dir_warn_overwrite(path)
 
 	command_list = [
 		"brew",
@@ -109,7 +127,7 @@ def backup_installs(path):
 def backup_fonts(path):
 	"""Creates list of all .ttf and .otf files in ~/Library/Fonts"""
 
-	overwrite_make_dir(path)
+	make_dir_warn_overwrite(path)
 
 	font_list_path = "{}/installed_fonts.txt".format(path)
 	print(font_list_path)
@@ -148,6 +166,64 @@ def backup_all(installs_path, dotfiles_path, fonts_path):
 # CLI
 ######
 
+
+def check_config(config_path, config):
+	################
+	# CONTROL FLOW #
+	################
+	#
+	# if $HOME/.shallow-backup does not exist, create it.
+	#
+	# if the path is empty or -new_path flag, prompt for a new path
+	# if the path is not empty and no -new_path flag, do nothing.
+	#
+	################
+
+	new_path = False
+
+	print(config_path)
+
+	# if config file doesn't exist, create it.
+	if not os.path.exists(config_path):
+		config['USER'] = {'backup_path': 'DEFAULT'}
+
+		with open(config_path, 'w') as f:
+				config.write(f)
+
+	# Now, let's check the config file.
+
+	config.read(config_path)
+
+	# path is not empty, user has set it already.
+	if not config['USER']['backup_path'] == 'DEFAULT' and not new_path:
+		print(Fore.GREEN + Style.DIM + "Reading path from config file..." + Style.RESET_ALL)
+		return
+	# if path is empty or new_path flag, prompt for new path
+	else:
+		print(Fore.GREEN + Style.BRIGHT + "Enter absolute path for backup dir or enter '.' to set path to shallow-backup dir here.")
+
+		user_in = input()
+
+		if user_in == ".":
+			print(Fore.GREEN + Style.BRIGHT + "Updating config file shallow-backup path to this directory...")
+			config['USER']['backup_path'] = os.path.abspath("shallow-backup/")
+		else:
+			print(Fore.GREEN + Style.BRIGHT + "Updating config file shallow-backup path to {}...").format(user_in)
+			config['USER']['backup_path'] = user_in
+
+		# Write to config file
+		with open(config_path, 'w') as f:
+			config.write(f)
+
+
+def read_config(config_path, config):
+	"""Read config file and make directory if it doesn't exist. Warn if it does."""
+	config.read(config_path)
+	backup_dir = config['USER']['backup_path']
+	make_dir_warn_overwrite(backup_dir)
+	return backup_dir
+
+
 # custom help options
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '-help'])
 
@@ -167,36 +243,26 @@ def cli(complete, dotfiles, installs, fonts, v):
 
 	splash_screen()
 
-	# Read config file
+	################
+	# CONTROL FLOW #
+	################
+	#
+	# Check if $HOME/.shallow-backup exists
+	# 	if yes, read it.
+	# 		if the path is empty or -new_path flag, prompt for a new path
+	# 		if the path is not empty and no -new_path flag, do nothing.
+	# 	if no, create it
+	# 		prompt for new path
+	#
+	# Read backup directory path out of $HOME/.shallow-backup
+	#
+	################
+
+	config_path = os.path.join(expanduser("~"), ".shallow-backup-config")
 	config = configparser.ConfigParser()
-	config.read("config.ini")
-	path = config['Paths']['backup_dir']
-	# print("Backup Dir", path)
 
-	# if path is "", that means that user has never run before.
-	if path == "":
-		# Make sure folder with that path doesn't exist already
-		if not os.path.exists("shallow_backup"):
-			print(Fore.GREEN + Style.BRIGHT + "Creating default shallow_backup directory in this folder.")
-			overwrite_make_dir("shallow_backup")
-
-			# get absolute path, write it to config file, set for later in program
-			path = os.path.abspath("./shallow_backup")
-			config['Paths']['backup_dir'] = path
-
-			with open('config.ini', 'w') as configfile:
-				config.write(configfile)
-
-			# print("Abs path:", path)
-
-		# Edge case: User has shallow_backup dir that was not created by this program (or by an older version of this program)
-		else:
-			print(Fore.GREEN + Style.BRIGHT + "ERROR: shallow_backup directory already in this folder.")
-			sys.exit()
-
-	# path is not "". Use absolute path in config file.
-	else:
-		print(Fore.GREEN + Style.BRIGHT + "Reading config file to get `shallow_backup` directory path." + Style.RESET_ALL, end="\n\n")
+	check_config(config_path, config)
+	path = read_config(config_path, config)
 
 	dotfiles_path = os.path.join(path, "dotfiles")
 	installs_path = os.path.join(path, "installs")
