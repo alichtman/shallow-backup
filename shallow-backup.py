@@ -4,7 +4,6 @@
 import os
 from os.path import expanduser
 import sys
-import shutil
 import configparser
 import subprocess as sp
 
@@ -16,50 +15,57 @@ from constants import Constants
 
 
 def splash_screen():
-
 	print(Fore.YELLOW + Style.BRIGHT + "\n" +
-"            dP                dP dP                        dP                         dP                         \n" +
-"            88                88 88                        88                         88                         \n" +
-"   ,d8888'  88d888b. .d8888b. 88 88 .d8888b. dP  dP  dP    88d888b. .d8888b. .d8888b. 88  .dP  dP    dP 88d888b. \n" +
-"   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88    88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
-"         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
-"   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
-"                                                                                                         88		\n" +
-"                                                                                                         dP		\n" + Style.RESET_ALL)
+	      "            dP                dP dP                        dP                         dP                         \n" +
+	      "            88                88 88                        88                         88                         \n" +
+	      "   ,d8888'  88d888b. .d8888b. 88 88 .d8888b. dP  dP  dP    88d888b. .d8888b. .d8888b. 88  .dP  dP    dP 88d888b. \n" +
+	      "   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88    88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
+	      "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
+	      "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
+	      "                                                                                                        88		\n" +
+	      "                                                                                                        dP		\n" + Style.RESET_ALL)
+
+
+def prompt_yes_no(message, color):
+	"""Print question and return True or False depending on user selection from list.
+	bottom_line should be used for one liners. Otherwise, it's the second line you want printed."""
+	questions = [inquirer.List('choice',
+	                           message=color + Style.BRIGHT + message + Fore.BLUE,
+	                           choices=[' Yes', ' No'],
+	                           ),
+	             ]
+
+	answers = inquirer.prompt(questions)
+
+	return answers.get('choice').strip().lower() == 'yes'
+
+
+def print_section_header(title, COLOR):
+	"""Prints variable sized section header"""
+	block = "#" * (len(title) + 2)
+	print("\n" + COLOR + Style.BRIGHT + block)
+	print("#", title)
+	print(block + "\n" + Style.RESET_ALL)
+
 
 def make_dir_warn_overwrite(path):
 	"""Make destination dir if path doesn't exist. Warn if it does."""
 
-	if not os.path.exists(path):
-		print(Fore.GREEN + path, "was created." + Style.RESET_ALL)
-		os.makedirs(path)
+	if os.path.exists(path):
+		print(Fore.RED + Style.BRIGHT + "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
+		return
 	else:
-		# If confirmed, remove directory and recreate it. If not, exit program.
-		questions = [ inquirer.List('choice',
-	                            message=Fore.RED + "WARNING: {} will be overwritten. Is that okay?".format(path) + Fore.BLUE,
-	                            choices=[' YES', ' NO'],
-	                            ),
-		]
-
-		answers = inquirer.prompt(questions)
-
-		print(Style.RESET_ALL)
-
-		if answers.get('choice').strip().lower() == 'no':
-			sys.exit()
-		else:
-			shutil.rmtree(path)
-			os.makedirs(path)
-			print(Fore.RED + path, "was removed and an updated directory was created." + Style.RESET_ALL)
+		os.makedirs(path)
+		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
 
 
 def backup_prompt():
 	"""Use pick library to prompt user with choice of what to backup."""
-	questions = [ inquirer.List('choice',
-	                            message=Fore.BLUE + "What would you like to backup?" + Fore.RED,
-	                            choices=[' Dotfiles', ' Installs', ' Fonts', ' All'],
-	                            ),
-		]
+	questions = [inquirer.List('choice',
+	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to backup?" + Fore.BLUE,
+	                           choices=[' Dotfiles', ' Installs', ' Fonts', ' All'],
+	                           ),
+	             ]
 
 	answers = inquirer.prompt(questions)
 
@@ -68,6 +74,8 @@ def backup_prompt():
 
 def backup_dotfiles(path):
 	"""Creates `dotfiles` directory and places copies of dotfiles there."""
+
+	print_section_header("DOTFILES", Fore.BLUE)
 
 	make_dir_warn_overwrite(path)
 
@@ -99,6 +107,8 @@ def backup_dotfiles(path):
 def backup_installs(path):
 	"""Creates `installs` directory and places install list text files there."""
 
+	print_section_header("INSTALLS", Fore.BLUE)
+
 	make_dir_warn_overwrite(path)
 
 	command_list = [
@@ -127,7 +137,11 @@ def backup_installs(path):
 def backup_fonts(path):
 	"""Creates list of all .ttf and .otf files in ~/Library/Fonts"""
 
+	print_section_header("FONTS", Fore.BLUE)
+
 	make_dir_warn_overwrite(path)
+
+	# Get font list
 
 	font_list_path = "{}/installed_fonts.txt".format(path)
 	print(font_list_path)
@@ -135,15 +149,10 @@ def backup_fonts(path):
 	command = "ls ~/Library/Fonts > " + font_list_path
 	sp.run(command, shell=True, stdout=sp.PIPE)
 
-	fonts = []
-
-	print(Fore.GREEN + "Only including '.otf' and '.ttf' filetypes." + Style.RESET_ALL)
-
 	# read list of fonts
-	with open(font_list_path,"r") as f:
+	with open(font_list_path, "r") as f:
 		fonts = f.readlines()
 
-	# TODO: Better way to do this.
 	# clear that file
 	os.remove(font_list_path)
 
@@ -151,8 +160,18 @@ def backup_fonts(path):
 		for font in fonts:
 			if ".otf" in font or ".ttf" in font:
 				f.write("{}".format(font))
-			else:
-				print("Skipped:", font.strip())
+
+	# Copy fonts
+	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
+	copy_ttf = "cp ~/Library/Fonts/*.ttf {}/".format(path)
+	copy_otf = "cp ~/Library/Fonts/*.otf {}/".format(path)
+
+	sp.run(copy_otf, shell=True, stdout=sp.PIPE)
+	sp.run(copy_ttf, shell=True, stdout=sp.PIPE)
+
+	print(copy_otf)
+	print(copy_ttf, "\n")
+
 
 
 def backup_all(installs_path, dotfiles_path, fonts_path):
@@ -167,43 +186,20 @@ def backup_all(installs_path, dotfiles_path, fonts_path):
 ######
 
 
-def check_config(config_path, reroute, config):
-	################
-	# CONTROL FLOW #
-	################
-	#
-	# if $HOME/.shallow-backup does not exist, create it.
-	#
-	# if the path is empty or -new_path flag, prompt for a new path
-	# if the path is not empty and no -new_path flag, do nothing.
-	#
-	################
-
-	print(config_path)
-
-	# if config file doesn't exist, create it.
-	if not os.path.exists(config_path):
-		config['USER'] = {'backup_path': 'DEFAULT'}
-
-		with open(config_path, 'w') as f:
-				config.write(f)
-
-	# Now, let's check the config file.
-
+def prompt_for_path_update(config_path, config):
+	"""Ask user if they'd like to update the backup path or not. If yes, update. If no... don't."""
 	config.read(config_path)
 
-	# path is not empty, user has set it already.
-	if not config['USER']['backup_path'] == 'DEFAULT' and not reroute:
-		print(Fore.GREEN + Style.DIM + "Reading path from config file..." + Style.RESET_ALL)
-		return
-	# if path is empty or new_path flag, prompt for new path
-	else:
-		print(Fore.GREEN + Style.BRIGHT + "Enter relative path for backup dir." + Style.RESET_ALL)
+	# Prompt for update
+	print(Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(config['USER']['backup_path']) + Style.RESET_ALL)
 
-		user_in = input()
+	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
+		print(Fore.GREEN + Style.BRIGHT + "Enter relative path:" + Style.RESET_ALL)
 
-		print(Fore.GREEN + Style.BRIGHT + "Updating config file shallow-backup path to {}...".format(user_in) + Style.RESET_ALL)
-		config['USER']['backup_path'] = os.path.abspath(user_in)
+		abs_path = os.path.abspath(input())
+
+		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(abs_path) + Style.RESET_ALL)
+		config['USER']['backup_path'] = abs_path
 
 		# Write to config file
 		with open(config_path, 'w') as f:
@@ -211,7 +207,7 @@ def check_config(config_path, reroute, config):
 
 
 def read_config(config_path, config):
-	"""Read config file and make directory if it doesn't exist. Warn if it does."""
+	"""Read config file. Make home backup directory if it doesn't exist. Warn user if it already exists."""
 	config.read(config_path)
 	backup_dir = config['USER']['backup_path']
 	make_dir_warn_overwrite(backup_dir)
@@ -219,52 +215,68 @@ def read_config(config_path, config):
 
 
 # custom help options
-CONTEXT_SETTINGS = dict(help_option_names=['-h', '-help'])
-
-@click.command(context_settings=CONTEXT_SETTINGS)
+@click.command(context_settings=dict(help_option_names=['-h', '-help']))
 @click.option('-complete', is_flag=True, default=False, help="Backup everything.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Create backup of dotfiles.")
-@click.option('-fonts',    is_flag=True, default=False, help="Create backup of installed fonts.")
+@click.option('-fonts', is_flag=True, default=False, help="Create backup of installed fonts.")
 @click.option('-installs', is_flag=True, default=False, help="Create backup of installs.")
-@click.option('-reroute',  is_flag=True, default=False, help="Change backup directory.")
-@click.option('-v', 	   is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, installs, fonts, reroute, v):
+@click.option('-old_path', is_flag=True, default=False, help="Decline setting new backup directory path.")
+@click.option('--new_path', default="DEFAULT", help="Input a new backup directory path.")
+@click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
+def cli(complete, dotfiles, installs, fonts, old_path, new_path, v):
 	"""Easily create text documentation of installed applications, dotfiles, and more."""
 
 	# Print version information
 	if v:
-		print('{} v{} by {} -> (Github: {})'.format(Constants.PROJECT_NAME, Constants.VERSION, Constants.AUTHOR_FULL_NAME, Constants.AUTHOR_GITHUB))
+		print(
+			'{} v{} by {} -> (Github: {})'.format(Constants.PROJECT_NAME,
+			                                      Constants.VERSION,
+			                                      Constants.AUTHOR_FULL_NAME,
+			                                      Constants.AUTHOR_GITHUB))
 		sys.exit()
 
 	splash_screen()
 
-	################
-	# CONTROL FLOW #
-	################
-	#
-	# Check if $HOME/.shallow-backup exists
-	# 	if yes, read it.
-	# 		if the path is empty or -new_path flag, prompt for a new path
-	# 		if the path is not empty and no -new_path flag, do nothing.
-	# 	if no, create it
-	# 		prompt for new path
-	#
-	# Read backup directory path out of $HOME/.shallow-backup
-	#
-	################
+	# CONFIG FILE
 
 	config_path = os.path.join(expanduser("~"), ".shallow-backup-config")
 	config = configparser.ConfigParser()
 
-	check_config(config_path, reroute, config)
-	path = read_config(config_path, config)
+	# if config file doesn't exist, create it.
+	if not os.path.exists(config_path):
+		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(config_path))
+		config['USER'] = {'backup_path': 'DEFAULT'}
+		with open(config_path, 'w') as f:
+			config.write(f)
 
-	dotfiles_path = os.path.join(path, "dotfiles")
-	installs_path = os.path.join(path, "installs")
-	fonts_path = os.path.join(path, "fonts")
+	# Decide to update path from CLI args, prompt user, or skip updating
 
-	# print("Dots:", dotfiles_path)
-	# print("Installs:", installs_path)
+	# User entered a new path in, update the config
+	if not new_path == "DEFAULT":
+
+		abs_path = os.path.abspath(new_path)
+
+		print(Fore.BLUE + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(abs_path) + Style.RESET_ALL)
+		config.read(config_path)
+		config['USER']['backup_path'] = abs_path
+
+		# Write to config file
+		with open(config_path, 'w') as f:
+			config.write(f)
+
+	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
+	elif old_path or complete or dotfiles or installs or fonts:
+		pass
+
+	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
+	else:
+		prompt_for_path_update(config_path, config)
+
+	backup_home_path = read_config(config_path, config)
+
+	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
+	installs_path = os.path.join(backup_home_path, "installs")
+	fonts_path = os.path.join(backup_home_path, "fonts")
 
 	# Command line options
 	if complete or dotfiles or installs or fonts:
@@ -279,7 +291,7 @@ def cli(complete, dotfiles, installs, fonts, reroute, v):
 
 		return
 
-	# No CL options, input in terminal
+	# No CL options, prompt for selection
 	else:
 		selection = backup_prompt()
 
