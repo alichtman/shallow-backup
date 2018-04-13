@@ -90,7 +90,7 @@ setup(
     # executes the function `main` from this package when invoked:
     entry_points={
         'console_scripts': [
-            'shallowBackup = shallowBackup:cli'
+            'shallow-backup = shallow-backup:cli'
         ]
     },
 

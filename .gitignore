@@ -2,5 +2,5 @@
 .DS_Store
 *.pyc
 *.txt
-shallow_backup/dotfiles/ssh/known_hosts
-shallow_backup/dotfiles/vim/.netrwhist
+shallow-backup/dotfiles/ssh/known_hosts
+shallow-backup/dotfiles/vim/.netrwhist
