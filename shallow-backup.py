@@ -167,7 +167,7 @@ def backup_all(installs_path, dotfiles_path, fonts_path):
 ######
 
 
-def check_config(config_path, config):
+def check_config(config_path, reroute, config):
 	################
 	# CONTROL FLOW #
 	################
@@ -178,8 +178,6 @@ def check_config(config_path, config):
 	# if the path is not empty and no -new_path flag, do nothing.
 	#
 	################
-
-	new_path = False
 
 	print(config_path)
 
@@ -195,21 +193,17 @@ def check_config(config_path, config):
 	config.read(config_path)
 
 	# path is not empty, user has set it already.
-	if not config['USER']['backup_path'] == 'DEFAULT' and not new_path:
+	if not config['USER']['backup_path'] == 'DEFAULT' and not reroute:
 		print(Fore.GREEN + Style.DIM + "Reading path from config file..." + Style.RESET_ALL)
 		return
 	# if path is empty or new_path flag, prompt for new path
 	else:
-		print(Fore.GREEN + Style.BRIGHT + "Enter absolute path for backup dir or enter '.' to set path to shallow-backup dir here.")
+		print(Fore.GREEN + Style.BRIGHT + "Enter relative path for backup dir." + Style.RESET_ALL)
 
 		user_in = input()
 
-		if user_in == ".":
-			print(Fore.GREEN + Style.BRIGHT + "Updating config file shallow-backup path to this directory...")
-			config['USER']['backup_path'] = os.path.abspath("shallow-backup/")
-		else:
-			print(Fore.GREEN + Style.BRIGHT + "Updating config file shallow-backup path to {}...").format(user_in)
-			config['USER']['backup_path'] = user_in
+		print(Fore.GREEN + Style.BRIGHT + "Updating config file shallow-backup path to {}...".format(user_in) + Style.RESET_ALL)
+		config['USER']['backup_path'] = os.path.abspath(user_in)
 
 		# Write to config file
 		with open(config_path, 'w') as f:
@@ -232,8 +226,9 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '-help'])
 @click.option('-dotfiles', is_flag=True, default=False, help="Create backup of dotfiles.")
 @click.option('-fonts',    is_flag=True, default=False, help="Create backup of installed fonts.")
 @click.option('-installs', is_flag=True, default=False, help="Create backup of installs.")
+@click.option('-reroute',  is_flag=True, default=False, help="Change backup directory.")
 @click.option('-v', 	   is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, installs, fonts, v):
+def cli(complete, dotfiles, installs, fonts, reroute, v):
 	"""Easily create text documentation of installed applications, dotfiles, and more."""
 
 	# Print version information
@@ -261,7 +256,7 @@ def cli(complete, dotfiles, installs, fonts, v):
 	config_path = os.path.join(expanduser("~"), ".shallow-backup-config")
 	config = configparser.ConfigParser()
 
-	check_config(config_path, config)
+	check_config(config_path, reroute, config)
 	path = read_config(config_path, config)
 
 	dotfiles_path = os.path.join(path, "dotfiles")
