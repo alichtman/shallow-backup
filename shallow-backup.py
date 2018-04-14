@@ -23,7 +23,8 @@ def splash_screen():
 	      "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
 	      "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
 	      "                                                                                                        88		\n" +
-	      "                                                                                                        dP		\n" + Style.RESET_ALL)
+	      "                                                                                                        dP		\n" +
+	      Style.RESET_ALL)
 
 
 def prompt_yes_no(message, color):
@@ -36,7 +37,6 @@ def prompt_yes_no(message, color):
 	             ]
 
 	answers = inquirer.prompt(questions)
-
 	return answers.get('choice').strip().lower() == 'yes'
 
 
@@ -111,7 +111,7 @@ def backup_installs(path):
 
 	make_dir_warn_overwrite(path)
 
-	command_list = [
+	package_managers = [
 		"brew",
 		"brew cask",
 		"npm",
@@ -119,14 +119,9 @@ def backup_installs(path):
 		"pip"
 	]
 
-	for x in command_list:
-		command = ""
-
-		if " " not in x:
-			command = x + " list > {}/".format(path) + "_list.txt"
-		else:
-			command = x + " list > {}/".format(path) + x.replace(" ", "_") + "_list.txt"
-
+	for mgr in package_managers:
+		# deal with package managers that have spaces in them.
+		command = "{0} list > {1}/{2}_list.txt".format(mgr, path, mgr.replace(" ", "_"))
 		print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
@@ -138,7 +133,6 @@ def backup_fonts(path):
 	"""Creates list of all .ttf and .otf files in ~/Library/Fonts"""
 
 	print_section_header("FONTS", Fore.BLUE)
-
 	make_dir_warn_overwrite(path)
 
 	# Get font list
@@ -173,8 +167,7 @@ def backup_fonts(path):
 	print(copy_ttf, "\n")
 
 
-
-def backup_all(installs_path, dotfiles_path, fonts_path):
+def backup_all(dotfiles_path, installs_path, fonts_path):
 	"""Complete backup"""
 	backup_dotfiles(dotfiles_path)
 	backup_installs(installs_path)
@@ -191,7 +184,8 @@ def prompt_for_path_update(config_path, config):
 	config.read(config_path)
 
 	# Prompt for update
-	print(Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(config['USER']['backup_path']) + Style.RESET_ALL)
+	print(Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(
+		config['USER']['backup_path']) + Style.RESET_ALL)
 
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
 		print(Fore.GREEN + Style.BRIGHT + "Enter relative path:" + Style.RESET_ALL)
@@ -222,9 +216,12 @@ def read_config(config_path, config):
 @click.option('-installs', is_flag=True, default=False, help="Create backup of installs.")
 @click.option('-old_path', is_flag=True, default=False, help="Decline setting new backup directory path.")
 @click.option('--new_path', default="DEFAULT", help="Input a new backup directory path.")
+@click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, installs, fonts, old_path, new_path, v):
+def cli(complete, dotfiles, installs, fonts, old_path, new_path, delete_config, v):
 	"""Easily create text documentation of installed applications, dotfiles, and more."""
+
+	config_path = os.path.join(expanduser("~"), ".shallow-backup")
 
 	# Print version information
 	if v:
@@ -235,11 +232,16 @@ def cli(complete, dotfiles, installs, fonts, old_path, new_path, v):
 			                                      Constants.AUTHOR_GITHUB))
 		sys.exit()
 
+	elif delete_config:
+		command = "rm {}".format(config_path)
+		sp.run(command, shell=True, stdout=sp.PIPE)
+		print(Fore.RED + Style.BRIGHT + "Removed config file...")
+		sys.exit()
+
 	splash_screen()
 
 	# CONFIG FILE
 
-	config_path = os.path.join(expanduser("~"), ".shallow-backup-config")
 	config = configparser.ConfigParser()
 
 	# if config file doesn't exist, create it.
@@ -256,7 +258,8 @@ def cli(complete, dotfiles, installs, fonts, old_path, new_path, v):
 
 		abs_path = os.path.abspath(new_path)
 
-		print(Fore.BLUE + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(abs_path) + Style.RESET_ALL)
+		print(Fore.BLUE + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
+			abs_path) + Style.RESET_ALL)
 		config.read(config_path)
 		config['USER']['backup_path'] = abs_path
 
