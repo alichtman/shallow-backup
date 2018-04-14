@@ -65,7 +65,7 @@ setup(
     # `stronghold.py` to exist:
     #
     py_modules=[
-        "shallow-backup",
+        "shallow_backup",
         "constants"
     ],
 
@@ -89,9 +89,7 @@ setup(
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
     entry_points={
-        'console_scripts': [
-            'shallow-backup = shallow-backup:cli'
-        ]
+        'console_scripts':'shallow-backup=shallow_backup:cli'
     },
 
     # List additional URLs that are relevant to your project as a dict.

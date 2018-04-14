@@ -1,4 +1,4 @@
-# shallow-backup
+# shallow_backup
 # alichtman
 
 import os
