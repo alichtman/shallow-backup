@@ -4,7 +4,7 @@
 
 ![GIF demo](img/demo_faster.gif)
 
-#### Featured On
+### Featured On
 ---
 
 `shallow-backup` is featured on these lists!
@@ -12,7 +12,7 @@
 * [awesome-mac](https://github.com/jaywcjlove/awesome-mac)
 * [tools-osx](https://github.com/morgant/tools-osx)
 
-#### The Idea
+### The Idea
 ---
 
 I make complete system images of my MacBook Pro on an external SSD multiple times every week, and it always takes **forever**. I wanted to speed this up so I took a look at *what was actually being backed up*. I realized my `brew`, `npm`, and `pip` libraries took up much more space than I ever imagined and is incredibly space inefficient!
@@ -23,7 +23,7 @@ I could now safely cut down my backup size by almost 10GB by excluding `pip`, `b
 
 Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup dotfiles and installed fonts. (Note: Because having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
 
-#### Usage
+### Usage
 ---
 
 ```
@@ -91,7 +91,7 @@ backup_directory
 5 directories, 214 files
 ```
 
-#### What can I back up?
+### What can I back up?
 ---
 
 **Dotfiles**
@@ -114,7 +114,7 @@ backup_directory
 
 1. All user installed fonts (`~/Library/Fonts`)
 
-#### Installation Options
+### Installation Options
 ---
 
 1. Install with [`pip`](https://pypi.org/project/shallow-backup/)
@@ -123,13 +123,13 @@ backup_directory
 
 2. Download the `shallow-backup` binary from Releases tab.
 
-#### What's Next?
+### What's Next?
 ---
 
 1. Support for more package managers.
 2. MacOS GUI for non-CLI users.
 
-#### How to Contribute
+### How to Contribute
 ---
 
 1. Clone repo and create a new branch: `$ git checkout https://github.com/alichtman/shallow-backup -b name_for_new_branch`.
