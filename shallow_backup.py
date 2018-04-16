@@ -62,7 +62,7 @@ def make_dir_warn_overwrite(path):
 def backup_prompt():
 	"""Use pick library to prompt user with choice of what to backup."""
 	questions = [inquirer.List('choice',
-	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to backup?" + Fore.BLUE,
+	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to back up?" + Fore.BLUE,
 	                           choices=[' Dotfiles', ' Installs', ' Fonts', ' All'],
 	                           ),
 	             ]
@@ -210,12 +210,12 @@ def read_config(config_path, config):
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help']))
-@click.option('-complete', is_flag=True, default=False, help="Backup everything.")
-@click.option('-dotfiles', is_flag=True, default=False, help="Create backup of dotfiles.")
-@click.option('-fonts', is_flag=True, default=False, help="Create backup of installed fonts.")
-@click.option('-installs', is_flag=True, default=False, help="Create backup of installs.")
-@click.option('-old_path', is_flag=True, default=False, help="Decline setting new backup directory path.")
-@click.option('--new_path', default="DEFAULT", help="Input a new backup directory path.")
+@click.option('-complete', is_flag=True, default=False, help="Back up everything.")
+@click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
+@click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
+@click.option('-installs', is_flag=True, default=False, help="Back up package and application installs.")
+@click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
+@click.option('--new_path', default="DEFAULT", help="Input a new back up directory path.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(complete, dotfiles, installs, fonts, old_path, new_path, delete_config, v):

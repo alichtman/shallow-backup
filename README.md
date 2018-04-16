@@ -1,46 +1,66 @@
 # shallow-backup
 
-`shallow-backup` is designed to make it incredibly simple for developers to document their Mac configurations.
+`shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles.
 
 ![GIF demo](img/demo_faster.gif)
 
-`shallow-backup` makes copies of your `dotfiles` and `fonts`, and documents your package manager install lists in `.txt` format.
-
-#### Example Use Case
+#### Featured On
 ---
 
-Instead of backing up your `brew` / `npm` / `pip` / `whatever package manager` library in a system image, which may occupy GBs of space, use `shallow-backup` to create lists of the packages installed, which takes up minimal space and can be easily distributed, saved, or transported.
+`shallow-backup` is featured on these lists!
+
+* [awesome-mac](https://github.com/jaywcjlove/awesome-mac)
+* [tools-osx](https://github.com/morgant/tools-osx)
+
+#### The Idea
+---
+
+I make complete system images of my MacBook Pro on an external SSD multiple times every week, and it always takes **forever**. I wanted to speed this up so I took a look at *what was actually being backed up*. I realized my `brew`, `npm`, and `pip` libraries took up much more space than I ever imagined and is incredibly space inefficient!
+
+All you need to "back up" your package installs is a list of the installed packages from each package manager. If you have these, restoring your system package installs is easy. `$ pip install -r pip_list.txt`, for example. Additionally, you have the added bonus of always installing up-to-date packages after an OS wipe and reinstall.
+
+I could now safely cut down my backup size by almost 10GB by excluding `pip`, `brew`, `brew cask` and `npm` libraries, which expedites the back up time significantly.
+
+Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup dotfiles and installed fonts. (Note: Because having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
 
 #### Usage
 ---
 
 ```
-Usage: shallow-backup.py [OPTIONS]
+Usage: shallow_backup.py [OPTIONS]
 
   Easily create text documentation of installed applications, dotfiles, and
   more.
 
 Options:
-  -complete        Backup everything.
-  -dotfiles        Create backup of dotfiles.
-  -fonts           Create backup of installed fonts.
-  -installs        Create backup of installs.
-  -old_path        Decline setting new backup directory path.
-  --new_path TEXT  Input a new backup directory path.
+  -complete        Back up everything.
+  -dotfiles        Back up dotfiles.
+  -fonts           Back up installed fonts.
+  -installs        Back up package and application installs.
+  -old_path        Skip setting new back up directory path.
+  --new_path TEXT  Input a new back up directory path.
   -delete_config   Remove config file.
   -v               Display version and author information and exit.
-  -help, -h        Show this message and exit.
+  -h, -help        Show this message and exit.
 ```
 
-**Example Commands**
+#### Use Cases
 
-+ `$ shallow-backup` -- Launch interactive backup process.
-+ `$ shallow-backup -old_path -complete` -- Complete backup to path stored in `.shallow-backup`.
-+ `$ shallow-backup -new_path backup_dir_to_be_created -fonts` -- Back up fonts in `backup_dir_to_be_created` directory.
+1. Reduce your system image size greatly by backing up your `brew`, `npm`, and `pip` / `x package manager` library.
+2. Easily back up your dotfiles.
+3. Create an archive of the `.ttf` and `.otf` fonts you've imported to `Fontbook`.
 
-**Output Structure**
+#### Example Commands
 
+```shell
+$ shallow-backup # Launch interactive backup process
+$ shallow-backup -old_path -complete # Make complete backup using same path as in config file
+$ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `./new_backup_dir/`
 ```
+
+#### Output Structure
+
+```shell
 backup_directory
 ├── dotfiles
 │   ├── bashrc.txt
@@ -71,40 +91,30 @@ backup_directory
 5 directories, 214 files
 ```
 
-**Reinstalling is easy!**
-
-Just run `$ package_manager install package_manager_list.txt`.
-
-For example, `$ brew install brew_list.txt` would reinstall all brew packages listed in `brew_list.txt`.
-
-**What can I back up?**
+#### What can I back up?
 ---
 
 **Dotfiles**
 
-Copies the following files into a nested `dotfiles` directory.
-
 1. `.pypirc`
-1. `.ssh `
-1. `.vim`
 1. `.zshrc`
+1. `.ssh/`
+1. `.vim/`
 
 **Package Manager Install Lists**
 
-Creates install lists for the following package managers in a nested `installs` directory.
-
 1. `brew`
 1. `brew cask`
-1. `npm`
 1. `gem`
 1. `pip`
-1. System `Applications` directory
+1. `npm`
+1. MacOS `Applications/` directory
 
 **Fonts**
 
-Copy all fonts from `~/Library/Fonts` into a nested `fonts` directory.
+1. All user installed fonts (`~/Library/Fonts`)
 
-**Installation Options**
+#### Installation Options
 ---
 
 1. Install with [`pip`](https://pypi.org/project/shallow-backup/)
@@ -113,7 +123,13 @@ Copy all fonts from `~/Library/Fonts` into a nested `fonts` directory.
 
 2. Download the `shallow-backup` binary from Releases tab.
 
-**How to Contribute**
+#### What's Next?
+---
+
+1. Support for more package managers.
+2. MacOS GUI for non-CLI users.
+
+#### How to Contribute
 ---
 
 1. Clone repo and create a new branch: `$ git checkout https://github.com/alichtman/shallow-backup -b name_for_new_branch`.
