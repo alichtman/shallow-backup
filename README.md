@@ -15,13 +15,13 @@
 ### The Idea
 ---
 
-I make complete system images of my MacBook Pro on an external SSD multiple times every week, and it always takes **forever**. I wanted to speed this up so I took a look at *what was actually being backed up*. I realized my `brew`, `npm`, and `pip` libraries took up much more space than I ever imagined and is incredibly space inefficient!
+I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at *what was actually being backed up*. I saw that my `brew`, `npm`, and `pip` libraries took up way more memory than I imagined.
 
-All you need to "back up" your package installs is a list of the installed packages from each package manager. If you have these, restoring your system package installs is easy. `$ pip install -r pip_list.txt`, for example. Additionally, you have the added bonus of always installing up-to-date packages after an OS wipe and reinstall.
+*And it's totally unnecessary!* All you need to "back up" your package installs is a list of the installed packages from each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example. Additionally, you have the added bonus of always installing up-to-date packages after an OS wipe and reinstall.
 
-I could now safely cut down my backup size by almost 10GB by excluding `pip`, `brew`, `brew cask` and `npm` libraries, which expedites the back up time significantly.
+I could now safely cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` install libraries with simple text files, which cuts down the back up time significantly.
 
-Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup dotfiles and installed fonts. (Note: Because having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
+Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
 
 ### Usage
 ---
