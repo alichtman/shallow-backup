@@ -159,7 +159,10 @@ def backup_installs(backup_path):
 		# print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
-	# special case for system installs
+	# macports
+	sp.run("port installed requested > {}/macports_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+
+	# system installs
 	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 
