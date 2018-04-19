@@ -4,12 +4,15 @@
 import os
 from os.path import expanduser
 import sys
+import glob
 import configparser
 import subprocess as sp
+import multiprocessing as mp
 
 import click
 import inquirer
 from colorama import Fore, Style
+from pprint import pprint
 
 from constants import Constants
 
@@ -72,61 +75,92 @@ def backup_prompt():
 	return answers.get('choice').strip().lower()
 
 
-def backup_dotfiles(path):
+def copy_dotfolder(dotfolder, backup_path):
+	"""Copy dotfolder from $HOME."""
+
+	print(dotfolder)
+
+	invalid = set([".Trash", ".npm", ".cache"])
+
+	if len(invalid.intersection(set(dotfolder.split("/")))) == 0:
+		command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
+		# print(command)
+		sp.run(command, shell=True, stdout=sp.PIPE)
+	# else:
+		# print("SKIP:", dotfolder)
+
+
+def copy_dotfile(dotfile, backup_path):
+	"""Copy dotfile from $HOME."""
+
+	command = "cp -a " + dotfile + " " + backup_path
+	# print(command)
+	sp.run(command, shell=True, stdout=sp.PIPE)
+
+
+def backup_dotfiles(backup_path):
 	"""Creates `dotfiles` directory and places copies of dotfiles there."""
 
 	print_section_header("DOTFILES", Fore.BLUE)
-
-	make_dir_warn_overwrite(path)
-
-	source_dest = [
-		"/.pypirc {}/pypirc.txt".format(path),
-		"/.zshrc {}/zshrc.txt".format(path),
-		"/.bashrc {}/bashrc.txt".format(path),
-		"/.ssh {}/ssh".format(path),
-		"/.vim {}/vim".format(path)
-	]
+	make_dir_warn_overwrite(backup_path)
 
 	# assumes dotfiles are stored in home directory
 	home_path = os.path.expanduser('~')
 
-	for x in source_dest:
-		# directory copy
-		if ".ssh" in x or ".vim" in x:
-			command = "cp -R " + home_path + x
-			print(command)
-			sp.run(command, shell=True, stdout=sp.PIPE)
+	# get dotfolders and dotfiles
+	# [(full_backup_path, full dotfile path), ...]
 
-		# file copy
-		else:
-			command = "cp " + home_path + x
-			print(command)
-			sp.run(command, shell=True, stdout=sp.PIPE)
+	dotfiles_mp_in = []
+	dotfiles = [file for file in os.listdir(home_path) if os.path.isfile(os.path.join(home_path, file)) and
+	            file[0] is "." and not file[-1] is "/"]
+
+	for dotfile in dotfiles:
+		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
+
+	# [(full_backup_path, full dotfolder path), ...]
+	dotfolders_mp_in = []
+
+	for dotfolder in glob.glob(os.path.join(home_path, '.*/')):
+		dotfolders_mp_in.append((dotfolder, backup_path))
+
+	# Multiprocessing
+	with mp.Pool(mp.cpu_count()):
+
+		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
+		for x in dotfolders_mp_in:
+			x = list(x)
+			mp.Process(target=copy_dotfolder, args=(x[0], x[1],)).start()
+
+	with mp.Pool(mp.cpu_count()):
+		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfiles..." + Style.RESET_ALL)
+		for x in dotfiles_mp_in:
+			x = list(x)
+			mp.Process(target=copy_dotfile, args=(x[0], x[1],)).start()
 
 
-def backup_installs(path):
+def backup_installs(backup_path):
 	"""Creates `installs` directory and places install list text files there."""
 
 	print_section_header("INSTALLS", Fore.BLUE)
 
-	make_dir_warn_overwrite(path)
+	make_dir_warn_overwrite(backup_path)
 
 	package_managers = [
 		"brew",
 		"brew cask",
 		"npm",
 		"gem",
-		"pip"
+		"pip",
 	]
 
 	for mgr in package_managers:
 		# deal with package managers that have spaces in them.
-		command = "{0} list > {1}/{2}_list.txt".format(mgr, path, mgr.replace(" ", "_"))
-		print(command)
+		command = "{0} list > {1}/{2}_list.txt".format(mgr, backup_path, mgr.replace(" ", "_"))
+		# print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 	# special case for system installs
-	sp.run("ls /Applications/ > {}/applications_list.txt".format(path), shell=True, stdout=sp.PIPE)
+	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 
 def backup_fonts(path):
@@ -134,26 +168,6 @@ def backup_fonts(path):
 
 	print_section_header("FONTS", Fore.BLUE)
 	make_dir_warn_overwrite(path)
-
-	# Get font list
-
-	font_list_path = "{}/installed_fonts.txt".format(path)
-	print(font_list_path)
-
-	command = "ls ~/Library/Fonts > " + font_list_path
-	sp.run(command, shell=True, stdout=sp.PIPE)
-
-	# read list of fonts
-	with open(font_list_path, "r") as f:
-		fonts = f.readlines()
-
-	# clear that file
-	os.remove(font_list_path)
-
-	with open(font_list_path, "w") as f:
-		for font in fonts:
-			if ".otf" in font or ".ttf" in font:
-				f.write("{}".format(font))
 
 	# Copy fonts
 	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
