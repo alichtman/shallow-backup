@@ -12,7 +12,7 @@
 * [awesome-mac](https://github.com/jaywcjlove/awesome-mac)
 * [tools-osx](https://github.com/morgant/tools-osx)
 
-### The Idea
+### Inspiration
 ---
 
 I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at *what was actually being backed up*. I saw that my `brew`, `npm`, and `pip` libraries took up way more memory than I imagined.
