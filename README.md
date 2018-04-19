@@ -94,20 +94,18 @@ backup_directory
 ### What can I back up?
 ---
 
-**Dotfiles**
-
-1. `.pypirc`
-1. `.zshrc`
-1. `.ssh/`
-1. `.vim/`
+1. All dotfiles and dotfolders.
 
 **Package Manager Install Lists**
+
+Currently supported:
 
 1. `brew`
 1. `brew cask`
 1. `gem`
 1. `pip`
 1. `npm`
+1. `macports`
 1. MacOS `Applications/` directory
 
 **Fonts**
@@ -123,10 +121,16 @@ backup_directory
 
 2. Download the `shallow-backup` binary from Releases tab.
 
+### Dependencies
+---
+
++ `restic` -> `$ brew install restic`
+
+
 ### What's Next?
 ---
 
-1. Support for more package managers.
+1. Automatic restic backup.
 2. MacOS GUI for non-CLI users.
 
 ### How to Contribute
