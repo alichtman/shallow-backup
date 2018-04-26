@@ -10,6 +10,7 @@
 `shallow-backup` is featured on these lists!
 
 * [awesome-mac](https://github.com/jaywcjlove/awesome-mac)
+* [open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps)
 * [tools-osx](https://github.com/morgant/tools-osx)
 
 ### Inspiration
