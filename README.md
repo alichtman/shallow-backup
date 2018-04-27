@@ -47,9 +47,9 @@ Options:
 
 #### Use Cases
 
-1. Reduce your system image size greatly by backing up your `brew`, `npm`, and `pip` / `x package manager` library.
+1. Reduce your system image size by using `shallow-backup` to compress `x package manager's` library.
 2. Easily back up your dotfiles.
-3. Create an archive of the `.ttf` and `.otf` fonts you've imported to `Fontbook`.
+3. Back up the `.ttf` and `.otf` fonts you've imported to `Fontbook`.
 
 #### Example Commands
 
@@ -80,8 +80,7 @@ backup_dir/
 │   ├── Ubuntu Mono derivative Powerline Bold Italic.ttf
 │   ├── Ubuntu Mono derivative Powerline Bold.ttf
 │   ├── Ubuntu Mono derivative Powerline Italic.ttf
-│   ├── Ubuntu Mono derivative Powerline.ttf
-│   └── installed_fonts.txt
+│   └── Ubuntu Mono derivative Powerline.ttf
 └── installs
     ├── applications_list.txt
     ├── brew_cask_list.txt
