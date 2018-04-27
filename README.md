@@ -62,10 +62,11 @@ $ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `./
 #### Output Structure
 
 ```shell
-backup_directory
+backup_dir/
 ├── dotfiles
 │   ├── bashrc.txt
 │   ├── pypirc.txt
+│   ├── ...
 │   ├── ssh
 │   │   └── known_hosts
 │   ├── vim
@@ -75,16 +76,16 @@ backup_directory
 │   ├── Aller_Bd.ttf
 │   ├── Aller_BdIt.ttf
 │   ├── Aller_It.ttf
-│      .........
-│   ├── Ubuntu\ Mono\ derivative\ Powerline\ Bold\ Italic.ttf
-│   ├── Ubuntu\ Mono\ derivative\ Powerline\ Bold.ttf
-│   ├── Ubuntu\ Mono\ derivative\ Powerline\ Italic.ttf
-│   ├── Ubuntu\ Mono\ derivative\ Powerline.ttf
+│   ├── ...
+│   ├── Ubuntu Mono derivative Powerline Bold Italic.ttf
+│   ├── Ubuntu Mono derivative Powerline Bold.ttf
+│   ├── Ubuntu Mono derivative Powerline Italic.ttf
+│   ├── Ubuntu Mono derivative Powerline.ttf
 │   └── installed_fonts.txt
 └── installs
     ├── applications_list.txt
     ├── brew_cask_list.txt
-    ├── brew_list.txt
+    ├── ...
     ├── gem_list.txt
     ├── npm_list.txt
     └── pip_list.txt
@@ -95,23 +96,18 @@ backup_directory
 ### What can I back up?
 ---
 
-1. All dotfiles and dotfolders.
+1. All `dotfiles` and `dotfolders`.
 
-**Package Manager Install Lists**
+2. Package Manager and Application `installs`.
+    * `brew`
+    * `brew cask`
+    * `gem`
+    * `pip`
+    * `npm`
+    * `macports`
+    * macOS `~/Applications/` directory
 
-Currently supported:
-
-1. `brew`
-1. `brew cask`
-1. `gem`
-1. `pip`
-1. `npm`
-1. `macports`
-1. MacOS `Applications/` directory
-
-**Fonts**
-
-1. All user installed fonts (`~/Library/Fonts`)
+3. User installed `fonts`.
 
 ### Installation Options
 ---
@@ -121,11 +117,6 @@ Currently supported:
     + `$ shallow-backup`
 
 2. Download the `shallow-backup` binary from Releases tab.
-
-### Dependencies
----
-
-+ `restic` -> `$ brew install restic`
 
 
 ### What's Next?
