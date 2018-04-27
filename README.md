@@ -27,7 +27,7 @@ Once I'd built that functionality, I wanted to have a single backup utility for 
 ### Usage
 ---
 
-```
+```shell
 Usage: shallow_backup.py [OPTIONS]
 
   Easily create text documentation of installed applications, dotfiles, and
@@ -54,9 +54,9 @@ Options:
 #### Example Commands
 
 ```shell
-$ shallow-backup # Launch interactive backup process
-$ shallow-backup -old_path -complete # Make complete backup using same path as in config file
-$ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `./new_backup_dir/`
+$ sudo shallow-backup # Launch interactive backup process
+$ sudo shallow-backup -old_path -complete # Make complete backup using same path as in config file
+$ sudo shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/new_backup_dir/`
 ```
 
 #### Output Structure
@@ -113,7 +113,7 @@ backup_dir/
 
 1. Install with [`pip`](https://pypi.org/project/shallow-backup/)
     + `$ pip install shallow-backup`
-    + `$ shallow-backup`
+    + `$ sudo shallow-backup`
 
 2. Download the `shallow-backup` binary from Releases tab.
 
