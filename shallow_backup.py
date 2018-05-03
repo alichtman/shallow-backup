@@ -155,17 +155,21 @@ def backup_installs(backup_path):
 
 	for mgr in package_managers:
 		# deal with package managers that have spaces in them.
+		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
 		command = "{0} list > {1}/{2}_list.txt".format(mgr, backup_path, mgr.replace(" ", "_"))
 		# print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 	# atom package manager
-	sp.run("apm list --installed --bare > {}/atom_packages_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	print(Fore.BLUE + "Backing up atom package list..." + Style.RESET_ALL)
+	sp.run("apm list --installed --bare > {}/atom_package_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# macports
+	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
 	sp.run("port installed requested > {}/macports_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# system installs
+	print(Fore.BLUE + "Backing up system application list..." + Style.RESET_ALL)
 	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 
