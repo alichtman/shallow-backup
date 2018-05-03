@@ -6,3 +6,5 @@ shallow-backup/dotfiles/ssh/known_hosts
 shallow-backup/dotfiles/vim/.netrwhist
 *.xml
 *.iml
+*.whl
+shallow_backup.egg-info/PKG-INFO

@@ -4,6 +4,20 @@
 
 ![GIF demo](img/demo_faster.gif)
 
+Contents
+========
+
+ * [Featured On](#featured-on)
+ * [What can I back up?](#what-can-i-back-up)
+ * [Installation](#installation)
+ * [Usage](#usage)
+    * [Example Commands](#example-commands)
+    * [Use Cases](#use-cases)
+    * [Output Structure](#output-structure)
+ * [Inspiration](#inspiration)
+ * [What's Next?](#whats-next)
+ * [How to Contribute](#how-to-contribute)
+
 ### Featured On
 ---
 
@@ -13,16 +27,34 @@
 * [open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps)
 * [tools-osx](https://github.com/morgant/tools-osx)
 
-### Inspiration
+### What can I back up?
 ---
 
-I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at *what was actually being backed up*. I saw that my `brew`, `npm`, and `pip` libraries took up way more memory than I imagined.
+1. All `dotfiles` and `dotfolders`.
+    * Sublime Text Settings
+    * Atom Settings
+    * etc.
 
-*And it's totally unnecessary!* All you need to "back up" your package installs is a list of the installed packages from each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example. Additionally, you have the added bonus of always installing up-to-date packages after an OS wipe and reinstall.
+2. Package Manager and Application `installs`.
+    * `apm`
+    * `brew`
+    * `brew cask`
+    * `gem`
+    * `pip`
+    * `npm`
+    * `macports`
+    * macOS `~/Applications/` directory
 
-I could now safely cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` install libraries with simple text files, which cuts down the back up time significantly.
+3. User installed `fonts`.
 
-Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
+### Installation
+---
+
+1. Install with [`pip`](https://pypi.org/project/shallow-backup/)
+    + `$ pip install shallow-backup`
+    + `$ sudo shallow-backup`
+
+2. Download the `shallow-backup` binary from Releases tab.
 
 ### Usage
 ---
@@ -45,13 +77,8 @@ Options:
   -h, -help        Show this message and exit.
 ```
 
-#### Use Cases
-
-1. Reduce your system image size by using `shallow-backup` to compress `x package manager's` library.
-2. Easily back up your dotfiles.
-3. Back up the `.ttf` and `.otf` fonts you've imported to `Fontbook`.
-
 #### Example Commands
+---
 
 ```shell
 $ sudo shallow-backup # Launch interactive backup process
@@ -59,7 +86,15 @@ $ sudo shallow-backup -old_path -complete # Make complete backup using same path
 $ sudo shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/new_backup_dir/`
 ```
 
+#### Use Cases
+---
+
+1. Reduce your backup size by compressing all package manager libraries to `.txt` files.
+2. Easily back up your dotfiles, Sublime Text settings and Atom config.
+3. Back up all user installed `.ttf` and `.otf` fonts from `Fontbook`.
+
 #### Output Structure
+---
 
 ```shell
 backup_dir/
@@ -92,37 +127,23 @@ backup_dir/
 5 directories, 214 files
 ```
 
-### What can I back up?
+### Inspiration
 ---
 
-1. All `dotfiles` and `dotfolders`.
+I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at *what was actually being backed up*. I saw that my `brew`, `npm`, and `pip` libraries took up way more memory than I imagined.
 
-2. Package Manager and Application `installs`.
-    * `brew`
-    * `brew cask`
-    * `gem`
-    * `pip`
-    * `npm`
-    * `macports`
-    * macOS `~/Applications/` directory
+*And it's totally unnecessary!* All you need to "back up" your package installs is a list of the installed packages from each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example. Additionally, you have the added bonus of always installing up-to-date packages after an OS wipe and reinstall.
 
-3. User installed `fonts`.
+I could now safely cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` install libraries with simple text files, which cuts down the back up time significantly.
 
-### Installation Options
----
-
-1. Install with [`pip`](https://pypi.org/project/shallow-backup/)
-    + `$ pip install shallow-backup`
-    + `$ sudo shallow-backup`
-
-2. Download the `shallow-backup` binary from Releases tab.
+Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
 
 
 ### What's Next?
 ---
 
 1. Automatic restic backup.
-2. MacOS GUI for non-CLI users.
+2. MacOS GUI.
 
 ### How to Contribute
 ---

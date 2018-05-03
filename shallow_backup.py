@@ -159,6 +159,9 @@ def backup_installs(backup_path):
 		# print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
+	# atom package manager
+	sp.run("apm list --installed --bare > {}/atom_packages_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+
 	# macports
 	sp.run("port installed requested > {}/macports_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
