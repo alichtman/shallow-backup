@@ -33,6 +33,7 @@ Contents
 1. All `dotfiles` and `dotfolders`.
     * Sublime Text Settings
     * Atom Settings
+    * `.bashrc`.
     * etc.
 
 2. Package Manager and Application `installs`.
@@ -43,6 +44,7 @@ Contents
     * `pip`
     * `npm`
     * `macports`
+    * Sublime Text 2 and 3 packages
     * macOS `~/Applications/` directory
 
 3. User installed `fonts`.
