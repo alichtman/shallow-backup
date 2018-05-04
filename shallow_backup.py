@@ -92,10 +92,7 @@ def copy_dotfolder(dotfolder, backup_path):
 			command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
 		elif "Sublime" in dotfolder:
 			command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-3]
-		# print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
-	# else:
-	# print("SKIP:", dotfolder)
 
 
 def copy_dotfile(dotfile, backup_path):
@@ -132,7 +129,7 @@ def backup_dotfiles(backup_path):
 		dotfolders_mp_in.append((dotfolder, backup_path))
 
 	####
-	# Back up from Application Support
+	# Back up System and Application Preferences and Settings
 	####
 
 	# Sublime Text Configs
@@ -146,7 +143,7 @@ def backup_dotfiles(backup_path):
 	if os.path.isdir("/Users/alichtman/Library/Developer/Xcode/UserData"):
 		dotfolders_mp_in.append(("/Users/alichtman/Library/Developer/Xcode/UserData", backup_path))
 
-	# MacOS Configs
+	# MacOS Preferences
 	dotfolders_mp_in.append(("/Users/alichtman/Library/Preferences", backup_path))
 
 	# Multiprocessing
