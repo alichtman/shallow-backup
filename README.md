@@ -69,12 +69,13 @@ Options:
   -complete        Back up everything.
   -dotfiles        Back up dotfiles.
   -fonts           Back up installed fonts.
-  -installs        Back up package and application installs.
+  -installs        Back up package libraries and installed applications.
   -old_path        Skip setting new back up directory path.
   --new_path TEXT  Input a new back up directory path.
+  -reinstall       Reinstall packages from backed up package lists.
   -delete_config   Remove config file.
   -v               Display version and author information and exit.
-  -h, -help        Show this message and exit.
+  -help, -h        Show this message and exit.
 ```
 
 #### Example Commands
@@ -117,10 +118,12 @@ backup_dir/
 │   ├── Ubuntu Mono derivative Powerline Italic.ttf
 │   └── Ubuntu Mono derivative Powerline.ttf
 └── installs
-    ├── applications_list.txt
-    ├── brew_cask_list.txt
-    ├── ...
+    ├── apm_list.txt
+    ├── brew-cask_list.txt
+    ├── brew_list.txt
     ├── gem_list.txt
+    ├── installed_apps_list.txt
+    ├── macports_list.txt
     ├── npm_list.txt
     └── pip_list.txt
 
