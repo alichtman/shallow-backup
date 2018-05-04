@@ -81,10 +81,17 @@ def copy_dotfolder(dotfolder, backup_path):
 
 	print(dotfolder)
 
-	invalid = {".Trash", ".npm", ".cache"}
+	invalid = {".Trash", ".npm", ".cache", ".rvm"}
 
 	if len(invalid.intersection(set(dotfolder.split("/")))) == 0:
-		command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
+		command = ""
+		if "Library" in dotfolder.split("/") and "Preferences" in dotfolder.split("/"):
+			command = "cp -aR " + dotfolder + " " + backup_path + "/macOS_Preferences"
+			print(Fore.BLUE + command)
+		elif "Application\ Support" not in dotfolder or "XCode" in dotfolder:
+			command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
+		elif "Sublime" in dotfolder:
+			command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-3]
 		# print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 	# else:
@@ -123,6 +130,24 @@ def backup_dotfiles(backup_path):
 
 	for dotfolder in glob.glob(os.path.join(home_path, '.*/')):
 		dotfolders_mp_in.append((dotfolder, backup_path))
+
+	####
+	# Back up from Application Support
+	####
+
+	# Sublime Text Configs
+	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime\ Text\ 2"):
+		dotfolders_mp_in.append((os.path.join(home_path, "Library/Application\ Support/Sublime\ Text\ 2/Packages/User"), backup_path))
+
+	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime\ Text\ 3"):
+		dotfolders_mp_in.append((os.path.join(home_path, "Library/Application\ Support/Sublime\ Text\ 3/Packages/User"), backup_path))
+
+	# XCode Configs
+	if os.path.isdir("/Users/alichtman/Library/Developer/Xcode/UserData"):
+		dotfolders_mp_in.append(("/Users/alichtman/Library/Developer/Xcode/UserData", backup_path))
+
+	# MacOS Configs
+	dotfolders_mp_in.append(("/Users/alichtman/Library/Preferences", backup_path))
 
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
@@ -191,7 +216,7 @@ def backup_packages(backup_path):
 
 	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime Text 3"):
 		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
-		sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 3/Packages/ > {}/sublime3_list.txt"
+		sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages/ > {}/sublime3_list.txt"
 		       .format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# macports
