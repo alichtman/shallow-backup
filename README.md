@@ -31,6 +31,7 @@ Contents
 ---
 
 1. All `dotfiles` and `dotfolders`.
+    * macOS System Preferences
     * Sublime Text Settings
     * Atom Settings
     * `.bashrc`.
@@ -79,15 +80,15 @@ Options:
   -help, -h        Show this message and exit.
 ```
 
-This script may require admin privileges, and therefore should be run with `sudo`.
+NOTE: `shallow-backup` works best when it's populating an empty directory.
 
 #### Example Commands
 ---
 
 ```shell
-$ sudo shallow-backup # Launch interactive backup process
-$ sudo shallow-backup -old_path -complete # Make complete backup using same path as in config file
-$ sudo shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/new_backup_dir/`
+$ shallow-backup # Launch interactive CLI backup process
+$ shallow-backup -old_path -complete # Make complete backup using same path as in config file
+$ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/new_backup_dir/`
 ```
 
 #### Use Cases
@@ -103,13 +104,13 @@ $ sudo shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path
 ```shell
 backup_dir/
 ├── dotfiles
-│   ├── bashrc.txt
-│   ├── pypirc.txt
+│   ├── .bashrc
+│   ├── .pypirc
 │   ├── ...
-│   ├── ssh
+│   ├── .ssh/
 │   │   └── known_hosts
-│   ├── vim
-│   └── zshrc.txt
+│   ├── .vim/
+│   └── .zshrc
 ├── fonts
 │   ├── AllerDisplay.ttf
 │   ├── Aller_Bd.ttf

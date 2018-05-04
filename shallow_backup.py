@@ -5,6 +5,7 @@ import os
 from os.path import expanduser
 import sys
 import glob
+import shutil
 import configparser
 import subprocess as sp
 import multiprocessing as mp
@@ -52,14 +53,20 @@ def print_section_header(title, COLOR):
 
 
 def make_dir_warn_overwrite(path):
-	"""Make destination dir if path doesn't exist. Warn if it does."""
-
-	if os.path.exists(path):
+	"""Make destination dir if path doesn't exist, confirm before overwriting if it does."""
+	if os.path.exists(path) and path.split("/")[-1] in ["dotfiles", "packages", "fonts"]:
 		print(Fore.RED + Style.BRIGHT + "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
-		return
-	else:
+		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
+			shutil.rmtree(path)
+			os.makedirs(path)
+		else:
+			print(Fore.Red + "Exiting to prevent accidental deletion of user data." + Style.RESET_ALL)
+			sys.exit()
+	elif not os.path.exists(path):
 		os.makedirs(path)
 		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
+
+	return
 
 
 def backup_prompt():
@@ -86,12 +93,12 @@ def copy_dotfolder(dotfolder, backup_path):
 	if len(invalid.intersection(set(dotfolder.split("/")))) == 0:
 		command = ""
 		if "Library" in dotfolder.split("/") and "Preferences" in dotfolder.split("/"):
-			command = "cp -aR " + dotfolder + " " + backup_path + "/macOS_Preferences"
+			command = "cp -aRp " + dotfolder + " " + backup_path + "/macOS_Preferences"
 			print(Fore.BLUE + command)
 		elif "Application\ Support" not in dotfolder or "XCode" in dotfolder:
-			command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
+			command = "cp -aRp " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
 		elif "Sublime" in dotfolder:
-			command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-3]
+			command = "cp -aRp " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-3]
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 
@@ -159,6 +166,8 @@ def backup_dotfiles(backup_path):
 		for x in dotfiles_mp_in:
 			x = list(x)
 			mp.Process(target=copy_dotfile, args=(x[0], x[1],)).start()
+
+	# TODO: Fix permissions on Preferences folder to 644 -> rw for you, r only for everyone else
 
 
 def backup_packages(backup_path):
