@@ -62,21 +62,22 @@ Contents
 ```shell
 Usage: shallow_backup.py [OPTIONS]
 
-  Easily create text documentation of installed applications, dotfiles, and
-  more.
+  Easily back up installed packages, dotfiles, and more.
 
 Options:
   -complete        Back up everything.
   -dotfiles        Back up dotfiles.
   -fonts           Back up installed fonts.
-  -installs        Back up package libraries and installed applications.
+  -packages        Back up package libraries and installed applications.
   -old_path        Skip setting new back up directory path.
   --new_path TEXT  Input a new back up directory path.
-  -reinstall       Reinstall packages from backed up package lists.
+  -reinstall       Reinstall packages from package lists.
   -delete_config   Remove config file.
   -v               Display version and author information and exit.
   -help, -h        Show this message and exit.
 ```
+
+This script may require admin privileges, and therefore should be run with `sudo`.
 
 #### Example Commands
 ---

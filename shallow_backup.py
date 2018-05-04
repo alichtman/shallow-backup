@@ -66,7 +66,8 @@ def backup_prompt():
 	"""Use pick library to prompt user with choice of what to backup."""
 	questions = [inquirer.List('choice',
 	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
-	                           choices=[' Back up dotfiles', ' Back up packages', ' Back up fonts', ' Back up everything', ' REINSTALL packages'],
+	                           choices=[' Back up dotfiles', ' Back up packages', ' Back up fonts',
+	                                    ' Back up everything', ' Reinstall packages'],
 	                           ),
 	             ]
 
@@ -80,14 +81,14 @@ def copy_dotfolder(dotfolder, backup_path):
 
 	print(dotfolder)
 
-	invalid = set([".Trash", ".npm", ".cache"])
+	invalid = {".Trash", ".npm", ".cache"}
 
 	if len(invalid.intersection(set(dotfolder.split("/")))) == 0:
 		command = "cp -aR " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
 		# print(command)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 	# else:
-		# print("SKIP:", dotfolder)
+	# print("SKIP:", dotfolder)
 
 
 def copy_dotfile(dotfile, backup_path):
@@ -138,10 +139,10 @@ def backup_dotfiles(backup_path):
 			mp.Process(target=copy_dotfile, args=(x[0], x[1],)).start()
 
 
-def backup_installs(backup_path):
-	"""Creates `installs` directory and places install list text files there."""
+def backup_packages(backup_path):
+	"""Creates `packages` directory and places install list text files there."""
 
-	print_section_header("INSTALLS", Fore.BLUE)
+	print_section_header("PACKAGES", Fore.BLUE)
 
 	make_dir_warn_overwrite(backup_path)
 
@@ -211,7 +212,7 @@ def backup_fonts(path):
 def backup_all(dotfiles_path, installs_path, fonts_path):
 	"""Complete backup"""
 	backup_dotfiles(dotfiles_path)
-	backup_installs(installs_path)
+	backup_packages(installs_path)
 	backup_fonts(fonts_path)
 
 
@@ -220,12 +221,12 @@ def get_subfiles(directory):
 	return next(os.walk(directory))[2]
 
 
-def reinstall_packages(installs_path):
+def reinstall_packages(packages_path):
 	"""Reinstall all packages from the files in backup/installs."""
 
 	# Figure out which install lists they have saved
 	package_mgrs = set()
-	for file in get_subfiles(installs_path):
+	for file in get_subfiles(packages_path):
 		print(file)
 		manager = file.split("_")[0].replace("-", " ")
 		if manager != "installed":
@@ -235,19 +236,19 @@ def reinstall_packages(installs_path):
 	# construct commands
 	for pm in package_mgrs:
 		if pm in ["brew", "brew-cask"]:
-			cmd = "xargs {0} install < {1}/{2}_list.txt".format(pm.replace("-", " "), installs_path, pm)
+			cmd = "xargs {0} install < {1}/{2}_list.txt".format(pm.replace("-", " "), packages_path, pm)
 			print(cmd)
 			sp.call(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "npm":
-			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(installs_path)
+			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(packages_path)
 			print(cmd)
 			sp.call(cmd, shell=True, stdout=sp.PIPE)
 		if pm == "pip":
-			cmd = "pip install -r {0}/pip_list.txt".format(installs_path)
+			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
 			print(cmd)
 			sp.call(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "apm":
-			cmd = "apm install --packages-file {0}/apm_list.txt".format(installs_path)
+			cmd = "apm install --packages-file {0}/apm_list.txt".format(packages_path)
 			print(cmd)
 			sp.call(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "macports":
@@ -258,7 +259,6 @@ def reinstall_packages(installs_path):
 			print(Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
 
 	sys.exit()
-
 
 
 ######
@@ -300,14 +300,14 @@ def read_config(config_path, config):
 @click.option('-complete', is_flag=True, default=False, help="Back up everything.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
-@click.option('-installs', is_flag=True, default=False, help="Back up package libraries and installed applications.")
+@click.option('-packages', is_flag=True, default=False, help="Back up package libraries and installed applications.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
 @click.option('--new_path', default="DEFAULT", help="Input a new back up directory path.")
-@click.option('-reinstall', is_flag=True, default=False, help="Reinstall packages from backed up package lists.")
+@click.option('-reinstall', is_flag=True, default=False, help="Reinstall packages from package lists.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, installs, fonts, old_path, new_path, reinstall, delete_config, v):
-	"""Easily create text documentation of installed applications, dotfiles, and more."""
+def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall, delete_config, v):
+	"""Easily back up installed packages, dotfiles, and more."""
 
 	config_path = os.path.join(expanduser("~"), ".shallow-backup")
 
@@ -356,7 +356,7 @@ def cli(complete, dotfiles, installs, fonts, old_path, new_path, reinstall, dele
 			config.write(f)
 
 	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
-	elif old_path or complete or dotfiles or installs or fonts:
+	elif old_path or complete or dotfiles or packages or fonts:
 		pass
 
 	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
@@ -366,21 +366,21 @@ def cli(complete, dotfiles, installs, fonts, old_path, new_path, reinstall, dele
 	backup_home_path = read_config(config_path, config)
 
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
-	installs_path = os.path.join(backup_home_path, "installs")
+	packages_path = os.path.join(backup_home_path, "packages")
 	fonts_path = os.path.join(backup_home_path, "fonts")
 
-	print(installs_path)
+	print(packages_path)
 
 	# Command line options
-	if complete or dotfiles or installs or fonts or reinstall:
+	if complete or dotfiles or packages or fonts or reinstall:
 		if reinstall:
-			reinstall_packages(installs_path)
+			reinstall_packages(packages_path)
 		elif complete:
-			backup_all(dotfiles_path, installs_path, fonts_path)
+			backup_all(dotfiles_path, packages_path, fonts_path)
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path)
-		elif installs:
-			backup_installs(installs_path)
+		elif packages:
+			backup_packages(packages_path)
 		elif fonts:
 			backup_fonts(fonts_path)
 
@@ -391,15 +391,15 @@ def cli(complete, dotfiles, installs, fonts, old_path, new_path, reinstall, dele
 		selection = backup_prompt().lower().strip()
 
 		if selection == "back up everything":
-			backup_all(dotfiles_path, installs_path, fonts_path)
+			backup_all(dotfiles_path, packages_path, fonts_path)
 		elif selection == "back up dotfiles":
 			backup_dotfiles(dotfiles_path)
 		elif selection == "back up packages":
-			backup_installs(installs_path)
+			backup_packages(packages_path)
 		elif selection == "back up fonts":
 			backup_fonts(fonts_path)
 		elif selection == "reinstall packages":
-			reinstall_packages(installs_path)
+			reinstall_packages(packages_path)
 		return
 
 
