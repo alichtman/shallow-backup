@@ -169,6 +169,7 @@ def backup_packages(backup_path):
 	with open("{0}/npm_temp_list.txt".format(backup_path), mode="r+") as f:
 		# Skip first line of file
 		skip = True
+		sp.run("touch {0}/npm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 		with open("{0}/npm_list.txt".format(backup_path), mode="r+") as dest:
 			for line in f:
 				if not skip:
@@ -179,8 +180,19 @@ def backup_packages(backup_path):
 	sp.run("rm {}/npm_temp_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# atom package manager
-	print(Fore.BLUE + "Backing up atom package list..." + Style.RESET_ALL)
+	print(Fore.BLUE + "Backing up Atom package list..." + Style.RESET_ALL)
 	sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+
+	# sublime text packages
+	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime Text 2"):
+		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
+		sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 2/Packages/ > {}/sublime2_list.txt"
+		       .format(backup_path), shell=True, stdout=sp.PIPE)
+
+	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime Text 3"):
+		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
+		sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 3/Packages/ > {}/sublime3_list.txt"
+		       .format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# macports
 	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
@@ -209,10 +221,10 @@ def backup_fonts(path):
 	print(copy_ttf, "\n")
 
 
-def backup_all(dotfiles_path, installs_path, fonts_path):
+def backup_all(dotfiles_path, packages_path, fonts_path):
 	"""Complete backup"""
 	backup_dotfiles(dotfiles_path)
-	backup_packages(installs_path)
+	backup_packages(packages_path)
 	backup_fonts(fonts_path)
 
 
