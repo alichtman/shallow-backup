@@ -1,6 +1,6 @@
 class Constants:
 	PROJECT_NAME='shallow-backup'
-	VERSION='0.5'
+	VERSION='1.0'
 	AUTHOR_GITHUB='alichtman'
 	AUTHOR_FULL_NAME='Aaron Lichtman'
 	DESCRIPTION="Easily back up lightweight documentation of installed packages, dotfiles, and more."
