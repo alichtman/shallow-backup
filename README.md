@@ -149,8 +149,8 @@ Once I'd built that functionality, I wanted to have a single backup utility for 
 ### What's Next?
 ---
 
-1. Automatic restic backup.
-2. MacOS GUI.
+1. MacOS GUI.
+2. More optimization.
 
 ### How to Contribute
 ---
