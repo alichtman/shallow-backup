@@ -34,7 +34,7 @@ Contents
     * macOS System Preferences
     * Sublime Text Settings
     * Atom Settings
-    * `.bashrc`.
+    * `.bashrc`
     * etc.
 
 2. Package Manager and Application `installs`.
@@ -130,27 +130,26 @@ backup_dir/
     ├── macports_list.txt
     ├── npm_list.txt
     └── pip_list.txt
-
-5 directories, 214 files
 ```
 
 ### Inspiration
 ---
 
-I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at *what was actually being backed up*. I saw that my `brew`, `npm`, and `pip` libraries took up way more memory than I imagined.
+I back up system images of my MacBook Pro to an external SSD multiple times per week, and it always takes way too long. I wanted to speed this up, so I took a look at *what was actually being backed up*. I saw that my `brew`, `npm`, and `pip` libraries took up way more memory than I imagined.
 
-*And it's totally unnecessary!* All you need to "back up" your package installs is a list of the installed packages from each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example. Additionally, you have the added bonus of always installing up-to-date packages after an OS wipe and reinstall.
+*And it's totally unnecessary!* All you really need to "back up" your package installs is a list of the installed packages from each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example. Additionally, you have the added bonus of always installing up-to-date packages after an OS wipe and reinstall.
 
-I could now safely cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` install libraries with simple text files, which cuts down the back up time significantly.
+I cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` install libraries with simple text files, also cutting down the back up time significantly.
 
 Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
 
 
-### What's Next?
+### Upcoming Features
 ---
 
-1. MacOS GUI.
-2. More optimization.
+1. GUI.
+2. Option to back up specific paths.
+3. Further optimization.
 
 ### How to Contribute
 ---
