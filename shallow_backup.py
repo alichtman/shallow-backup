@@ -111,7 +111,9 @@ def copy_dotfile(dotfile, backup_path):
 
 
 def backup_dotfiles(backup_path):
-	"""Creates `dotfiles` directory and places copies of dotfiles there."""
+	"""
+	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
+	"""
 
 	print_section_header("DOTFILES", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
@@ -120,19 +122,22 @@ def backup_dotfiles(backup_path):
 	home_path = os.path.expanduser('~')
 
 	# get dotfolders and dotfiles
-	# [(full_backup_path, full dotfile path), ...]
+
+	dotfiles_for_backup = [".bashrc", ".bash_profile", ".gitconfig", ".pypirc", ".shallow-backup", ".zshrc"]
+	dotfolders_for_backup = [".ssh", ".vim"]
+
+	# Add dotfile/folder for backup if it exists on the machine
+	dotfiles = [file for file in dotfiles_for_backup if os.path.isfile(os.path.join(home_path, file))]
+	dotfolders = [folder for folder in dotfolders_for_backup if os.path.isdir(os.path.join(home_path, folder))]
+
+	# dotfiles/dotfolders multiprocessing in list format: [(full_backup_path, full dotfolder path), ...]
 
 	dotfiles_mp_in = []
-	dotfiles = [file for file in os.listdir(home_path) if os.path.isfile(os.path.join(home_path, file)) and
-	            file[0] is "." and not file[-1] is "/"]
-
 	for dotfile in dotfiles:
 		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
 
-	# [(full_backup_path, full dotfolder path), ...]
 	dotfolders_mp_in = []
-
-	for dotfolder in glob.glob(os.path.join(home_path, '.*/')):
+	for dotfolder in dotfolders:
 		dotfolders_mp_in.append((dotfolder, backup_path))
 
 	####
@@ -276,6 +281,7 @@ def reinstall_packages(packages_path):
 			package_mgrs.add(file.split("_")[0])
 
 	pprint(package_mgrs)
+
 	# construct commands
 	for pm in package_mgrs:
 		if pm in ["brew", "brew-cask"]:
@@ -286,7 +292,7 @@ def reinstall_packages(packages_path):
 			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(packages_path)
 			print(cmd)
 			sp.call(cmd, shell=True, stdout=sp.PIPE)
-		if pm == "pip":
+		elif pm == "pip":
 			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
 			print(cmd)
 			sp.call(cmd, shell=True, stdout=sp.PIPE)
@@ -295,10 +301,8 @@ def reinstall_packages(packages_path):
 			print(cmd)
 			sp.call(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "macports":
-			# TODO
 			print(Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
 		elif pm == "gem":
-			# TODO
 			print(Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
 
 	sys.exit()
