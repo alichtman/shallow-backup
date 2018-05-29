@@ -32,8 +32,11 @@ def splash_screen():
 
 
 def prompt_yes_no(message, color):
-	"""Print question and return True or False depending on user selection from list.
-	bottom_line should be used for one liners. Otherwise, it's the second line you want printed."""
+	"""
+	Print question and return True or False depending on user selection from list.
+	bottom_line should be used for one liners.
+	Otherwise, it's the second line you want printed.
+	"""
 	questions = [inquirer.List('choice',
 	                           message=color + Style.BRIGHT + message + Fore.BLUE,
 	                           choices=[' Yes', ' No'],
@@ -52,20 +55,33 @@ def print_section_header(title, COLOR):
 	print(block + "\n" + Style.RESET_ALL)
 
 
+def get_subfiles(directory):
+	"""
+	Returns list of immediate subfiles
+	"""
+	file_paths = []
+	for path, subdirs, files in os.walk(directory):
+		print(path, subdirs, files)
+		for name in files:
+			file_paths.append(os.path.join(path, name))
+	return file_paths
+
+
 def make_dir_warn_overwrite(path):
-	"""Make destination dir if path doesn't exist, confirm before overwriting if it does."""
+	"""
+	Make destination dir if path doesn't exist, confirm before overwriting if it does.
+	"""
 	if os.path.exists(path) and path.split("/")[-1] in ["dotfiles", "packages", "fonts"]:
 		print(Fore.RED + Style.BRIGHT + "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			shutil.rmtree(path)
 			os.makedirs(path)
 		else:
-			print(Fore.Red + "Exiting to prevent accidental deletion of user data." + Style.RESET_ALL)
+			print(Fore.RED + "Exiting to prevent accidental deletion of user data." + Style.RESET_ALL)
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
 		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
-
 	return
 
 
@@ -79,12 +95,13 @@ def backup_prompt():
 	             ]
 
 	answers = inquirer.prompt(questions)
-
 	return answers.get('choice').strip().lower()
 
 
 def copy_dotfolder(dotfolder, backup_path):
-	"""Copy dotfolder from $HOME."""
+	"""
+	Copy dotfolder from $HOME.
+	"""
 
 	print(dotfolder)
 
@@ -103,7 +120,9 @@ def copy_dotfolder(dotfolder, backup_path):
 
 
 def copy_dotfile(dotfile, backup_path):
-	"""Copy dotfile from $HOME."""
+	"""
+	Copy dotfile from $HOME.
+	"""
 
 	command = "cp -a " + dotfile + " " + backup_path
 	# print(command)
@@ -233,9 +252,17 @@ def backup_packages(backup_path):
 	print(Fore.BLUE + "Backing up system application list..." + Style.RESET_ALL)
 	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
+	# Clean up empty package list files
+	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
+	for file in get_subfiles(backup_path):
+		if os.path.getsize(file) == 0:
+			os.remove(file)
+
 
 def backup_fonts(path):
-	"""Creates list of all .ttf and .otf files in ~/Library/Fonts"""
+	"""
+	Creates list of all .ttf and .otf files in ~/Library/Fonts
+	"""
 
 	print_section_header("FONTS", Fore.BLUE)
 	make_dir_warn_overwrite(path)
@@ -253,19 +280,18 @@ def backup_fonts(path):
 
 
 def backup_all(dotfiles_path, packages_path, fonts_path):
-	"""Complete backup"""
+	"""
+	Complete backup procedure.
+	"""
 	backup_dotfiles(dotfiles_path)
 	backup_packages(packages_path)
 	backup_fonts(fonts_path)
 
 
-def get_subfiles(directory):
-	"""Returns list of immediate subfiles"""
-	return next(os.walk(directory))[2]
-
-
 def reinstall_packages(packages_path):
-	"""Reinstall all packages from the files in backup/installs."""
+	"""
+	Reinstall all packages from the files in backup/installs.
+	"""
 
 	# Figure out which install lists they have saved
 	package_mgrs = set()
@@ -309,7 +335,10 @@ def reinstall_packages(packages_path):
 
 
 def prompt_for_path_update(config_path, config):
-	"""Ask user if they'd like to update the backup path or not. If yes, update. If no... don't."""
+	"""
+	Ask user if they'd like to update the backup path or not.
+	If yes, update. If no... don't.
+	"""
 	config.read(config_path)
 
 	# Prompt for update
@@ -330,7 +359,10 @@ def prompt_for_path_update(config_path, config):
 
 
 def read_config(config_path, config):
-	"""Read config file. Make home backup directory if it doesn't exist. Warn user if it already exists."""
+	"""
+	Read config file. Make home backup directory if it doesn't exist.
+	Warn user if it already exists.
+	"""
 	config.read(config_path)
 	backup_dir = config['USER']['backup_path']
 	make_dir_warn_overwrite(backup_dir)
@@ -349,7 +381,9 @@ def read_config(config_path, config):
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall, delete_config, v):
-	"""Easily back up installed packages, dotfiles, and more."""
+	"""
+	Easily back up installed packages, dotfiles, and more.
+	"""
 
 	config_path = os.path.join(expanduser("~"), ".shallow-backup")
 
@@ -446,4 +480,7 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall, dele
 
 
 if __name__ == '__main__':
+	"""
+	I'm just here so I don't get fined.
+	"""
 	cli()
