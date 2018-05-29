@@ -155,9 +155,6 @@ def backup_dotfiles(backup_path):
 	if os.path.isdir("/Users/alichtman/Library/Developer/Xcode/UserData"):
 		dotfolders_mp_in.append(("/Users/alichtman/Library/Developer/Xcode/UserData", backup_path))
 
-	# MacOS Preferences
-	dotfolders_mp_in.append(("/Users/alichtman/Library/Preferences", backup_path))
-
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
 
@@ -171,8 +168,6 @@ def backup_dotfiles(backup_path):
 		for x in dotfiles_mp_in:
 			x = list(x)
 			mp.Process(target=copy_dotfile, args=(x[0], x[1],)).start()
-
-	# TODO: Fix permissions on Preferences folder to 644 -> rw for you, r only for everyone else
 
 
 def backup_packages(backup_path):

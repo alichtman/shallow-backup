@@ -30,32 +30,39 @@ Contents
 ### What can I back up?
 ---
 
-1. All `dotfiles` and `dotfolders`.
-    * macOS System Preferences
-    * Sublime Text Settings
-    * Atom Settings
+1. `dotfiles` and `dotfolders`.
     * `.bashrc`
-    * etc.
+    * `.bash_profile`
+    * `.gitconfig`
+    * `.pypirc`
+    * `.shallow-backup`
+    * `.ssh/`
+    * `.vim/`
+    * `.zshrc`
 
-2. Package Manager and Application `installs`.
-    * `apm`
-    * `brew`
-    * `brew cask`
+2. Application Preferences
+    * Sublime Text
+    * Terminal (Coming soon!)
+    * VS Code (Coming soon!)
+
+3. Insalled `packages`.
+    * `Atom` Packages (`apm`)
+    * `brew` and `cask`
     * `gem`
     * `pip`
     * `npm`
     * `macports`
-    * Sublime Text 2 and 3 packages
-    * macOS `~/Applications/` directory
+    * `Sublime Text` Packages
+    * `~/Applications/` directory
 
-3. User installed `fonts`.
+4. User installed `fonts`.
 
 ### Installation
 ---
 
 1. Install with [`pip`](https://pypi.org/project/shallow-backup/)
     + `$ pip install shallow-backup`
-    + `$ sudo shallow-backup`
+    + `$ shallow-backup`
 
 2. Download the `shallow-backup` binary from Releases tab.
 
@@ -94,8 +101,8 @@ $ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/n
 #### Use Cases
 ---
 
-1. Reduce your backup size by compressing all package manager libraries to `.txt` files.
-2. Easily back up your dotfiles, Sublime Text settings and Atom config.
+1. Reduce your backup size by compressing all package manager libraries to simple `.txt` files.
+2. Easily back up your dotfiles.
 3. Back up all user installed `.ttf` and `.otf` fonts from `Fontbook`.
 
 #### Output Structure
@@ -121,7 +128,7 @@ backup_dir/
 │   ├── Ubuntu Mono derivative Powerline Bold.ttf
 │   ├── Ubuntu Mono derivative Powerline Italic.ttf
 │   └── Ubuntu Mono derivative Powerline.ttf
-└── installs
+└── packages
     ├── apm_list.txt
     ├── brew-cask_list.txt
     ├── brew_list.txt
@@ -149,11 +156,10 @@ Once I'd built that functionality, I wanted to have a single backup utility for 
 
 1. GUI.
 2. Option to back up specific paths.
-3. Further optimization.
 
 ### How to Contribute
 ---
 
 1. Clone repo and create a new branch: `$ git checkout https://github.com/alichtman/shallow-backup -b name_for_new_branch`.
 2. Make changes and test
-3. Submit Pull Request with comprehensive description of changes
+3. Open Pull Request with comprehensive description of changes
