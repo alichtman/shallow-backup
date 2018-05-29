@@ -196,20 +196,24 @@ def backup_packages(backup_path):
 
 	make_dir_warn_overwrite(backup_path)
 
-	package_managers = [
+	std_backup_package_managers = [
 		"brew",
 		"brew cask",
 		"gem"
 	]
 
-	for mgr in package_managers:
+	for mgr in std_backup_package_managers:
 		# deal with package managers that have spaces in them.
 		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
 		command = "{0} list > {1}/{2}_list.txt".format(mgr, backup_path, mgr.replace(" ", "-"))
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
+	# cargo
+	print(Fore.BLUE + "Backing up cargo package list..." + Style.RESET_ALL)
+	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(os.path.expanduser('~'), backup_path), shell=True, stdout=sp.PIPE)
+
 	# pip
-	print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
+	print(Fore.BLUE + "Backing up pip package list..." + Style.RESET_ALL)
 	sp.run("pip list --format=freeze > {}/pip_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# npm
