@@ -48,6 +48,7 @@ Contents
 3. Insalled `packages`.
     * `Atom` Packages (`apm`)
     * `brew` and `cask`
+    * `cargo`
     * `gem`
     * `pip`
     * `npm`
@@ -111,13 +112,15 @@ $ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/n
 ```shell
 backup_dir/
 ├── dotfiles
-│   ├── .bashrc
-│   ├── .pypirc
-│   ├── ...
+│   ├── .bash_profile
+│   ├── .bashrc
+│   ├── .gitconfig
+│   ├── .pypirc
+│   ├── .shallow-backup
 │   ├── .ssh/
 │   │   └── known_hosts
 │   ├── .vim/
-│   └── .zshrc
+│   └── .zshrc
 ├── fonts
 │   ├── AllerDisplay.ttf
 │   ├── Aller_Bd.ttf
@@ -132,11 +135,13 @@ backup_dir/
     ├── apm_list.txt
     ├── brew-cask_list.txt
     ├── brew_list.txt
+    ├── cargo_list.txt
     ├── gem_list.txt
     ├── installed_apps_list.txt
-    ├── macports_list.txt
     ├── npm_list.txt
-    └── pip_list.txt
+    ├── macports_list.txt
+    ├── pip_list.txt
+    └── sublime3_list.txt
 ```
 
 ### Inspiration
