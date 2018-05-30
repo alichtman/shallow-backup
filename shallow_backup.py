@@ -143,21 +143,21 @@ def backup_dotfiles(backup_path):
 	# get dotfolders and dotfiles
 
 	dotfiles_for_backup = [".bashrc", ".bash_profile", ".gitconfig", ".pypirc", ".shallow-backup", ".zshrc"]
-	dotfolders_for_backup = [".ssh", ".vim"]
+	dotfolders_for_backup = [".ssh/", ".vim/"]
 
 	# Add dotfile/folder for backup if it exists on the machine
 	dotfiles = [file for file in dotfiles_for_backup if os.path.isfile(os.path.join(home_path, file))]
-	dotfolders = [folder for folder in dotfolders_for_backup if os.path.isdir(os.path.join(home_path, folder))]
+	dotfolders = [folder for folder in dotfolders_for_backup if os.path.exists(os.path.join(home_path, folder))]
 
-	# dotfiles/dotfolders multiprocessing in list format: [(full_backup_path, full dotfolder path), ...]
-
-	dotfiles_mp_in = []
-	for dotfile in dotfiles:
-		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
+	# dotfiles/dotfolders multiprocessing in list format: [(full_dotfile_path, full_dest_path), ...]
 
 	dotfolders_mp_in = []
 	for dotfolder in dotfolders:
-		dotfolders_mp_in.append((dotfolder, backup_path))
+		dotfolders_mp_in.append((os.path.join(home_path, dotfolder), backup_path))
+
+	dotfiles_mp_in = []
+	for dotfile in dotfiles:
+		dotfiles_mp_in.append((os.path.join(home_path, dotfile), backup_path))
 
 	####
 	# Back up System and Application Preferences and Settings
@@ -173,6 +173,9 @@ def backup_dotfiles(backup_path):
 	# XCode Configs
 	if os.path.isdir("/Users/alichtman/Library/Developer/Xcode/UserData"):
 		dotfolders_mp_in.append(("/Users/alichtman/Library/Developer/Xcode/UserData", backup_path))
+
+	pprint(dotfiles_mp_in)
+	pprint(dotfolders_mp_in)
 
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
