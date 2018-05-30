@@ -73,7 +73,6 @@ def get_subfiles(directory):
 	"""
 	file_paths = []
 	for path, subdirs, files in os.walk(directory):
-		print(path, subdirs, files)
 		for name in files:
 			file_paths.append(os.path.join(path, name))
 	return file_paths
@@ -115,7 +114,7 @@ def copy_dotfolder(dotfolder, backup_path):
 	Copy dotfolder from $HOME.
 	"""
 
-	print(dotfolder)
+	# print(dotfolder)
 
 	invalid = {".Trash", ".npm", ".cache", ".rvm"}
 
@@ -186,8 +185,8 @@ def backup_dotfiles(backup_path):
 	if os.path.isdir("/Users/alichtman/Library/Developer/Xcode/UserData"):
 		dotfolders_mp_in.append(("/Users/alichtman/Library/Developer/Xcode/UserData", backup_path))
 
-	pprint(dotfiles_mp_in)
-	pprint(dotfolders_mp_in)
+	# pprint(dotfiles_mp_in)
+	# pprint(dotfolders_mp_in)
 
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
@@ -291,11 +290,11 @@ def backup_fonts(path):
 	copy_ttf = "cp ~/Library/Fonts/*.ttf {}/".format(path)
 	copy_otf = "cp ~/Library/Fonts/*.otf {}/".format(path)
 
-	sp.run(copy_otf, shell=True, stdout=sp.PIPE)
-	sp.run(copy_ttf, shell=True, stdout=sp.PIPE)
-
 	print(copy_otf)
 	print(copy_ttf, "\n")
+
+	sp.run(copy_otf, shell=True, stdout=sp.PIPE)
+	sp.run(copy_ttf, shell=True, stdout=sp.PIPE)
 
 
 def backup_all(dotfiles_path, packages_path, fonts_path):
@@ -315,11 +314,12 @@ def reinstall_packages(packages_path):
 	# Figure out which install lists they have saved
 	package_mgrs = set()
 	for file in get_subfiles(packages_path):
-		print(file)
+		# print(file)
 		manager = file.split("_")[0].replace("-", " ")
 		if manager != "installed":
 			package_mgrs.add(file.split("_")[0])
 
+	print(Fore.BLUE + "Package Managers detected:" + Style.RESET_ALL)
 	pprint(package_mgrs)
 
 	# construct commands
@@ -421,8 +421,6 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall, dele
 		sys.exit()
 
 	splash_screen()
-
-	# CONFIG FILE
 
 	config = configparser.ConfigParser()
 
