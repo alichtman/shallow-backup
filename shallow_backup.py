@@ -19,10 +19,14 @@ from constants import Constants
 
 
 def print_version_info():
-	print(Fore.RED + "{} v{} by {} -> (Github: {})".format(Constants.PROJECT_NAME,
+	version = "{} v{} by {} -> (Github: {})".format(Constants.PROJECT_NAME,
 			                                      Constants.VERSION,
 			                                      Constants.AUTHOR_FULL_NAME,
-			                                      Constants.AUTHOR_GITHUB) + Style.RESET_ALL)
+			                                      Constants.AUTHOR_GITHUB)
+	line = "-" * (len(version))
+	print(Fore.RED + Style.BRIGHT + line)
+	print(version)
+	print(line + "\n" + Style.RESET_ALL)
 
 
 def splash_screen():
@@ -40,7 +44,6 @@ def splash_screen():
 	      "                                                                                                        dP		\n" + Style.RESET_ALL)
 
 	print_version_info()
-	print("\n")
 
 
 def prompt_yes_no(message, color):
