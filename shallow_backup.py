@@ -329,6 +329,9 @@ def reinstall_packages(packages_path):
 			print(Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
 		elif pm == "gem":
 			print(Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
+		elif pm == "cargo":
+			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment. \
+			      \n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
 
 	sys.exit()
 
