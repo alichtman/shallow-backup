@@ -18,7 +18,17 @@ from pprint import pprint
 from constants import Constants
 
 
+def print_version_info():
+	print(Fore.RED + "{} v{} by {} -> (Github: {})".format(Constants.PROJECT_NAME,
+			                                      Constants.VERSION,
+			                                      Constants.AUTHOR_FULL_NAME,
+			                                      Constants.AUTHOR_GITHUB) + Style.RESET_ALL)
+
+
 def splash_screen():
+	"""
+	Display splash graphic, and then version info
+	"""
 	print(Fore.YELLOW + Style.BRIGHT + "\n" +
 	      "            dP                dP dP                        dP                         dP                         \n" +
 	      "            88                88 88                        88                         88                         \n" +
@@ -27,8 +37,10 @@ def splash_screen():
 	      "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
 	      "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
 	      "                                                                                                        88		\n" +
-	      "                                                                                                        dP		\n" +
-	      Style.RESET_ALL)
+	      "                                                                                                        dP		\n" + Style.RESET_ALL)
+
+	print_version_info()
+	print("\n")
 
 
 def prompt_yes_no(message, color):
@@ -399,11 +411,7 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall, dele
 
 	# Print version information
 	if v:
-		print(
-			'{} v{} by {} -> (Github: {})'.format(Constants.PROJECT_NAME,
-			                                      Constants.VERSION,
-			                                      Constants.AUTHOR_FULL_NAME,
-			                                      Constants.AUTHOR_GITHUB))
+		print_version_info()
 		sys.exit()
 
 	elif delete_config:
