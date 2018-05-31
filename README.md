@@ -45,7 +45,7 @@ Contents
     * Terminal (Coming soon!)
     * VS Code (Coming soon!)
 
-3. Insalled `packages`.
+3. Installed `packages`.
     * `Atom` Packages (`apm`)
     * `brew` and `cask`
     * `cargo`
