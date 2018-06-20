@@ -126,7 +126,7 @@ def copy_dotfolder(dotfolder, backup_path):
 		if "Library" in dotfolder.split("/") and "Preferences" in dotfolder.split("/"):
 			command = "cp -aRp " + dotfolder + " " + backup_path + "/macOS_Preferences"
 			print(Fore.BLUE + command)
-		elif "Application\ Support" not in dotfolder:
+		elif "Application\ Support" not in dotfolder or "XCode" in dotfolder:
 			command = "cp -aRp " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
 		elif "Sublime" in dotfolder:
 			command = "cp -aRp " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-3]
@@ -183,6 +183,10 @@ def backup_dotfiles(backup_path):
 
 	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime\ Text\ 3"):
 		dotfolders_mp_in.append((os.path.join(home_path, "Library/Application\ Support/Sublime\ Text\ 3/Packages/User"), backup_path))
+
+	# XCode Configs
+	if os.path.isdir("/Users/alichtman/Library/Developer/Xcode/UserData"):
+		dotfolders_mp_in.append(("/Users/alichtman/Library/Developer/Xcode/UserData", backup_path))
 
 	# pprint(dotfiles_mp_in)
 	# pprint(dotfolders_mp_in)
