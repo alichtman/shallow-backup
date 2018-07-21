@@ -29,6 +29,7 @@ Contents
 * [awesome-shell](https://github.com/alebcay/awesome-shell)
 * [open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps)
 * [tools-osx](https://github.com/morgant/tools-osx)
+* [agarrharr/awesome-cli-apps](https://github.com/agarrharr/awesome-cli-apps)
 
 ### What can I back up?
 ---
