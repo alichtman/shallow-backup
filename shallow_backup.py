@@ -137,12 +137,11 @@ def copy_dotfolder(dotfolder, backup_path):
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 
-def copy_dotfile(dotfile, backup_path):
+def _copy_file(source, target):
 	"""
 	Copy dotfile from $HOME.
 	"""
-
-	command = "cp -a " + dotfile + " " + backup_path
+	command = "cp -a '" + source + "' '" + target + "'"
 	# print(command)
 	sp.run(command, shell=True, stdout=sp.PIPE)
 
@@ -211,7 +210,7 @@ def backup_dotfiles(backup_path):
 			  "Backing up dotfiles..." + Style.RESET_ALL)
 		for x in dotfiles_mp_in:
 			x = list(x)
-			mp.Process(target=copy_dotfile, args=(x[0], x[1],)).start()
+			mp.Process(target=_copy_file, args=(x[0], x[1],)).start()
 
 
 def backup_configs(backup_path):
@@ -242,13 +241,6 @@ def backup_configs(backup_path):
 def _copy_dir_content(source, target):
 	"""Copies the contents of a dir to a specified target path."""
 	cmd = "cp -a '" + source + "' '" + target + "/'"
-	# print(cmd)
-	sp.run(cmd, shell=True, stdout=sp.PIPE)
-
-
-def _copy_file(source, target):
-	"""Copies a file to a specified target path."""
-	cmd = "cp -a '" + source + "' '" + target + "'"
 	# print(cmd)
 	sp.run(cmd, shell=True, stdout=sp.PIPE)
 
@@ -324,7 +316,7 @@ def backup_packages(backup_path):
 		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
 		sp.run(
 			"ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages/ > {}/sublime3_list.txt"
-			.format(backup_path), shell=True, stdout=sp.PIPE)
+				.format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# macports
 	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
@@ -363,13 +355,14 @@ def backup_fonts(path):
 	sp.run(copy_ttf, shell=True, stdout=sp.PIPE)
 
 
-def backup_all(dotfiles_path, packages_path, fonts_path):
+def backup_all(dotfiles_path, packages_path, fonts_path, configs_path):
 	"""
 	Complete backup procedure.
 	"""
 	backup_dotfiles(dotfiles_path)
 	backup_packages(packages_path)
 	backup_fonts(fonts_path)
+	backup_configs(configs_path)
 
 
 def reinstall_config_files(configs_path):
@@ -487,7 +480,7 @@ def read_config(config_path, config):
 
 
 # custom help options
-@click.command(context_settings=dict(help_option_names=['-h', '-help']))
+@click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('-complete', is_flag=True, default=False, help="Back up everything.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
@@ -495,12 +488,12 @@ def read_config(config_path, config):
 @click.option('-packages', is_flag=True, default=False, help="Back up package libraries and installed applications.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
 @click.option('--new_path', default="DEFAULT", help="Input a new back up directory path.")
-@click.option('-reinstall', is_flag=True, default=False, help="Reinstall packages from package lists.")
+@click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages from package lists.")
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinstall, reinstall_configs, delete_config,
-		v):
+def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinstall_packages, reinstall_configs,
+		delete_config, v):
 	"""
 	Easily back up installed packages, dotfiles, and more.
 	"""
@@ -566,13 +559,13 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinst
 	# print(packages_path)
 
 	# Command line options
-	if complete or dotfiles or configs or packages or fonts or reinstall or reinstall_configs:
-		if reinstall:
+	if complete or dotfiles or configs or packages or fonts or reinstall_packages or reinstall_configs:
+		if reinstall_packages:
 			reinstall_packages(packages_path)
 		elif reinstall_configs:
 			reinstall_config_files(configs_path)
 		elif complete:
-			backup_all(dotfiles_path, packages_path, fonts_path)
+			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path)
 		elif configs:
@@ -589,7 +582,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinst
 		selection = backup_prompt().lower().strip()
 
 		if selection == "back up everything":
-			backup_all(dotfiles_path, packages_path, fonts_path)
+			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif selection == "back up dotfiles":
 			backup_dotfiles(dotfiles_path)
 		elif selection == "back up configs":
