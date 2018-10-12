@@ -111,16 +111,20 @@ def backup_prompt():
 	return answers.get('choice').strip().lower()
 
 
-def copy_dotfolder(dir, backup_path):
+def copy_dir(source_dir, backup_path):
 	"""
 	Copy dotfolder from $HOME.
 	"""
-	command = ""
-	if "Application\ Support" not in dir:
-		command = "cp -aRp '" + dir + "' '" + backup_path + "/" + dir.split("/")[-2] + "'"
+	invalid = {".Trash", ".npm", ".cache", ".rvm"}
+	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
+		return
 
-	if "Sublime" in dir:
-		command = "cp -aRp '" + dir + "' '" + backup_path + "/" + dir.split("/")[-3] + "'"
+	if "Application\ Support" not in source_dir:
+		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-2] + "'"
+	elif "Sublime" in source_dir:
+		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-3] + "'"
+	else:
+		command = "cp -a '" + source_dir + "' '" + backup_path + "/'"
 
 	sp.run(command, shell=True, stdout=sp.PIPE)
 
@@ -157,8 +161,7 @@ def backup_dotfiles(backup_path):
 
 	# get dotfolders and dotfiles
 
-	dotfiles_for_backup = [".bashrc", ".bash_profile",
-						   ".gitconfig", ".pypirc", ".shallow-backup", ".zshrc"]
+	dotfiles_for_backup = [".bashrc", ".bash_profile", ".gitconfig", ".pypirc", ".shallow-backup", ".zshrc", ".vimrc", ]
 	dotfolders_for_backup = [".ssh/", ".vim/"]
 
 	# Add dotfile/folder for backup if it exists on the machine
@@ -196,7 +199,7 @@ def backup_dotfiles(backup_path):
 			  "Backing up dotfolders..." + Style.RESET_ALL)
 		for x in dotfolders_mp_in:
 			x = list(x)
-			mp.Process(target=copy_dotfolder, args=(x[0], x[1],)).start()
+			mp.Process(target=copy_dir, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
 		print(Fore.BLUE + Style.BRIGHT +
@@ -464,7 +467,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinst
 	Easily back up installed packages, dotfiles, and more.
 	"""
 
-	_config_path = os.path.join(expanduser("~"), ".shallow-backup")
+	backup_config_path = os.path.join(expanduser("~"), ".shallow-backup")
 
 	# Print version information
 	if v:
@@ -472,22 +475,21 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinst
 		sys.exit()
 
 	elif delete_config:
-		command = "rm {}".format(_config_path)
+		command = "rm {}".format(backup_config_path)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 		print(Fore.RED + Style.BRIGHT + "Removed config file..." + Style.RESET_ALL)
 		sys.exit()
 
 	splash_screen()
 
-	# TODO: find proper naming for _config and configs.
-	_config = configparser.ConfigParser()
+	backup_config = configparser.ConfigParser()
 
 	# if config file doesn't exist, create it.
-	if not os.path.exists(_config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(_config_path))
-		_config['USER'] = {'backup_path': 'DEFAULT'}
-		with open(_config_path, 'w') as f:
-			_config.write(f)
+	if not os.path.exists(backup_config_path):
+		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
+		backup_config['USER'] = {'backup_path': 'DEFAULT'}
+		with open(backup_config_path, 'w') as f:
+			backup_config.write(f)
 
 	# Decide to update path from CLI args, prompt user, or skip updating
 
@@ -497,12 +499,12 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinst
 		abs_path = os.path.abspath(new_path)
 
 		print(Fore.BLUE + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(abs_path) + Style.RESET_ALL)
-		_config.read(_config_path)
-		_config['USER']['backup_path'] = abs_path
+		backup_config.read(backup_config_path)
+		backup_config['USER']['backup_path'] = abs_path
 
 		# Write to config file
-		with open(_config_path, 'w') as f:
-			_config.write(f)
+		with open(backup_config_path, 'w') as f:
+			backup_config.write(f)
 
 	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
 	elif old_path or complete or dotfiles or packages or fonts:
@@ -510,9 +512,9 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinst
 
 	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
 	else:
-		prompt_for_path_update(_config_path, _config)
+		prompt_for_path_update(backup_config_path, backup_config)
 
-	backup_home_path = read_config(_config_path, _config)
+	backup_home_path = read_config(backup_config_path, backup_config)
 
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
 	configs_path = os.path.join(backup_home_path, "configs")
