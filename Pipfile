@@ -10,6 +10,8 @@ colorama = "*"
 pprint = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-mock = "*"
 
 [requires]
 python_version = "3.6"
