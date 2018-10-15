@@ -45,7 +45,7 @@ Contents
 
 2. Application Preferences
     * Sublime Text
-    * Terminal (Coming soon!)
+    * Terminal
     * VS Code (Coming soon!)
 
 3. Installed `packages`.
@@ -80,17 +80,19 @@ Usage: shallow_backup.py [OPTIONS]
   You can edit which dotfiles are backed up in ~/.shallow-backup.
 
 Options:
-  -complete        Back up everything.
-  -dotfiles        Back up dotfiles.
-  -fonts           Back up installed fonts.
-  -packages        Back up package libraries and installed applications.
-  -old_path        Skip setting new back up directory path.
-  --new_path TEXT  Input a new back up directory path.
-  --remote TEXT    Input a URL for a git repository.
-  -reinstall       Reinstall packages from package lists.
-  -delete_config   Remove config file.
-  -v               Display version and author information and exit.
-  -help, -h        Show this message and exit.
+  -complete            Back up everything.
+  -dotfiles            Back up dotfiles.
+  -configs             Back up app config files.
+  -fonts               Back up installed fonts.
+  -packages            Back up package libraries and installed applications.
+  -old_path            Skip setting new back up directory path.
+  --new_path TEXT      Input a new back up directory path.
+  --remote TEXT        Input a URL for a git repository.
+  -reinstall_packages  Reinstall packages from package lists.
+  -reinstall_configs   Reinstall configs from configs backup.
+  -delete_config       Remove config file.
+  -v                   Display version and author information and exit.
+  -h, -help, --help    Show this message and exit.
 ```
 
 NOTE: `shallow-backup` works best when it's populating an empty directory.
@@ -110,12 +112,20 @@ $ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/n
 1. Reduce your backup size by compressing all package manager libraries to simple `.txt` files.
 2. Easily back up your dotfiles.
 3. Back up all user installed `.ttf` and `.otf` fonts from `Fontbook`.
+4. Back up application preferences of Terminal and Sublime.
 
 #### Output Structure
 ---
 
 ```shell
 backup_dir/
+├── configs
+│   ├── plist
+│   │   └── com.apple.Terminal.plist
+│   ├── sublime_2
+│   │   └── ...
+│   └── sublime_3
+│       └── ...
 ├── dotfiles
 │   ├── .bash_profile
 │   ├── .bashrc

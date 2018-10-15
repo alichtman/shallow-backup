@@ -29,14 +29,14 @@ def splash_screen():
 	Display splash graphic, and then version info
 	"""
 	print(Fore.YELLOW + Style.BRIGHT + "\n" +
-	      "            dP                dP dP                        dP                         dP                         \n" +
-	      "            88                88 88                        88                         88                         \n" +
-	      "   ,d8888'  88d888b. .d8888b. 88 88 .d8888b. dP  dP  dP    88d888b. .d8888b. .d8888b. 88  .dP  dP    dP 88d888b. \n" +
-	      "   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88    88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
-	      "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
-	      "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
-	      "                                                                                                        88		\n" +
-	      "                                                                                                        dP		\n" + Style.RESET_ALL)
+		  "            dP                dP dP                        dP                         dP                         \n" +
+		  "            88                88 88                        88                         88                         \n" +
+		  "   ,d8888'  88d888b. .d8888b. 88 88 .d8888b. dP  dP  dP    88d888b. .d8888b. .d8888b. 88  .dP  dP    dP 88d888b. \n" +
+		  "   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88    88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
+		  "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
+		  "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
+		  "                                                                                                        88		\n" +
+		  "                                                                                                        dP		\n" + Style.RESET_ALL)
 
 	print_version_info()
 
@@ -48,10 +48,10 @@ def prompt_yes_no(message, color):
 	Otherwise, it's the second line you want printed.
 	"""
 	questions = [inquirer.List('choice',
-	                           message=color + Style.BRIGHT + message + Fore.BLUE,
-	                           choices=[' Yes', ' No'],
-	                           ),
-	             ]
+							   message=color + Style.BRIGHT + message + Fore.BLUE,
+							   choices=[' Yes', ' No'],
+							   ),
+				 ]
 
 	answers = inquirer.prompt(questions)
 	return answers.get('choice').strip().lower() == 'yes'
@@ -82,7 +82,7 @@ def make_dir_warn_overwrite(path):
 	"""
 	Make destination dir if path doesn't exist, confirm before overwriting if it does.
 	"""
-	subdirs = ["dotfiles", "packages", "fonts"]
+	subdirs = ["dotfiles", "packages", "fonts", "configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
 		print(Fore.RED + Style.BRIGHT +
 		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
@@ -104,9 +104,12 @@ def backup_prompt():
 	questions = [inquirer.List('choice',
 	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
 	                           choices=[' Back up dotfiles',
-	                                    ' Back up packages', ' Back up fonts',
+                                      ' Back up configs',
+	                                    ' Back up packages', 
+                                      ' Back up fonts',
 	                                    ' Back up everything',
-	                                    ' Reinstall packages'],
+	                                    ' Reinstall packages', 
+                                      ' Reinstall configs'],
 	                           ),
 	             ]
 
@@ -114,38 +117,41 @@ def backup_prompt():
 	return answers.get('choice').strip().lower()
 
 
-def copy_dotfolder(dotfolder, backup_path):
+def copy_dir(source_dir, backup_path):
 	"""
 	Copy dotfolder from $HOME.
 	"""
-
-	# print(dotfolder)
-
 	invalid = {".Trash", ".npm", ".cache", ".rvm"}
+	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
+		return
 
-	if len(invalid.intersection(set(dotfolder.split("/")))) == 0:
-		command = ""
-		if "Library" in dotfolder.split(
-				"/") and "Preferences" in dotfolder.split("/"):
-			command = "cp -aRp " + dotfolder + " " + backup_path + "/macOS_Preferences"
-			print(Fore.BLUE + command)
-		elif "Application\ Support" not in dotfolder:
-			command = "cp -aRp " + dotfolder + " " + \
-			          backup_path + "/" + dotfolder.split("/")[-2]
-		elif "Sublime" in dotfolder:
-			command = "cp -aRp " + dotfolder + " " + \
-			          backup_path + "/" + dotfolder.split("/")[-3]
-		sp.run(command, shell=True, stdout=sp.PIPE)
+	if "Application\ Support" not in source_dir:
+		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-2] + "'"
+	elif "Sublime" in source_dir:
+		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-3] + "'"
+	else:
+		command = "cp -a '" + source_dir + "' '" + backup_path + "/'"
+
+	sp.run(command, shell=True, stdout=sp.PIPE)
 
 
-def copy_dotfile(dotfile, backup_path):
+def _copy_file(source, target):
 	"""
 	Copy dotfile from $HOME.
 	"""
-
-	command = "cp -a " + dotfile + " " + backup_path
+	command = "cp -a '" + source + "' '" + target + "'"
 	# print(command)
 	sp.run(command, shell=True, stdout=sp.PIPE)
+
+
+def _mkdir_or_pass(dir):
+	if not os.path.isdir(dir):
+		os.makedirs(dir)
+	pass
+
+
+def _home_prefix(path):
+	return os.path.join(os.path.expanduser('~'), path)
 
 
 def backup_dotfiles(backup_path):
@@ -186,19 +192,11 @@ def backup_dotfiles(backup_path):
 	####
 
 	# Sublime Text Configs
-	if os.path.isdir(
-			"/Users/alichtman/Library/Application Support/Sublime\ Text\ 2"):
-		dotfolders_mp_in.append((os.path.join(
-			home_path,
-			"Library/Application\ Support/Sublime\ Text\ 2/Packages/User"),
-		                         backup_path))
+	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 2")):
+		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 2/Packages/User"), backup_path))
 
-	if os.path.isdir(
-			"/Users/alichtman/Library/Application Support/Sublime\ Text\ 3"):
-		dotfolders_mp_in.append((os.path.join(
-			home_path,
-			"Library/Application\ Support/Sublime\ Text\ 3/Packages/User"),
-		                         backup_path))
+	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 3")):
+		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 3/Packages/User"), backup_path))
 
 	# pprint(dotfiles_mp_in)
 	# pprint(dotfolders_mp_in)
@@ -207,17 +205,47 @@ def backup_dotfiles(backup_path):
 	with mp.Pool(mp.cpu_count()):
 
 		print(Fore.BLUE + Style.BRIGHT +
-		      "Backing up dotfolders..." + Style.RESET_ALL)
+			  "Backing up dotfolders..." + Style.RESET_ALL)
+
 		for x in dotfolders_mp_in:
 			x = list(x)
-			mp.Process(target=copy_dotfolder, args=(x[0], x[1],)).start()
+			mp.Process(target=copy_dir, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
 		print(Fore.BLUE + Style.BRIGHT +
-		      "Backing up dotfiles..." + Style.RESET_ALL)
+			  "Backing up dotfiles..." + Style.RESET_ALL)
 		for x in dotfiles_mp_in:
 			x = list(x)
-			mp.Process(target=copy_dotfile, args=(x[0], x[1],)).start()
+			mp.Process(target=_copy_file, args=(x[0], x[1],)).start()
+
+
+def backup_configs(backup_path):
+	make_dir_warn_overwrite(backup_path)
+
+	configs_dir_mapping = {"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
+						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3", }
+	plist_files = ["Library/Preferences/com.apple.Terminal.plist"]
+
+	# backup config dirs in backup_path/configs/<target>/
+	for config, target in configs_dir_mapping.items():
+		if os.path.isdir(_home_prefix(config)):
+			configs_backup_path = os.path.join(backup_path, target)
+			_mkdir_or_pass(configs_backup_path)
+			_copy_dir_content(_home_prefix(config), configs_backup_path)
+
+	# backup plist files in backup_path/configs/plist/
+	plist_backup_path = os.path.join(backup_path, "plist")
+	_mkdir_or_pass(plist_backup_path)
+	for plist in plist_files:
+		if os.path.exists(_home_prefix(plist)):
+			_copy_dir_content(_home_prefix(plist), plist_backup_path)
+
+
+def _copy_dir_content(source, target):
+	"""Copies the contents of a dir to a specified target path."""
+	cmd = "cp -a '" + source + "' '" + target + "/'"
+	# print(cmd)
+	sp.run(cmd, shell=True, stdout=sp.PIPE)
 
 
 def backup_packages(backup_path):
@@ -272,20 +300,15 @@ def backup_packages(backup_path):
 	sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# sublime text packages
-	if os.path.isdir(
-			"/Users/alichtman/Library/Application Support/Sublime Text 2"):
-		print(
-			Fore.BLUE + "Backing up Sublime Text 2 package list..." + Style.RESET_ALL)
-	sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 2/Packages/ > {}/sublime2_list.txt".format(
-		backup_path), shell=True, stdout=sp.PIPE)
+	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 2")):
+		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
+		source_path = _home_prefix("Library/Application Support/Sublime Text 2/Packages/")
+		sp.run("ls {} > {}/sublime2_list.txt".format(source_path, backup_path), shell=True, stdout=sp.PIPE)
 
-	if os.path.isdir(
-			"/Users/alichtman/Library/Application Support/Sublime Text 3"):
-		print(
-			Fore.BLUE + "Backing up Sublime Text 3 package list..." + Style.RESET_ALL)
-		sp.run(
-			"ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages/ > {}/sublime3_list.txt"
-				.format(backup_path), shell=True, stdout=sp.PIPE)
+	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 3")):
+		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
+		source_path = _home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
+		sp.run("ls {} > {}/sublime3_list.txt".format(source_path, backup_path), shell=True, stdout=sp.PIPE)
 
 	# macports
 	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
@@ -323,16 +346,38 @@ def backup_fonts(path):
 	sp.run(copy_ttf, shell=True, stdout=sp.PIPE)
 
 
-def backup_all(dotfiles_path, packages_path, fonts_path):
+def backup_all(dotfiles_path, packages_path, fonts_path, configs_path):
 	"""
 	Complete backup procedure.
 	"""
 	backup_dotfiles(dotfiles_path)
 	backup_packages(packages_path)
 	backup_fonts(fonts_path)
+	backup_configs(configs_path)
 
 
-def reinstall_packages(packages_path):
+def reinstall_config_files(configs_path):
+	"""
+	Reinstall all configs from the backup.
+	"""
+
+	def backup_prefix(path):
+		return os.path.join(configs_path, path)
+
+	configs_dir_mapping = {"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
+						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3", }
+	plist_files = {"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist"}
+
+	for target, backup in configs_dir_mapping.items():
+		if os.path.isdir(backup_prefix(backup)):
+			_copy_dir_content(backup_prefix(backup), _home_prefix(target))
+
+	for target, backup in plist_files.items():
+		if os.path.exists(backup_prefix(backup)):
+			_copy_file(backup_prefix(backup), _home_prefix(target))
+
+
+def reinstall_package(packages_path):
 	"""
 	Reinstall all packages from the files in backup/installs.
 	"""
@@ -430,6 +475,7 @@ def git_add_all_commit(repo, dir_path):
 	dotfiles_path = os.path.join(dir_path, "dotfiles")
 	fonts_path = os.path.join(dir_path, "fonts")
 	packages_path = os.path.join(dir_path, "packages")
+	configs_path = os.path.join(dir_path, "configs")
 	gitignore_path = os.path.join(dir_path, ".gitignore")
 	repo.index.add([gitignore_path])
 	if os.path.exists(dotfiles_path):
@@ -438,6 +484,8 @@ def git_add_all_commit(repo, dir_path):
 		repo.index.add([fonts_path])
 	if os.path.exists(packages_path):
 		repo.index.add([packages_path])
+	if os.path.exists(configs_path):
+		repo.index.add([configs_path])
 	repo.index.commit("shallow-backup update.")
 
 
@@ -457,7 +505,7 @@ def git_push_origin(repo):
 
 
 def get_config_path():
-	return os.path.join(expanduser("~"), Constants.CONFIG_PATH)
+	return _home_prefix(Constants.CONFIG_PATH)
 
 
 def get_config():
@@ -533,33 +581,26 @@ def prompt_for_path_update(config):
 
 
 # custom help options
-@click.command(context_settings=dict(help_option_names=['-h', '-help']))
-@click.option('-complete', is_flag=True, default=False,
-              help="Back up everything.")
-@click.option('-dotfiles', is_flag=True, default=False,
-              help="Back up dotfiles.")
-@click.option('-fonts', is_flag=True, default=False,
-              help="Back up installed fonts.")
-@click.option('-packages', is_flag=True, default=False,
-              help="Back up package libraries and installed applications.")
-@click.option('-old_path', is_flag=True, default=False,
-              help="Skip setting new back up directory path.")
-@click.option('--new_path', default="",
-              help="Input a new back up directory path.")
-@click.option('--remote', default="",
-              help="Input a URL for a git repository.")
-@click.option('-reinstall', is_flag=True, default=False,
-              help="Reinstall packages from package lists.")
-@click.option('-delete_config', is_flag=True, default=False,
-              help="Remove config file.")
-@click.option('-v', is_flag=True, default=False,
-              help='Display version and author information and exit.')
-def cli(complete, dotfiles, packages, fonts, old_path, new_path, remote, reinstall,
-        delete_config, v):
+@click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
+@click.option('-complete', is_flag=True, default=False, help="Back up everything.")
+@click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
+@click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
+@click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
+@click.option('-packages', is_flag=True, default=False, help="Back up package libraries and installed applications.")
+@click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
+@click.option('--new_path', default="DEFAULT", help="Input a new back up directory path.")
+@click.option('--remote', default="", help="Input a URL for a git repository.")
+@click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages from package lists.")
+@click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
+@click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
+@click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
+def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs,
+		delete_config, v):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
-	config_path = get_config_path()
+
+	backup_config_path = get_config_path()
 
 	# Print version information
 	if v:
@@ -567,7 +608,7 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, remote, reinsta
 		sys.exit()
 
 	elif delete_config:
-		os.remove(config_path)
+		os.remove(backup_config_path)
 		print(Fore.RED + Style.BRIGHT +
 		      "Removed config file..." + Style.RESET_ALL)
 		sys.exit()
@@ -575,30 +616,32 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, remote, reinsta
 	splash_screen()
 
 	# If config file doesn't exist, create it.
-	if not os.path.exists(config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(config_path))
-		config = get_default_config()
-		write_config(config)
-
+	if not os.path.exists(backup_config_path):
+		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
+		backup_config = get_default_config()
+		write_config(backup_config)
+    
 	#####
 	# Update backup path from CLI args, prompt user, or skip updating
 	#####
 
-	config = get_config()
+	backup_config = get_config()
 
 	# User entered a new path, so update the config
 	if new_path != "":
 		abs_path = os.path.abspath(new_path)
+
 		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
 			abs_path) + Style.RESET_ALL)
-		config["backup_path"] = abs_path
-		write_config(config)
+		backup_config["backup_path"] = abs_path
+		write_config(backup_config)
+
 	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
 	elif old_path or complete or dotfiles or packages or fonts:
 		pass
 	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
 	else:
-		prompt_for_path_update(config)
+		prompt_for_path_update(backup_config)
 
 	###
 	# Create backup directory and set up git stuff
@@ -612,17 +655,22 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, remote, reinsta
 		git_set_remote(repo, remote)
 
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
+	configs_path = os.path.join(backup_home_path, "configs")
 	packages_path = os.path.join(backup_home_path, "packages")
 	fonts_path = os.path.join(backup_home_path, "fonts")
 
 	# Command line options
-	if complete or dotfiles or packages or fonts or reinstall:
-		if reinstall:
-			reinstall_packages(packages_path)
+	if complete or dotfiles or configs or packages or fonts or reinstall_packages or reinstall_configs:
+		if reinstall_packages:
+			reinstall_package(packages_path)
+		elif reinstall_configs:
+			reinstall_config_files(configs_path)
 		elif complete:
-			backup_all(dotfiles_path, packages_path, fonts_path)
+			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path)
+		elif configs:
+			backup_configs(configs_path)
 		elif packages:
 			backup_packages(packages_path)
 		elif fonts:
@@ -636,15 +684,19 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, remote, reinsta
 	else:
 		selection = backup_prompt().lower().strip()
 		if selection == "back up everything":
-			backup_all(dotfiles_path, packages_path, fonts_path)
+			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif selection == "back up dotfiles":
 			backup_dotfiles(dotfiles_path)
+		elif selection == "back up configs":
+			backup_configs(configs_path)
 		elif selection == "back up packages":
 			backup_packages(packages_path)
 		elif selection == "back up fonts":
 			backup_fonts(fonts_path)
 		elif selection == "reinstall packages":
-			reinstall_packages(packages_path)
+			reinstall_package(packages_path)
+		elif selection == "reinstall configs":
+			reinstall_config_files(configs_path)
 
 		git_add_all_commit(repo, backup_home_path)
 		git_push_origin(repo)
