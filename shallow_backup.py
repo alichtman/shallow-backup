@@ -220,88 +220,86 @@ def backup_dotfiles(backup_path):
 
 
 def backup_packages(backup_path):
-    """
-    Creates `packages` directory and places install list text files there.
-    """
+	"""Creates `packages` directory and places install list text files there."""
 
-    print_section_header("PACKAGES", Fore.BLUE)
+	print_section_header("PACKAGES", Fore.BLUE)
 
-    make_dir_warn_overwrite(backup_path)
+	make_dir_warn_overwrite(backup_path)
 
-    std_backup_package_managers = [
-        "brew",
-        "brew cask",
-        "gem"
-    ]
+	std_backup_package_managers = [
+		"brew",
+		"brew cask",
+		"gem"
+	]
 
-    for mgr in std_backup_package_managers:
-        # deal with package managers that have spaces in them.
-        print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
-        command = "{0} list > {1}/{2}_list.txt".format(
-            mgr, backup_path, mgr.replace(" ", "-"))
-        sp.run(command, shell=True, stdout=sp.PIPE)
+	for mgr in std_backup_package_managers:
+		# deal with package managers that have spaces in them.
+		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
+		command = "{0} list > {1}/{2}_list.txt".format(
+			mgr, backup_path, mgr.replace(" ", "-"))
+		sp.run(command, shell=True, stdout=sp.PIPE)
 
-    # cargo
-    print(Fore.BLUE + "Backing up cargo package list..." + Style.RESET_ALL)
-    sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(
-        os.path.expanduser('~'), backup_path), shell=True, stdout=sp.PIPE)
+	# cargo
+	print(Fore.BLUE + "Backing up cargo package list..." + Style.RESET_ALL)
+	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(os.path.expanduser('~'),
+                                                         backup_path), shell=True, stdout=sp.PIPE)
 
-    # pip
-    print(Fore.BLUE + "Backing up pip package list..." + Style.RESET_ALL)
-    sp.run("pip list --format=freeze > {}/pip_list.txt".format(backup_path),
-           shell=True, stdout=sp.PIPE)
+	# pip
+	print(Fore.BLUE + "Backing up pip package list..." + Style.RESET_ALL)
+	sp.run("pip list --format=freeze > {}/pip_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
-    # npm
-    print(Fore.BLUE + "Backing up npm package list..." + Style.RESET_ALL)
-    sp.run("npm ls --parseable=true > {}/npm_temp_list.txt".format(backup_path),
-           shell=True, stdout=sp.PIPE)
-    # Parse npm output
-    with open("{0}/npm_temp_list.txt".format(backup_path), mode="r+") as f:
-        # Skip first line of file
-        skip = True
-        sp.run("touch {0}/npm_list.txt".format(backup_path),
-               shell=True, stdout=sp.PIPE)
-        with open("{0}/npm_list.txt".format(backup_path), mode="r+") as dest:
-            for line in f:
-                if not skip:
-                    dest.write(line.split("/")[-1])
-                skip = False
+	# npm
+	print(Fore.BLUE + "Backing up npm package list..." + Style.RESET_ALL)
+	sp.run("npm ls --global --parseable=true --depth=0 > {}/npm_temp_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
+	# Parse npm output
+	with open("{0}/npm_temp_list.txt".format(backup_path), mode="r+") as f:
+		# Skip first line of file
+		skip = True
+		sp.run("touch {0}/npm_list.txt".format(backup_path),
+		       shell=True, stdout=sp.PIPE)
+		with open("{0}/npm_list.txt".format(backup_path), mode="r+") as dest:
+			for line in f:
+				if not skip:
+					dest.write(line.split("/")[-1])
+				skip = False
 
-    # remove temp file
-    sp.run("rm {}/npm_temp_list.txt".format(backup_path),
-           shell=True, stdout=sp.PIPE)
+	# remove temp file
+	sp.run("rm {}/npm_temp_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
-    # atom package manager
-    print(Fore.BLUE + "Backing up Atom package list..." + Style.RESET_ALL)
-    sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path),
-           shell=True, stdout=sp.PIPE)
+	# atom package manager
+	print(Fore.BLUE + "Backing up Atom package list..." + Style.RESET_ALL)
+	sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
-    # sublime text packages
-    if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime Text 2"):
-        print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
-        sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 2/Packages/ > {}/sublime2_list.txt"
-               .format(backup_path), shell=True, stdout=sp.PIPE)
+	# sublime text packages
+	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime Text 2"):
+		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
+		sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 2/Packages/ > {}/sublime2_list.txt"
+		       .format(backup_path), shell=True, stdout=sp.PIPE)
 
-    if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime Text 3"):
-        print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
-        sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages/ > {}/sublime3_list.txt"
-               .format(backup_path), shell=True, stdout=sp.PIPE)
+	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime Text 3"):
+		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
+		sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages/ > {}/sublime3_list.txt"
+		       .format(backup_path), shell=True, stdout=sp.PIPE)
 
-    # macports
-    print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
-    sp.run("port installed requested > {}/macports_list.txt".format(backup_path),
-           shell=True, stdout=sp.PIPE)
+	# macports
+	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
+	sp.run("port installed requested > {}/macports_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
-    # system installs
-    print(Fore.BLUE + "Backing up system application list..." + Style.RESET_ALL)
-    sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path),
-           shell=True, stdout=sp.PIPE)
+	# system installs
+	print(Fore.BLUE + "Backing up system application list..." + Style.RESET_ALL)
+	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
-    # Clean up empty package list files
-    print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
-    for file in get_subfiles(backup_path):
-        if os.path.getsize(file) == 0:
-            os.remove(file)
+	# Clean up empty package list files
+	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
+	for file in get_subfiles(backup_path):
+		if os.path.getsize(file) == 0:
+			os.remove(file)
 
 
 def backup_fonts(path):
