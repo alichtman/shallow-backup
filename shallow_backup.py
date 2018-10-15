@@ -161,7 +161,7 @@ def backup_dotfiles(backup_path):
 
 	# get dotfolders and dotfiles
 
-	dotfiles_for_backup = [".bashrc", ".bash_profile", ".gitconfig", ".pypirc", ".shallow-backup", ".zshrc", ".vimrc", ]
+	dotfiles_for_backup = [".bashrc", ".bash_profile", ".gitconfig", ".pypirc", ".shallow-backup", ".zshrc", ".vimrc"]
 	dotfolders_for_backup = [".ssh/", ".vim/"]
 
 	# Add dotfile/folder for backup if it exists on the machine
@@ -467,7 +467,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, reinst
 	Easily back up installed packages, dotfiles, and more.
 	"""
 
-	backup_config_path = os.path.join(expanduser("~"), ".shallow-backup")
+	backup_config_path = _home_prefix(".shallow-backup")
 
 	# Print version information
 	if v:
