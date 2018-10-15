@@ -235,7 +235,8 @@ def backup_packages(backup_path):
 
 	# npm
 	print(Fore.BLUE + "Backing up npm package list..." + Style.RESET_ALL)
-	sp.run("npm ls --parseable=true > {}/npm_temp_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("npm ls --global --parseable=true --depth=0 > {}/npm_temp_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 	# Parse npm output
 	with open("{0}/npm_temp_list.txt".format(backup_path), mode="r+") as f:
 		# Skip first line of file
