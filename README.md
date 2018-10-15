@@ -119,7 +119,7 @@ $ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/n
 
 ```shell
 backup_dir/
-├── configs
+├── app_configs
 │   ├── plist
 │   │   └── com.apple.Terminal.plist
 │   ├── sublime_2

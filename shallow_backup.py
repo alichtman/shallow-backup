@@ -82,7 +82,7 @@ def make_dir_warn_overwrite(path):
 	"""
 	Make destination dir if path doesn't exist, confirm before overwriting if it does.
 	"""
-	subdirs = ["dotfiles", "packages", "fonts", "configs"]
+	subdirs = ["dotfiles", "packages", "fonts", "app_configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
 		print(Fore.RED + Style.BRIGHT +
 		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
@@ -104,12 +104,12 @@ def backup_prompt():
 	questions = [inquirer.List('choice',
 	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
 	                           choices=[' Back up dotfiles',
-                                      ' Back up configs',
+                                      ' Back up app configs',
 	                                    ' Back up packages', 
                                       ' Back up fonts',
 	                                    ' Back up everything',
 	                                    ' Reinstall packages', 
-                                      ' Reinstall configs'],
+                                      ' Reinstall app configs'],
 	                           ),
 	             ]
 
@@ -226,14 +226,14 @@ def backup_configs(backup_path):
 						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3", }
 	plist_files = ["Library/Preferences/com.apple.Terminal.plist"]
 
-	# backup config dirs in backup_path/configs/<target>/
+	# backup config dirs in backup_path/app_configs/<target>/
 	for config, target in configs_dir_mapping.items():
 		if os.path.isdir(_home_prefix(config)):
 			configs_backup_path = os.path.join(backup_path, target)
 			_mkdir_or_pass(configs_backup_path)
 			_copy_dir_content(_home_prefix(config), configs_backup_path)
 
-	# backup plist files in backup_path/configs/plist/
+	# backup plist files in backup_path/app_configs/plist/
 	plist_backup_path = os.path.join(backup_path, "plist")
 	_mkdir_or_pass(plist_backup_path)
 	for plist in plist_files:
@@ -475,7 +475,7 @@ def git_add_all_commit(repo, dir_path):
 	dotfiles_path = os.path.join(dir_path, "dotfiles")
 	fonts_path = os.path.join(dir_path, "fonts")
 	packages_path = os.path.join(dir_path, "packages")
-	configs_path = os.path.join(dir_path, "configs")
+	configs_path = os.path.join(dir_path, "app_configs")
 	gitignore_path = os.path.join(dir_path, ".gitignore")
 	repo.index.add([gitignore_path])
 	if os.path.exists(dotfiles_path):
@@ -591,7 +591,7 @@ def prompt_for_path_update(config):
 @click.option('--new_path', default="DEFAULT", help="Input a new back up directory path.")
 @click.option('--remote', default="", help="Input a URL for a git repository.")
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages from package lists.")
-@click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
+@click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall app configs from configs backup.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs,
@@ -655,7 +655,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		git_set_remote(repo, remote)
 
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
-	configs_path = os.path.join(backup_home_path, "configs")
+	configs_path = os.path.join(backup_home_path, "app_configs")
 	packages_path = os.path.join(backup_home_path, "packages")
 	fonts_path = os.path.join(backup_home_path, "fonts")
 
@@ -687,7 +687,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif selection == "back up dotfiles":
 			backup_dotfiles(dotfiles_path)
-		elif selection == "back up configs":
+		elif selection == "back up app configs":
 			backup_configs(configs_path)
 		elif selection == "back up packages":
 			backup_packages(packages_path)
@@ -695,7 +695,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 			backup_fonts(fonts_path)
 		elif selection == "reinstall packages":
 			reinstall_package(packages_path)
-		elif selection == "reinstall configs":
+		elif selection == "reinstall app configs":
 			reinstall_config_files(configs_path)
 
 		git_add_all_commit(repo, backup_home_path)
