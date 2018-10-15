@@ -4,6 +4,7 @@
 import os
 from os.path import expanduser
 import sys
+import shlex
 import shutil
 import subprocess as sp
 import multiprocessing as mp
@@ -243,35 +244,26 @@ def backup_packages(backup_path):
 
 	for mgr in std_backup_package_managers:
 		# deal with package managers that have spaces in them.
-		print(Fore.BLUE + "Backing up {} package list...".format(
-			mgr) + Style.RESET_ALL)
-		command = "{0} list > {1}/{2}_list.txt".format(
-			mgr, backup_path, mgr.replace(" ", "-"))
+		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
+		command = "{0} list > {1}/{2}_list.txt".format(mgr, backup_path, mgr.replace(" ", "-"), True)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 	# cargo
 	print(Fore.BLUE + "Backing up cargo package list..." + Style.RESET_ALL)
-	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(
-		os.path.expanduser('~'),
-		backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(os.path.expanduser('~'), backup_path), shell=True, stdout=sp.PIPE)
 
 	# pip
 	print(Fore.BLUE + "Backing up pip package list..." + Style.RESET_ALL)
-	sp.run("pip list --format=freeze > {}/pip_list.txt".format(backup_path),
-	       shell=True, stdout=sp.PIPE)
+	sp.run("pip list --format=freeze > {}/pip_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# npm
 	print(Fore.BLUE + "Backing up npm package list..." + Style.RESET_ALL)
-	sp.run(
-		"npm ls --global --parseable=true --depth=0 > {}/npm_temp_list.txt".format(
-			backup_path),
-		shell=True, stdout=sp.PIPE)
+	sp.run("npm ls --global --parseable=true --depth=0 > {}/npm_temp_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 	# Parse npm output
 	with open("{0}/npm_temp_list.txt".format(backup_path), mode="r+") as f:
 		# Skip first line of file
 		skip = True
-		sp.run("touch {0}/npm_list.txt".format(backup_path),
-		       shell=True, stdout=sp.PIPE)
+		sp.run("touch {0}/npm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 		with open("{0}/npm_list.txt".format(backup_path), mode="r+") as dest:
 			for line in f:
 				if not skip:
@@ -279,41 +271,34 @@ def backup_packages(backup_path):
 				skip = False
 
 	# remove temp file
-	sp.run("rm {}/npm_temp_list.txt".format(backup_path),
-	       shell=True, stdout=sp.PIPE)
+	os.remove("{}/npm_temp_list.txt".format(backup_path))
 
 	# atom package manager
 	print(Fore.BLUE + "Backing up Atom package list..." + Style.RESET_ALL)
-	sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path),
-	       shell=True, stdout=sp.PIPE)
+	sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# sublime text packages
 	if os.path.isdir(
 			"/Users/alichtman/Library/Application Support/Sublime Text 2"):
 		print(
-			Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
-		sp.run(
-			"ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 2/Packages/ > {}/sublime2_list.txt"
-				.format(backup_path), shell=True, stdout=sp.PIPE)
+			Fore.BLUE + "Backing up Sublime Text 2 package list..." + Style.RESET_ALL)
+	sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 2/Packages/ > {}/sublime2_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	if os.path.isdir(
 			"/Users/alichtman/Library/Application Support/Sublime Text 3"):
 		print(
-			Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
+			Fore.BLUE + "Backing up Sublime Text 3 package list..." + Style.RESET_ALL)
 		sp.run(
 			"ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages/ > {}/sublime3_list.txt"
 				.format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# macports
 	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
-	sp.run(
-		"port installed requested > {}/macports_list.txt".format(backup_path),
-		shell=True, stdout=sp.PIPE)
+	sp.run("port installed requested > {}/macports_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# system installs
 	print(Fore.BLUE + "Backing up system application list..." + Style.RESET_ALL)
-	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path),
-	       shell=True, stdout=sp.PIPE)
+	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
 
 	# Clean up empty package list files
 	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
@@ -373,21 +358,21 @@ def reinstall_packages(packages_path):
 			cmd = "xargs {0} install < {1}/{2}_list.txt".format(
 				pm.replace("-", " "), packages_path, pm)
 			print(cmd)
-			sp.call(cmd, shell=True, stdout=sp.PIPE)
+			sp.run(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "npm":
 			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(
 				packages_path)
 			print(cmd)
-			sp.call(cmd, shell=True, stdout=sp.PIPE)
+			sp.run(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "pip":
 			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
 			print(cmd)
-			sp.call(cmd, shell=True, stdout=sp.PIPE)
+			sp.run(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "apm":
 			cmd = "apm install --packages-file {0}/apm_list.txt".format(
 				packages_path)
 			print(cmd)
-			sp.call(cmd, shell=True, stdout=sp.PIPE)
+			sp.run(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "macports":
 			print(
 				Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
@@ -504,8 +489,7 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall,
 		sys.exit()
 
 	elif delete_config:
-		command = "rm {}".format(config_path)
-		sp.run(command, shell=True, stdout=sp.PIPE)
+		os.remove(config_path)
 		print(Fore.RED + Style.BRIGHT +
 		      "Removed config file..." + Style.RESET_ALL)
 		sys.exit()
@@ -514,8 +498,7 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall,
 
 	# if config file doesn't exist, create it.
 	if not os.path.exists(config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(
-			config_path))
+		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(config_path))
 		config = get_default_config()
 		write_config(config)
 
@@ -550,8 +533,6 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall,
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
 	packages_path = os.path.join(backup_home_path, "packages")
 	fonts_path = os.path.join(backup_home_path, "fonts")
-
-	print(packages_path)
 
 	# Command line options
 	if complete or dotfiles or packages or fonts or reinstall:
