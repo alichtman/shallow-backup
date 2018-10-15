@@ -20,9 +20,9 @@ from constants import Constants
 
 def print_version_info():
 	version = "{} v{} by {} -> (Github: {})".format(Constants.PROJECT_NAME,
-			                                      Constants.VERSION,
-			                                      Constants.AUTHOR_FULL_NAME,
-			                                      Constants.AUTHOR_GITHUB)
+                                                 Constants.VERSION,
+                                                 Constants.AUTHOR_FULL_NAME,
+                                                 Constants.AUTHOR_GITHUB)
 	line = "-" * (len(version))
 	print(Fore.RED + Style.BRIGHT + line)
 	print(version)
@@ -86,7 +86,8 @@ def make_dir_warn_overwrite(path):
 	Make destination dir if path doesn't exist, confirm before overwriting if it does.
 	"""
 	if os.path.exists(path) and path.split("/")[-1] in ["dotfiles", "packages", "fonts"]:
-		print(Fore.RED + Style.BRIGHT + "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
+		print(Fore.RED + Style.BRIGHT +
+		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			shutil.rmtree(path)
 			os.makedirs(path)
@@ -95,7 +96,8 @@ def make_dir_warn_overwrite(path):
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
-		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
+		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " +
+		      Style.NORMAL + path + Style.RESET_ALL)
 	return
 
 
@@ -127,9 +129,11 @@ def copy_dotfolder(dotfolder, backup_path):
 			command = "cp -aRp " + dotfolder + " " + backup_path + "/macOS_Preferences"
 			print(Fore.BLUE + command)
 		elif "Application\ Support" not in dotfolder or "XCode" in dotfolder:
-			command = "cp -aRp " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-2]
+			command = "cp -aRp " + dotfolder + " " + \
+				backup_path + "/" + dotfolder.split("/")[-2]
 		elif "Sublime" in dotfolder:
-			command = "cp -aRp " + dotfolder + " " + backup_path + "/" + dotfolder.split("/")[-3]
+			command = "cp -aRp " + dotfolder + " " + \
+				backup_path + "/" + dotfolder.split("/")[-3]
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 
@@ -156,12 +160,15 @@ def backup_dotfiles(backup_path):
 
 	# get dotfolders and dotfiles
 
-	dotfiles_for_backup = [".bashrc", ".bash_profile", ".gitconfig", ".pypirc", ".shallow-backup", ".zshrc"]
+	dotfiles_for_backup = [".bashrc", ".bash_profile",
+                        ".gitconfig", ".pypirc", ".shallow-backup", ".zshrc"]
 	dotfolders_for_backup = [".ssh/", ".vim/"]
 
 	# Add dotfile/folder for backup if it exists on the machine
-	dotfiles = [file for file in dotfiles_for_backup if os.path.isfile(os.path.join(home_path, file))]
-	dotfolders = [folder for folder in dotfolders_for_backup if os.path.exists(os.path.join(home_path, folder))]
+	dotfiles = [file for file in dotfiles_for_backup if os.path.isfile(
+		os.path.join(home_path, file))]
+	dotfolders = [folder for folder in dotfolders_for_backup if os.path.exists(
+		os.path.join(home_path, folder))]
 
 	# dotfiles/dotfolders multiprocessing in list format: [(full_dotfile_path, full_dest_path), ...]
 
@@ -179,14 +186,17 @@ def backup_dotfiles(backup_path):
 
 	# Sublime Text Configs
 	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime\ Text\ 2"):
-		dotfolders_mp_in.append((os.path.join(home_path, "Library/Application\ Support/Sublime\ Text\ 2/Packages/User"), backup_path))
+		dotfolders_mp_in.append((os.path.join(
+			home_path, "Library/Application\ Support/Sublime\ Text\ 2/Packages/User"), backup_path))
 
 	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime\ Text\ 3"):
-		dotfolders_mp_in.append((os.path.join(home_path, "Library/Application\ Support/Sublime\ Text\ 3/Packages/User"), backup_path))
+		dotfolders_mp_in.append((os.path.join(
+			home_path, "Library/Application\ Support/Sublime\ Text\ 3/Packages/User"), backup_path))
 
 	# XCode Configs
 	if os.path.isdir("/Users/alichtman/Library/Developer/Xcode/UserData"):
-		dotfolders_mp_in.append(("/Users/alichtman/Library/Developer/Xcode/UserData", backup_path))
+		dotfolders_mp_in.append(
+			("/Users/alichtman/Library/Developer/Xcode/UserData", backup_path))
 
 	# pprint(dotfiles_mp_in)
 	# pprint(dotfolders_mp_in)
@@ -222,25 +232,30 @@ def backup_packages(backup_path):
 	for mgr in std_backup_package_managers:
 		# deal with package managers that have spaces in them.
 		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
-		command = "{0} list > {1}/{2}_list.txt".format(mgr, backup_path, mgr.replace(" ", "-"))
+		command = "{0} list > {1}/{2}_list.txt".format(
+			mgr, backup_path, mgr.replace(" ", "-"))
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 	# cargo
 	print(Fore.BLUE + "Backing up cargo package list..." + Style.RESET_ALL)
-	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(os.path.expanduser('~'), backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(os.path.expanduser('~'),
+                                                         backup_path), shell=True, stdout=sp.PIPE)
 
 	# pip
 	print(Fore.BLUE + "Backing up pip package list..." + Style.RESET_ALL)
-	sp.run("pip list --format=freeze > {}/pip_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("pip list --format=freeze > {}/pip_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
 	# npm
 	print(Fore.BLUE + "Backing up npm package list..." + Style.RESET_ALL)
-	sp.run("npm ls --parseable=true > {}/npm_temp_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("npm ls --parseable=true > {}/npm_temp_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 	# Parse npm output
 	with open("{0}/npm_temp_list.txt".format(backup_path), mode="r+") as f:
 		# Skip first line of file
 		skip = True
-		sp.run("touch {0}/npm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+		sp.run("touch {0}/npm_list.txt".format(backup_path),
+		       shell=True, stdout=sp.PIPE)
 		with open("{0}/npm_list.txt".format(backup_path), mode="r+") as dest:
 			for line in f:
 				if not skip:
@@ -248,11 +263,13 @@ def backup_packages(backup_path):
 				skip = False
 
 	# remove temp file
-	sp.run("rm {}/npm_temp_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("rm {}/npm_temp_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
 	# atom package manager
 	print(Fore.BLUE + "Backing up Atom package list..." + Style.RESET_ALL)
-	sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
 	# sublime text packages
 	if os.path.isdir("/Users/alichtman/Library/Application Support/Sublime Text 2"):
@@ -267,11 +284,13 @@ def backup_packages(backup_path):
 
 	# macports
 	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
-	sp.run("port installed requested > {}/macports_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("port installed requested > {}/macports_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
 	# system installs
 	print(Fore.BLUE + "Backing up system application list..." + Style.RESET_ALL)
-	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
 	# Clean up empty package list files
 	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
@@ -328,7 +347,8 @@ def reinstall_packages(packages_path):
 	# construct commands
 	for pm in package_mgrs:
 		if pm in ["brew", "brew-cask"]:
-			cmd = "xargs {0} install < {1}/{2}_list.txt".format(pm.replace("-", " "), packages_path, pm)
+			cmd = "xargs {0} install < {1}/{2}_list.txt".format(
+				pm.replace("-", " "), packages_path, pm)
 			print(cmd)
 			sp.call(cmd, shell=True, stdout=sp.PIPE)
 		elif pm == "npm":
@@ -429,7 +449,8 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall, dele
 
 	# if config file doesn't exist, create it.
 	if not os.path.exists(config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(config_path))
+		print(Fore.BLUE + Style.BRIGHT +
+		      "Creating config file at {}".format(config_path))
 		config['USER'] = {'backup_path': 'DEFAULT'}
 		with open(config_path, 'w') as f:
 			config.write(f)
