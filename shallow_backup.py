@@ -377,7 +377,7 @@ def reinstall_config_files(configs_path):
 			_copy_file(backup_prefix(backup), _home_prefix(target))
 
 
-def reinstall_packages(packages_path):
+def reinstall_package(packages_path):
 	"""
 	Reinstall all packages from the files in backup/installs.
 	"""
@@ -502,7 +502,7 @@ def git_push_origin(repo):
 
 
 def get_config_path():
-	return os.path.join(expanduser("~"), Constants.CONFIG_PATH)
+	return _home_prefix(Constants.CONFIG_PATH)
 
 
 def get_config():
@@ -631,10 +631,10 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 
 		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
 			abs_path) + Style.RESET_ALL)
-		config["backup_path"] = abs_path
+		backup_config["backup_path"] = abs_path
 		write_config(backup_config)
 
-  # User didn't enter the same_path flag but entered a backup option, so no path update prompt
+	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
 	elif old_path or complete or dotfiles or packages or fonts:
 		pass
 	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
@@ -660,7 +660,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	# Command line options
 	if complete or dotfiles or configs or packages or fonts or reinstall_packages or reinstall_configs:
 		if reinstall_packages:
-			reinstall_packages(packages_path)
+			reinstall_package(packages_path)
 		elif reinstall_configs:
 			reinstall_config_files(configs_path)
 		elif complete:
@@ -692,7 +692,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		elif selection == "back up fonts":
 			backup_fonts(fonts_path)
 		elif selection == "reinstall packages":
-			reinstall_packages(packages_path)
+			reinstall_package(packages_path)
 		elif selection == "reinstall configs":
 			reinstall_config_files(configs_path)
 
