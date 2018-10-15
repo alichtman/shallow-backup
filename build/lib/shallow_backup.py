@@ -41,7 +41,7 @@ def splash_screen():
 	      "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
 	      "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
 	      "                                                                                                        88		\n" +
-	      "                                                                                                        dP		\n" + Style.RESET_ALL)
+	      "                                                                                                        9P		\n" + Style.RESET_ALL)
 
 	print_version_info()
 
@@ -202,7 +202,7 @@ def backup_dotfiles(backup_path):
 	with mp.Pool(mp.cpu_count()):
 		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfiles..." + Style.RESET_ALL)
 		for x in dotfiles_mp_in:
-			x = list(x)
+			x = list(x) #x defined here
 			mp.Process(target=copy_dotfile, args=(x[0], x[1],)).start()
 
 
