@@ -171,5 +171,4 @@ Once I'd built that functionality, I wanted to have a single backup utility for 
 
 1. Clone repo and create a new branch: `$ git checkout https://github.com/alichtman/shallow-backup -b name_for_new_branch`.
 2. Make changes and test
-3. Format all Python code with [autopep8](https://github.com/hhatto/autopep8).
-4. Open Pull Request with comprehensive description of changes
+3. Open Pull Request with comprehensive description of changes
