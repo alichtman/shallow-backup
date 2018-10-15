@@ -1,20 +1,15 @@
-# shallow_backup
-# alichtman
-
 import os
-from os.path import expanduser
+import git
 import sys
-import shlex
-import shutil
-import subprocess as sp
-import multiprocessing as mp
-
 import json
 import click
 import inquirer
+import shutil
+import subprocess as sp
+import multiprocessing as mp
+from os.path import expanduser
 from colorama import Fore, Style
 from pprint import pprint
-
 from constants import Constants
 
 
@@ -87,23 +82,19 @@ def make_dir_warn_overwrite(path):
 	"""
 	Make destination dir if path doesn't exist, confirm before overwriting if it does.
 	"""
-	if os.path.exists(path) and path.split("/")[-1] in ["dotfiles", "packages",
-	                                                    "fonts"]:
+	subdirs = ["dotfiles", "packages", "fonts"]
+	if os.path.exists(path) and path.split("/")[-1] in subdirs:
 		print(Fore.RED + Style.BRIGHT +
-		      "Directory {} already exists".format(
-			      path) + "\n" + Style.RESET_ALL)
+		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			shutil.rmtree(path)
 			os.makedirs(path)
 		else:
-			print(
-				Fore.RED + "Exiting to prevent accidental deletion of user data." + Style.RESET_ALL)
+			print(Fore.RED + "Exiting to prevent accidental deletion of user data." + Style.RESET_ALL)
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
-		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " +
-		      Style.NORMAL + path + Style.RESET_ALL)
-	return
+		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
 
 
 def backup_prompt():
@@ -245,12 +236,14 @@ def backup_packages(backup_path):
 	for mgr in std_backup_package_managers:
 		# deal with package managers that have spaces in them.
 		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
-		command = "{0} list > {1}/{2}_list.txt".format(mgr, backup_path, mgr.replace(" ", "-"), True)
+		command = "{0} list > {1}/{2}_list.txt".format(mgr,
+		                                               backup_path, mgr.replace(" ", "-"), True)
 		sp.run(command, shell=True, stdout=sp.PIPE)
 
 	# cargo
 	print(Fore.BLUE + "Backing up cargo package list..." + Style.RESET_ALL)
-	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(os.path.expanduser('~'), backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(os.path.expanduser('~'),
+	                                                        backup_path), shell=True, stdout=sp.PIPE)
 
 	# pip
 	print(Fore.BLUE + "Backing up pip package list..." + Style.RESET_ALL)
@@ -258,7 +251,8 @@ def backup_packages(backup_path):
 
 	# npm
 	print(Fore.BLUE + "Backing up npm package list..." + Style.RESET_ALL)
-	sp.run("npm ls --global --parseable=true --depth=0 > {}/npm_temp_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("npm ls --global --parseable=true --depth=0 > {}/npm_temp_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 	# Parse npm output
 	with open("{0}/npm_temp_list.txt".format(backup_path), mode="r+") as f:
 		# Skip first line of file
@@ -282,7 +276,8 @@ def backup_packages(backup_path):
 			"/Users/alichtman/Library/Application Support/Sublime Text 2"):
 		print(
 			Fore.BLUE + "Backing up Sublime Text 2 package list..." + Style.RESET_ALL)
-	sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 2/Packages/ > {}/sublime2_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("ls /Users/alichtman/Library/Application\ Support/Sublime\ Text\ 2/Packages/ > {}/sublime2_list.txt".format(
+		backup_path), shell=True, stdout=sp.PIPE)
 
 	if os.path.isdir(
 			"/Users/alichtman/Library/Application Support/Sublime Text 3"):
@@ -294,7 +289,8 @@ def backup_packages(backup_path):
 
 	# macports
 	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
-	sp.run("port installed requested > {}/macports_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	sp.run("port installed requested > {}/macports_list.txt".format(backup_path),
+	       shell=True, stdout=sp.PIPE)
 
 	# system installs
 	print(Fore.BLUE + "Backing up system application list..." + Style.RESET_ALL)
@@ -382,12 +378,81 @@ def reinstall_packages(packages_path):
 		elif pm == "cargo":
 			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment. "
 			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
-
 	sys.exit()
 
 
+#####
+# Git
+#####
+
+def git_set_remote(repo, remote_url):
+	"""
+	Sets git repo upstream URL.
+	TODO: Must fast-forward history as well
+	"""
+	try:
+		origin = repo.create_remote('origin', remote_url)
+		# origin.fetch()
+		# origin.heads.master.set_tracking_branch(origin.refs.master)
+		# origin.heads.master.checkout()
+	except:
+		pass
+
+
+def create_gitignore(dir_path):
+	"""
+	Creates a .gitignore file that ignores all files listed in config.
+	"""
+	files_to_ignore = get_config()["gitignore"]
+	with open(os.path.join(dir_path, ".gitignore"), "w+") as f:
+		for ignore in files_to_ignore:
+			f.write("{}\n".format(ignore))
+
+
+def git_init_if_needed(dir_path):
+	"""
+	If there is no git repo inside the dir_path, intialize one.
+	Returns a Repo object
+	"""
+	if not os.path.isdir(os.path.join(dir_path, ".git")):
+		repo = git.Repo.init(dir_path)
+		return repo
+	else:
+		repo = git.Repo(dir_path)
+		return repo
+
+
+def git_add_all_commit(repo, dir_path):
+	"""
+	Stages all changed files in dir_path and its children folders for commit,
+	commits them and pushes to a remote if it's configured.
+	"""
+	dotfiles_path = os.path.join(dir_path, "dotfiles")
+	fonts_path = os.path.join(dir_path, "fonts")
+	packages_path = os.path.join(dir_path, "packages")
+	gitignore_path = os.path.join(dir_path, ".gitignore")
+	repo.index.add([gitignore_path])
+	if os.path.exists(dotfiles_path):
+		repo.index.add([dotfiles_path])
+	if os.path.exists(fonts_path):
+		repo.index.add([fonts_path])
+	if os.path.exists(packages_path):
+		repo.index.add([packages_path])
+	repo.index.commit("shallow-backup update.")
+
+
+def git_push_origin(repo):
+	"""
+	Push commits to remote if remote is configured.
+	"""
+	# TODO: Fix this method to allow for remotes to be named something other than origin.
+	if "origin" in [remote.name for remote in repo.remotes]:
+		print(Fore.RED + Style.BRIGHT + "Pushing to remote git repo..." + Style.RESET_ALL)
+		repo.remotes.origin.push(refspec='master:master')
+
+
 ######
-# CLI
+# Config
 ######
 
 
@@ -410,28 +475,40 @@ def write_config(config):
 	Write to config file
 	"""
 	with open(get_config_path(), 'w') as f:
-		json.dump(config, f)
+		json.dump(config, f, indent=4)
 
 
 def get_default_config():
 	"""
 	Returns a default configuration.
 	"""
+	return {
+		"backup_path": "DEFAULT",
+		"dotfiles"   : [
+			".bashrc",
+			".bash_profile",
+			".gitconfig",
+			".profile",
+			".pypirc",
+			".shallow-backup",
+			".vimrc",
+			".zshrc"
+		],
+		"dotfolders" : [
+			".ssh/",
+			".vim/"
+		],
+		"gitignore"  : [
+			"dotfiles/.ssh",
+			"packages/",
+			"dotfiles/.pypirc",
+		]
+	}
 
-	return {"backup_path": "DEFAULT",
-	        "dotfiles"   : [
-		        ".bashrc",
-		        ".bash_profile",
-		        ".gitconfig",
-		        ".pypirc",
-		        ".shallow-backup",
-		        ".vimrc",
-		        ".zshrc"
-	        ],
-	        "dotfolders" : [
-		        ".ssh/",
-		        ".vim/"
-	        ]}
+
+#######
+# CLI
+#######
 
 
 def prompt_for_path_update(config):
@@ -467,20 +544,21 @@ def prompt_for_path_update(config):
               help="Back up package libraries and installed applications.")
 @click.option('-old_path', is_flag=True, default=False,
               help="Skip setting new back up directory path.")
-@click.option('--new_path', default="DEFAULT",
+@click.option('--new_path', default="",
               help="Input a new back up directory path.")
+@click.option('--remote', default="",
+              help="Input a URL for a git repository.")
 @click.option('-reinstall', is_flag=True, default=False,
               help="Reinstall packages from package lists.")
 @click.option('-delete_config', is_flag=True, default=False,
               help="Remove config file.")
 @click.option('-v', is_flag=True, default=False,
               help='Display version and author information and exit.')
-def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall,
+def cli(complete, dotfiles, packages, fonts, old_path, new_path, remote, reinstall,
         delete_config, v):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
-
 	config_path = get_config_path()
 
 	# Print version information
@@ -496,39 +574,42 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall,
 
 	splash_screen()
 
-	# if config file doesn't exist, create it.
+	# If config file doesn't exist, create it.
 	if not os.path.exists(config_path):
 		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(config_path))
 		config = get_default_config()
 		write_config(config)
 
 	#####
-	# Decide to update path from CLI args, prompt user, or skip updating
+	# Update backup path from CLI args, prompt user, or skip updating
 	#####
 
 	config = get_config()
 
 	# User entered a new path, so update the config
-	if not new_path == "DEFAULT":
-
+	if new_path != "":
 		abs_path = os.path.abspath(new_path)
-
-		print(
-			Fore.BLUE + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
-				abs_path) + Style.RESET_ALL)
+		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
+			abs_path) + Style.RESET_ALL)
 		config["backup_path"] = abs_path
 		write_config(config)
-
 	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
 	elif old_path or complete or dotfiles or packages or fonts:
 		pass
-
 	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
 	else:
 		prompt_for_path_update(config)
 
+	###
+	# Create backup directory and set up git stuff
+	###
+
 	backup_home_path = get_config()["backup_path"]
 	make_dir_warn_overwrite(backup_home_path)
+	repo = git_init_if_needed(backup_home_path)
+	create_gitignore(backup_home_path)
+	if remote != "":
+		git_set_remote(repo, remote)
 
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
 	packages_path = os.path.join(backup_home_path, "packages")
@@ -547,12 +628,13 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall,
 		elif fonts:
 			backup_fonts(fonts_path)
 
-		return
+		git_add_all_commit(repo, backup_home_path)
+		git_push_origin(repo)
+		sys.exit()
 
 	# No CL options, prompt for selection
 	else:
 		selection = backup_prompt().lower().strip()
-
 		if selection == "back up everything":
 			backup_all(dotfiles_path, packages_path, fonts_path)
 		elif selection == "back up dotfiles":
@@ -563,7 +645,10 @@ def cli(complete, dotfiles, packages, fonts, old_path, new_path, reinstall,
 			backup_fonts(fonts_path)
 		elif selection == "reinstall packages":
 			reinstall_packages(packages_path)
-		return
+
+		git_add_all_commit(repo, backup_home_path)
+		git_push_origin(repo)
+		sys.exit()
 
 
 if __name__ == '__main__':
