@@ -475,6 +475,7 @@ def git_add_all_commit(repo, dir_path):
 	dotfiles_path = os.path.join(dir_path, "dotfiles")
 	fonts_path = os.path.join(dir_path, "fonts")
 	packages_path = os.path.join(dir_path, "packages")
+	configs_path = os.path.join(dir_path, "configs")
 	gitignore_path = os.path.join(dir_path, ".gitignore")
 	repo.index.add([gitignore_path])
 	if os.path.exists(dotfiles_path):
@@ -483,6 +484,8 @@ def git_add_all_commit(repo, dir_path):
 		repo.index.add([fonts_path])
 	if os.path.exists(packages_path):
 		repo.index.add([packages_path])
+	if os.path.exists(configs_path):
+		repo.index.add([configs_path])
 	repo.index.commit("shallow-backup update.")
 
 
@@ -605,7 +608,6 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		sys.exit()
 
 	elif delete_config:
-
 		os.remove(backup_config_path)
 		print(Fore.RED + Style.BRIGHT +
 		      "Removed config file..." + Style.RESET_ALL)
