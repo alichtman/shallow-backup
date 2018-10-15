@@ -8,3 +8,4 @@ shallow-backup/dotfiles/vim/.netrwhist
 *.iml
 *.whl
 shallow_backup.egg-info/PKG-INFO
+.pytest_cache/
