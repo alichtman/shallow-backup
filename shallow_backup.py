@@ -413,7 +413,6 @@ def get_config_path():
 def get_config():
 	"""
 	Returns the config.
-	:param config_path:
 	:return: dictionary for config
 	"""
 	with open(get_config_path()) as f:

@@ -17,13 +17,12 @@ Contents
     * [Use Cases](#use-cases)
     * [Output Structure](#output-structure)
  * [Inspiration](#inspiration)
- * [What's Next?](#whats-next)
  * [How to Contribute](#how-to-contribute)
 
 ### Featured On
 ---
 
-`shallow-backup` is featured on these lists!
+`shallow-backup` is featured on these awesome lists!
 
 * [awesome-mac](https://github.com/jaywcjlove/awesome-mac)
 * [awesome-shell](https://github.com/alebcay/awesome-shell)
@@ -160,16 +159,7 @@ I cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew 
 
 Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
 
-
-### Upcoming Features
+### Want to Contribute?
 ---
 
-1. GUI.
-2. Option to back up specific paths.
-
-### How to Contribute
----
-
-1. Clone repo and create a new branch: `$ git checkout https://github.com/alichtman/shallow-backup -b name_for_new_branch`.
-2. Make changes and test
-3. Open Pull Request with comprehensive description of changes
+Check out `CONTRIBUTING.md`
