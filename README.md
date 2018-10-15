@@ -2,7 +2,7 @@
 
 [![Downloads](http://pepy.tech/badge/shallow-backup)](http://pepy.tech/count/shallow-backup)
 
-`shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles.
+`shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles, and automatically push them to a remote Git repository.
 
 ![GIF demo](img/demo_faster.gif)
 
@@ -86,6 +86,7 @@ Options:
   -packages        Back up package libraries and installed applications.
   -old_path        Skip setting new back up directory path.
   --new_path TEXT  Input a new back up directory path.
+  --remote TEXT    Input a URL for a git repository.
   -reinstall       Reinstall packages from package lists.
   -delete_config   Remove config file.
   -v               Display version and author information and exit.
