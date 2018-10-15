@@ -78,6 +78,7 @@ Contents
 Usage: shallow_backup.py [OPTIONS]
 
   Easily back up installed packages, dotfiles, and more.
+  You can edit which dotfiles are backed up in ~/.shallow-backup.
 
 Options:
   -complete        Back up everything.
