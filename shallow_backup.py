@@ -356,15 +356,10 @@ def backup_all(dotfiles_path, packages_path, fonts_path, configs_path):
 	backup_configs(configs_path)
 
 
-def reinstall_config_files(configs_path, old_configs_path):
+def reinstall_config_files(configs_path):
 	"""
 	Reinstall all configs from the backup.
-	Look for old /configs/ dir for backward compatibility.
 	"""
-
-	if not os.path.isdir(configs_path) and os.path.isdir(old_configs_path):
-		print(Fore.BLUE + "Old app config backup found, migrating..." + Style.RESET_ALL)
-		os.rename(old_configs_path, configs_path)
 
 	def backup_prefix(path):
 		return os.path.join(configs_path, path)
@@ -660,7 +655,6 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		git_set_remote(repo, remote)
 
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
-	old_configs_path = os.path.join(backup_home_path, "configs")
 	configs_path = os.path.join(backup_home_path, "app_configs")
 	packages_path = os.path.join(backup_home_path, "packages")
 	fonts_path = os.path.join(backup_home_path, "fonts")
@@ -670,7 +664,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		if reinstall_packages:
 			reinstall_package(packages_path)
 		elif reinstall_configs:
-			reinstall_config_files(configs_path, old_configs_path)
+			reinstall_config_files(configs_path)
 		elif complete:
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif dotfiles:
@@ -702,7 +696,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		elif selection == "reinstall packages":
 			reinstall_package(packages_path)
 		elif selection == "reinstall app configs":
-			reinstall_config_files(configs_path, old_configs_path)
+			reinstall_config_files(configs_path)
 
 		git_add_all_commit(repo, backup_home_path)
 		git_push_origin(repo)
