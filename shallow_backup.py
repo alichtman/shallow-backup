@@ -223,7 +223,11 @@ def backup_configs(backup_path):
 	make_dir_warn_overwrite(backup_path)
 
 	configs_dir_mapping = {"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3", }
+						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
+						   "Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018-2",
+						   "Library/Preferences/PyCharm2018.2/":"pycharm_2018-2",
+						   "Library/Preferences/CLion2018.2/":"clion_2018-2",
+						   "Library/Preferences/PhpStorm2018.2":"phpstorm_2018-2",}
 	plist_files = ["Library/Preferences/com.apple.Terminal.plist"]
 
 	# backup config dirs in backup_path/configs/<target>/
@@ -365,7 +369,11 @@ def reinstall_config_files(configs_path):
 		return os.path.join(configs_path, path)
 
 	configs_dir_mapping = {"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3", }
+						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
+						   "Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018-2",
+						   "Library/Preferences/PyCharm2018.2/":"pycharm_2018-2",
+						   "Library/Preferences/CLion2018.2/":"clion_2018-2",
+						   "Library/Preferences/PhpStorm2018.2":"phpstorm_2018-2", }
 	plist_files = {"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist"}
 
 	for target, backup in configs_dir_mapping.items():
