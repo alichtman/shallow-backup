@@ -476,7 +476,6 @@ def create_remote(repo, remote_url):
 def git_set_remote(repo, remote_url):
 	"""
 	Sets git repo upstream URL and fast-forwards history.
-	TODO: Allow users to name the remote.
 	"""
 	print(Fore.GREEN + Style.BRIGHT + "Setting remote URL to {}...".format(remote_url) + Style.RESET_ALL)
 	remotes = [remote for remote in repo.remotes]
@@ -486,16 +485,10 @@ def git_set_remote(repo, remote_url):
 		origin = create_remote(repo, remote_url)
 		if not repo.head:
 			repo.create_head('master', origin.refs.master)
-		repo.heads.master.set_tracking_branch(origin.refs.master).checkout()
-		origin.fetch()
 	# Update push URL with new URL.
 	else:
-		# TODO: Fix this error that fails a push after updating the URL:
-		# 		"There is no tracking information for the current branch."
 		repo.delete_remote(repo.remotes.origin)
 		origin = create_remote(repo, remote_url)
-		repo.heads.master.set_tracking_branch(origin.refs.master).checkout()
-		origin.fetch()
 
 
 def create_gitignore_if_needed(dir_path):
@@ -554,11 +547,14 @@ def git_add_all_commit(repo, dir_path):
 
 def git_push_if_possible(repo):
 	"""
-	Push commits to origin if possible
+	Push commits to origin after fast-forwarding branch.
 	"""
 	if "origin" in [remote.name for remote in repo.remotes]:
-		print(Fore.GREEN + Style.BRIGHT + "Pushing to " + Fore.RED+ "{}...".format(repo.remotes.origin.url) + Style.RESET_ALL)
-		repo.remotes.origin.push(refspec='master:master')
+		origin = repo.remotes.origin
+		print(Fore.GREEN + Style.BRIGHT + "Pushing to master at " + Fore.RED+ "{}...".format(origin.url) + Style.RESET_ALL)
+		repo.heads.master.set_tracking_branch(origin.refs.master)
+		origin.pull()
+		origin.push(refspec='master:master')
 
 
 ######
