@@ -1,4 +1,4 @@
-import unittest
+import pytest
 import os
 import shutil
 from shallow_backup import _copy_file, copy_dir
@@ -10,12 +10,12 @@ TEST_TEXT_FILE = 'test-file.txt'
 DIRS = [TEST_DIR, TEST_BACKUP_DIR]
 
 
-class TestCopyMethods(unittest.TestCase):
+class TestCopyMethods:
     """
     Test the functionality of copying
     """
 
-    def setUp(self):
+    def setup_method(self):
         for directory in DIRS:
             try:
                 os.mkdir(directory)
@@ -25,7 +25,7 @@ class TestCopyMethods(unittest.TestCase):
         f = open(TEST_TEXT_FILE, "w+")
         f.close()
 
-    def tearDown(self):
+    def teardown_method(self):
         shutil.rmtree(TEST_DIR)
         os.remove(TEST_TEXT_FILE)
 
@@ -49,10 +49,10 @@ class TestCopyMethods(unittest.TestCase):
         assert os.path.isdir(TEST_DIR + dir_to_copy)
         assert os.path.isdir(TEST_BACKUP_DIR + dir_to_copy)
 
-    def test_copy_dir_invalid(self):
+    @pytest.mark.parametrize('invalid', Constants.INVALIDS)
+    def test_copy_dir_invalid(self, invalid):
         """
         Test that attempting to copy an invalid directory fails
         """
-        for invalid in Constants.INVALIDS:
-            process = copy_dir(invalid, TEST_DIR)
-            assert process is None
+        process = copy_dir(invalid, TEST_DIR)
+        assert process is None
