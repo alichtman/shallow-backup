@@ -403,7 +403,7 @@ def reinstall_config_files(configs_path):
 		if os.path.exists(backup_prefix(backup)):
 			_copy_file(backup_prefix(backup), _home_prefix(target))
 
-	print_section_header("SUCCESSFUL CONFIG FILE REINSTALLATION", Fore.BLUE)
+	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", Fore.BLUE)
 	sys.exit()
 
 
