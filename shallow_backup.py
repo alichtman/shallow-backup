@@ -118,11 +118,11 @@ def backup_prompt():
 	return answers.get('choice').strip().lower()
 
 
-def copy_dir(source_dir, backup_path):
+def _copy_dir(source_dir, backup_path):
 	"""
 	Copy dotfolder from $HOME.
 	"""
-	invalid = {".Trash", ".npm", ".cache", ".rvm"}
+	invalid = set(Constants.INVALID_DIRS)
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
 
@@ -133,7 +133,8 @@ def copy_dir(source_dir, backup_path):
 	else:
 		command = "cp -a '" + source_dir + "' '" + backup_path + "/'"
 
-	sp.run(command, shell=True, stdout=sp.PIPE)
+	process = sp.run(command, shell=True, stdout=sp.PIPE)
+	return process
 
 
 def _copy_file(source, target):
@@ -142,7 +143,8 @@ def _copy_file(source, target):
 	"""
 	command = "cp -a '" + source + "' '" + target + "'"
 	# print(command)
-	sp.run(command, shell=True, stdout=sp.PIPE)
+	process = sp.run(command, shell=True, stdout=sp.PIPE)
+	return process
 
 
 def _mkdir_or_pass(dir):
@@ -210,7 +212,7 @@ def backup_dotfiles(backup_path):
 
 		for x in dotfolders_mp_in:
 			x = list(x)
-			mp.Process(target=copy_dir, args=(x[0], x[1],)).start()
+			mp.Process(target=_copy_dir, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
 		print(Fore.BLUE + Style.BRIGHT +
