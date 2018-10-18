@@ -8,6 +8,7 @@ click = "*"
 inquirer = "*"
 gitpython = "*"
 colorama = "*"
+pytest = "*"
 
 [dev-packages]
 

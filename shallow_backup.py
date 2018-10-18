@@ -69,7 +69,7 @@ def print_section_header(title, COLOR):
 
 def get_subfiles(directory):
 	"""
-	Returns list of immediate subfiles
+	Returns list of immediate subfiles of a directory
 	"""
 	file_paths = []
 	for path, subdirs, files in os.walk(directory):
@@ -104,12 +104,13 @@ def backup_prompt():
 	questions = [inquirer.List('choice',
 	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
 	                           choices=[' Back up dotfiles',
-                                      ' Back up configs',
-	                                    ' Back up packages', 
-                                      ' Back up fonts',
+                                        ' Back up configs',
+	                                    ' Back up packages',
+                                        ' Back up fonts',
 	                                    ' Back up everything',
-	                                    ' Reinstall packages', 
-                                      ' Reinstall configs'],
+                                        ' Reinstall configs',
+	                                    ' Reinstall packages'
+                                    	],
 	                           ),
 	             ]
 
@@ -176,7 +177,7 @@ def backup_dotfiles(backup_path):
 	dotfolders = [folder for folder in dotfolders_for_backup if os.path.exists(
 		os.path.join(home_path, folder))]
 
-	# dotfiles/dotfolders multiprocessing in list format: [(full_dotfile_path, full_dest_path), ...]
+	# dotfiles/folders multiprocessing format: [(full_dotfile_path, full_dest_path), ...]
 
 	dotfolders_mp_in = []
 	for dotfolder in dotfolders:
@@ -219,12 +220,35 @@ def backup_dotfiles(backup_path):
 			mp.Process(target=_copy_file, args=(x[0], x[1],)).start()
 
 
+def get_configs_path_mapping():
+	"""
+	Gets a dictionary mapping directories to back up to their destination path.
+	"""
+	return {
+		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
+		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
+	}
+
+
+def get_plist_mapping():
+	"""
+	Gets a dictionary mapping plist files to back up to their destination path.
+	"""
+	return {
+		"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist"
+	}
+
+
 def backup_configs(backup_path):
+	"""
+	Creates `configs` directory and places config backups there.
+	Configs are application settings, generally. .plist files count.
+	"""
+	print_section_header("CONFIGS", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
 
-	configs_dir_mapping = {"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3", }
-	plist_files = ["Library/Preferences/com.apple.Terminal.plist"]
+	configs_dir_mapping = get_configs_path_mapping()
+	plist_files = [plist_map[0] for plist_map in get_plist_mapping()]
 
 	# backup config dirs in backup_path/configs/<target>/
 	for config, target in configs_dir_mapping.items():
@@ -242,17 +266,20 @@ def backup_configs(backup_path):
 
 
 def _copy_dir_content(source, target):
-	"""Copies the contents of a dir to a specified target path."""
+	"""
+	Copies the contents of a dir to a specified target path.
+	"""
 	cmd = "cp -a '" + source + "' '" + target + "/'"
 	# print(cmd)
 	sp.run(cmd, shell=True, stdout=sp.PIPE)
 
 
 def backup_packages(backup_path):
-	"""Creates `packages` directory and places install list text files there."""
+	"""
+	Creates `packages` directory and places install list text files there.
+	"""
 
 	print_section_header("PACKAGES", Fore.BLUE)
-
 	make_dir_warn_overwrite(backup_path)
 
 	std_backup_package_managers = [
@@ -360,13 +387,13 @@ def reinstall_config_files(configs_path):
 	"""
 	Reinstall all configs from the backup.
 	"""
+	print_section_header("REINSTALLING CONFIG FILES", Fore.BLUE)
 
 	def backup_prefix(path):
 		return os.path.join(configs_path, path)
 
-	configs_dir_mapping = {"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3", }
-	plist_files = {"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist"}
+	configs_dir_mapping = get_configs_path_mapping()
+	plist_files = get_plist_mapping()
 
 	for target, backup in configs_dir_mapping.items():
 		if os.path.isdir(backup_prefix(backup)):
@@ -376,11 +403,15 @@ def reinstall_config_files(configs_path):
 		if os.path.exists(backup_prefix(backup)):
 			_copy_file(backup_prefix(backup), _home_prefix(target))
 
+	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", Fore.BLUE)
+	sys.exit()
+
 
 def reinstall_package(packages_path):
 	"""
 	Reinstall all packages from the files in backup/installs.
 	"""
+	print_section_header("REINSTALLING PACKAGES", Fore.BLUE)
 
 	# Figure out which install lists they have saved
 	package_mgrs = set()
@@ -423,6 +454,8 @@ def reinstall_package(packages_path):
 		elif pm == "cargo":
 			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment. "
 			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
+
+	print_section_header("SUCCESSFUL PACKAGE REINSTALLATION", Fore.BLUE)
 	sys.exit()
 
 
@@ -433,11 +466,12 @@ def reinstall_package(packages_path):
 def git_set_remote(repo, remote_url):
 	"""
 	Sets git repo upstream URL.
+	TODO: Allow users to name the remote.
 	TODO: Must fast-forward history as well
 	"""
 	try:
 		origin = repo.create_remote('origin', remote_url)
-		# origin.fetch()
+		origin.fetch()
 		# origin.heads.master.set_tracking_branch(origin.refs.master)
 		# origin.heads.master.checkout()
 	except:
@@ -486,6 +520,7 @@ def git_add_all_commit(repo, dir_path):
 		repo.index.add([packages_path])
 	if os.path.exists(configs_path):
 		repo.index.add([configs_path])
+	# TODO: Base commit message on the back up type. (#81)
 	repo.index.commit("shallow-backup update.")
 
 
@@ -588,14 +623,13 @@ def prompt_for_path_update(config):
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
 @click.option('-packages', is_flag=True, default=False, help="Back up package libraries and installed applications.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
-@click.option('--new_path', default="DEFAULT", help="Input a new back up directory path.")
+@click.option('--new_path', default="", help="Input a new back up directory path.")
 @click.option('--remote', default="", help="Input a URL for a git repository.")
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages from package lists.")
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs,
-		delete_config, v):
+def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
@@ -620,7 +654,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
 		backup_config = get_default_config()
 		write_config(backup_config)
-    
+
 	#####
 	# Update backup path from CLI args, prompt user, or skip updating
 	#####
