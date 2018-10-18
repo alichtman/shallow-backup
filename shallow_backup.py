@@ -463,29 +463,55 @@ def reinstall_package(packages_path):
 # Git
 #####
 
+
+def create_remote(repo, remote_url):
+	"""
+	Creates a remote for a repo and fetches data.
+	"""
+	origin = repo.create_remote('origin', remote_url)
+	origin.fetch()
+	return origin
+
+
 def git_set_remote(repo, remote_url):
 	"""
-	Sets git repo upstream URL.
+	Sets git repo upstream URL and fast-forwards history.
 	TODO: Allow users to name the remote.
-	TODO: Must fast-forward history as well
 	"""
-	try:
-		origin = repo.create_remote('origin', remote_url)
+	print(Fore.GREEN + Style.BRIGHT + "Setting remote URL to {}...".format(remote_url) + Style.RESET_ALL)
+	remotes = [remote for remote in repo.remotes]
+	# pprint([remote.url for remote in remotes])
+	# Repo has no remotes, just create a new remote and pull.
+	if len(remotes) == 0:
+		origin = create_remote(repo, remote_url)
+		if not repo.head:
+			repo.create_head('master', origin.refs.master)
+		repo.heads.master.set_tracking_branch(origin.refs.master).checkout()
 		origin.fetch()
-		# origin.heads.master.set_tracking_branch(origin.refs.master)
-		# origin.heads.master.checkout()
-	except:
-		pass
+	# Update push URL with new URL.
+	else:
+		# TODO: Fix this error that fails a push after updating the URL:
+		# 		"There is no tracking information for the current branch."
+		repo.delete_remote(repo.remotes.origin)
+		origin = create_remote(repo, remote_url)
+		repo.heads.master.set_tracking_branch(origin.refs.master).checkout()
+		origin.fetch()
 
 
-def create_gitignore(dir_path):
+def create_gitignore_if_needed(dir_path):
 	"""
 	Creates a .gitignore file that ignores all files listed in config.
 	"""
-	files_to_ignore = get_config()["gitignore"]
-	with open(os.path.join(dir_path, ".gitignore"), "w+") as f:
-		for ignore in files_to_ignore:
-			f.write("{}\n".format(ignore))
+	gitignore_path = os.path.join(dir_path, ".gitignore")
+	if os.path.exists(gitignore_path):
+		print(Fore.GREEN + Style.BRIGHT + ".gitignore detected." + Style.RESET_ALL)
+		pass
+	else:
+		print(Fore.GREEN + Style.BRIGHT + "Creating .gitignore..." + Style.RESET_ALL)
+		files_to_ignore = get_config()["gitignore"]
+		with open(gitignore_path, "w+") as f:
+			for ignore in files_to_ignore:
+				f.write("{}\n".format(ignore))
 
 
 def git_init_if_needed(dir_path):
@@ -494,9 +520,11 @@ def git_init_if_needed(dir_path):
 	Returns a Repo object
 	"""
 	if not os.path.isdir(os.path.join(dir_path, ".git")):
+		print(Fore.GREEN + Style.BRIGHT + "Initializing new git repo..." + Style.RESET_ALL)
 		repo = git.Repo.init(dir_path)
 		return repo
 	else:
+		print(Fore.GREEN + Style.BRIGHT + "Detected git repo." + Style.RESET_ALL)
 		repo = git.Repo(dir_path)
 		return repo
 
@@ -506,6 +534,7 @@ def git_add_all_commit(repo, dir_path):
 	Stages all changed files in dir_path and its children folders for commit,
 	commits them and pushes to a remote if it's configured.
 	"""
+	print(Fore.GREEN + Style.BRIGHT + "Making new commit..." + Style.RESET_ALL)
 	dotfiles_path = os.path.join(dir_path, "dotfiles")
 	fonts_path = os.path.join(dir_path, "fonts")
 	packages_path = os.path.join(dir_path, "packages")
@@ -520,17 +549,15 @@ def git_add_all_commit(repo, dir_path):
 		repo.index.add([packages_path])
 	if os.path.exists(configs_path):
 		repo.index.add([configs_path])
-	# TODO: Base commit message on the back up type. (#81)
 	repo.index.commit("shallow-backup update.")
 
 
-def git_push_origin(repo):
+def git_push_if_possible(repo):
 	"""
-	Push commits to remote if remote is configured.
+	Push commits to origin if possible
 	"""
-	# TODO: Fix this method to allow for remotes to be named something other than origin.
 	if "origin" in [remote.name for remote in repo.remotes]:
-		print(Fore.RED + Style.BRIGHT + "Pushing to remote git repo..." + Style.RESET_ALL)
+		print(Fore.GREEN + Style.BRIGHT + "Pushing to " + Fore.RED+ "{}...".format(repo.remotes.origin.url) + Style.RESET_ALL)
 		repo.remotes.origin.push(refspec='master:master')
 
 
@@ -684,7 +711,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	backup_home_path = get_config()["backup_path"]
 	make_dir_warn_overwrite(backup_home_path)
 	repo = git_init_if_needed(backup_home_path)
-	create_gitignore(backup_home_path)
+	create_gitignore_if_needed(backup_home_path)
 	if remote != "":
 		git_set_remote(repo, remote)
 
@@ -711,7 +738,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 			backup_fonts(fonts_path)
 
 		git_add_all_commit(repo, backup_home_path)
-		git_push_origin(repo)
+		git_push_if_possible(repo)
 		sys.exit()
 
 	# No CL options, prompt for selection
@@ -733,7 +760,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 			reinstall_config_files(configs_path)
 
 		git_add_all_commit(repo, backup_home_path)
-		git_push_origin(repo)
+		git_push_if_possible(repo)
 		sys.exit()
 
 
