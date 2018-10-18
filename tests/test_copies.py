@@ -43,12 +43,12 @@ class TestCopyMethods:
         Test that copying a directory works as expected
         """
         test_dir = '/test/'
-        test_path = os.path.join(TEST_DIR + test_dir)
+        test_path = os.path.join(TEST_DIR, test_dir)
         os.mkdir(test_path)
         process = _copy_dir(test_path, TEST_BACKUP_DIR)
         assert process.returncode == 0
         assert os.path.isdir(test_path)
-        assert os.path.isdir(os.path.join(TEST_BACKUP_DIR + test_dir))
+        assert os.path.isdir(os.path.join(TEST_BACKUP_DIR, test_dir))
 
     @pytest.mark.parametrize('invalid', Constants.INVALID_DIRS)
     def test_copy_dir_invalid(self, invalid):
