@@ -132,7 +132,8 @@ def copy_dir(source_dir, backup_path):
 	else:
 		command = "cp -a '" + source_dir + "' '" + backup_path + "/'"
 
-	sp.run(command, shell=True, stdout=sp.PIPE)
+	process = sp.run(command, shell=True, stdout=sp.PIPE)
+	return process
 
 
 def _copy_file(source, target):
@@ -141,7 +142,8 @@ def _copy_file(source, target):
 	"""
 	command = "cp -a '" + source + "' '" + target + "'"
 	# print(command)
-	sp.run(command, shell=True, stdout=sp.PIPE)
+	process = sp.run(command, shell=True, stdout=sp.PIPE)
+	return process
 
 
 def _mkdir_or_pass(dir):
