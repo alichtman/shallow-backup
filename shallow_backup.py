@@ -117,11 +117,11 @@ def backup_prompt():
 	return answers.get('choice').strip().lower()
 
 
-def copy_dir(source_dir, backup_path):
+def _copy_dir(source_dir, backup_path):
 	"""
 	Copy dotfolder from $HOME.
 	"""
-	invalid = set(Constants.INVALIDS)
+	invalid = set(Constants.INVALID_DIRS)
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
 
@@ -211,7 +211,7 @@ def backup_dotfiles(backup_path):
 
 		for x in dotfolders_mp_in:
 			x = list(x)
-			mp.Process(target=copy_dir, args=(x[0], x[1],)).start()
+			mp.Process(target=_copy_dir, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
 		print(Fore.BLUE + Style.BRIGHT +
