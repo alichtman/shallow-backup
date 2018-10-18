@@ -593,7 +593,7 @@ def get_default_config():
 	Returns a default configuration.
 	"""
 	return {
-		"backup_path": "DEFAULT",
+		"backup_path": "~/shallow-backup",
 		"dotfiles"   : [
 			".bashrc",
 			".bash_profile",
