@@ -4,10 +4,10 @@ import shutil
 from shallow_backup import _copy_file, _copy_dir
 from constants import Constants
 
-TEST_DIR = 'shallow-backup-test-dir'
-TEST_BACKUP_DIR = 'shallow-backup-test-backup-dir'
+TEST_DIR_TO_BACKUP = 'shallow-backup-test-dir'
+TEST_DIR_FOR_BACKUP = 'shallow-backup-test-backup-dir'
 TEST_TEXT_FILE = 'test-file.txt'
-DIRS = [TEST_DIR, TEST_BACKUP_DIR]
+DIRS = [TEST_DIR_TO_BACKUP, TEST_DIR_FOR_BACKUP]
 
 
 class TestCopyMethods:
@@ -26,34 +26,34 @@ class TestCopyMethods:
         f.close()
 
     def teardown_method(self):
-        shutil.rmtree(TEST_DIR)
+        shutil.rmtree(TEST_DIR_TO_BACKUP)
         os.remove(TEST_TEXT_FILE)
 
     def test_copy_file(self):
         """
         Test that copying a file is working as expected
         """
-        process =_copy_file(TEST_TEXT_FILE, TEST_DIR)
+        process =_copy_file(TEST_TEXT_FILE, TEST_DIR_FOR_BACKUP)
         assert process.returncode == 0
         assert os.path.isfile(TEST_TEXT_FILE)
-        assert os.path.isfile(TEST_DIR + '/' + TEST_TEXT_FILE)
+        assert os.path.isfile(TEST_DIR_FOR_BACKUP + '/' + TEST_TEXT_FILE)
 
     def test_copy_dir(self):
         """
         Test that copying a directory works as expected
         """
-        test_dir = '/test/'
-        test_path = os.path.join(TEST_DIR, test_dir)
+        test_dir = 'test/'
+        test_path = os.path.join(TEST_DIR_TO_BACKUP, test_dir)
         os.mkdir(test_path)
-        process = _copy_dir(test_path, TEST_BACKUP_DIR)
+        process = _copy_dir(test_path, TEST_DIR_FOR_BACKUP)
         assert process.returncode == 0
         assert os.path.isdir(test_path)
-        assert os.path.isdir(os.path.join(TEST_BACKUP_DIR, test_dir))
+        assert os.path.isdir(os.path.join(TEST_DIR_FOR_BACKUP, test_dir))
 
     @pytest.mark.parametrize('invalid', Constants.INVALID_DIRS)
     def test_copy_dir_invalid(self, invalid):
         """
         Test that attempting to copy an invalid directory fails
         """
-        process = _copy_dir(invalid, TEST_DIR)
+        process = _copy_dir(invalid, TEST_DIR_TO_BACKUP)
         assert process is None
