@@ -7,3 +7,5 @@ class Constants:
 	URL='https://github.com/alichtman/shallow-backup'
 	AUTHOR_EMAIL='aaronlichtman@gmail.com'
 	CONFIG_PATH='.shallow-backup'
+	INVALIDS = [".Trash", ".npm", ".cache", ".rvm"]
+

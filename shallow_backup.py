@@ -121,7 +121,7 @@ def copy_dir(source_dir, backup_path):
 	"""
 	Copy dotfolder from $HOME.
 	"""
-	invalid = {".Trash", ".npm", ".cache", ".rvm"}
+	invalid = set(Constants.INVALIDS)
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
 

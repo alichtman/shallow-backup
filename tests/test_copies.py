@@ -2,6 +2,7 @@ import unittest
 import os
 import shutil
 from shallow_backup import _copy_file, copy_dir
+from constants import Constants
 
 TEST_DIR = 'test-directory'
 TEST_BACKUP_DIR = 'test-backup-dir'
@@ -52,7 +53,6 @@ class TestCopyMethods(unittest.TestCase):
         """
         Test that attempting to copy an invalid directory fails
         """
-        invalids = [".Trash", ".npm", ".cache", ".rvm"]
-        for invalid in invalids:
+        for invalid in Constants.INVALIDS:
             process = copy_dir(invalid, TEST_DIR)
             assert process is None
