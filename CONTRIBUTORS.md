@@ -2,3 +2,4 @@
 
 - [Caleb Jasik](https://github.com/jasikpark)
 - [Moritz Schillinger](https://github.com/schilli91)
+- [Brandon Temple](https://github.com/Brand-Temp)
