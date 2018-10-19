@@ -618,6 +618,18 @@ def get_default_config():
 	}
 
 
+def create_config_file_if_needed():
+	"""
+	Creates config file if it doesn't exist already.
+	"""
+	backup_config_path = get_config_path()
+	if not os.path.exists(backup_config_path):
+		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
+		backup_config = get_default_config()
+		write_config(backup_config)
+
+
+
 #######
 # CLI
 #######
@@ -661,7 +673,6 @@ def prompt_for_path_update(config):
 		move_git_folder_to_path(current_path, abs_path)
 
 
-
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('-complete', is_flag=True, default=False, help="Back up everything.")
@@ -696,16 +707,11 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 
 	splash_screen()
 
-	# If config file doesn't exist, create it.
-	if not os.path.exists(backup_config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
-		backup_config = get_default_config()
-		write_config(backup_config)
-
 	#####
 	# Update backup path from CLI args, prompt user, or skip updating
 	#####
 
+	create_config_file_if_needed()
 	backup_config = get_config()
 
 	# User entered a new path, so update the config
@@ -717,12 +723,10 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		backup_config["backup_path"] = abs_path
 		write_config(backup_config)
 
-	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
-	elif old_path or complete or dotfiles or packages or fonts:
-		pass
-	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
-	else:
+	# User didn't enter any CLI args so prompt for path update before showing menu
+	elif not (old_path or complete or dotfiles or packages or fonts):
 		prompt_for_path_update(backup_config)
+
 
 	###
 	# Create backup directory and set up git stuff
