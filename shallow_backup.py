@@ -139,7 +139,7 @@ def _copy_dir(source_dir, backup_path):
 	"""
 	invalid = set(Constants.INVALID_DIRS)
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
-		pass
+		return
 
 	if "Application\ Support" not in source_dir:
 		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-2]), symlinks=True)
