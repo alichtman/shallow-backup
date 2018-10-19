@@ -9,7 +9,6 @@
 Contents
 ========
 
- * [Featured On](#featured-on)
  * [What can I back up?](#what-can-i-back-up)
  * [Installation](#installation)
  * [Usage](#usage)
@@ -17,18 +16,8 @@ Contents
     * [Use Cases](#use-cases)
     * [Output Structure](#output-structure)
  * [Inspiration](#inspiration)
- * [How to Contribute](#how-to-contribute)
-
-### Featured On
----
-
-`shallow-backup` is featured on these awesome lists!
-
-* [awesome-mac](https://github.com/jaywcjlove/awesome-mac)
-* [awesome-shell](https://github.com/alebcay/awesome-shell)
-* [open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps)
-* [tools-osx](https://github.com/morgant/tools-osx)
-* [agarrharr/awesome-cli-apps](https://github.com/agarrharr/awesome-cli-apps)
+ * [Featured On](#featured-on)
+ * [Want to contribute?](#want-to-contribute)
 
 ### What can I back up?
 ---
@@ -44,8 +33,10 @@ Contents
     * `.zshrc`
 
 2. Application Preferences
+    * Atom (Coming soon!)
     * Sublime Text
     * Terminal
+    * JetBrains IDEs
     * VS Code (Coming soon!)
 
 3. Installed `packages`.
@@ -169,6 +160,17 @@ I back up system images of my MacBook Pro to an external SSD multiple times per 
 I cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` install libraries with simple text files, also cutting down the back up time significantly.
 
 Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
+
+### Featured On
+---
+
+`shallow-backup` is featured on these awesome lists!
+
+* [awesome-mac](https://github.com/jaywcjlove/awesome-mac)
+* [awesome-shell](https://github.com/alebcay/awesome-shell)
+* [open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps)
+* [tools-osx](https://github.com/morgant/tools-osx)
+* [agarrharr/awesome-cli-apps](https://github.com/agarrharr/awesome-cli-apps)
 
 ### Want to Contribute?
 ---
