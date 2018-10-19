@@ -4,8 +4,8 @@ import shutil
 from shallow_backup import _copy_file, _copy_dir
 from constants import Constants
 
-DIR_TO_BACKUP = 'shallow-backup-test-dir'
-BACKUP_DIR = 'shallow-backup-test-backup-dir'
+DIR_TO_BACKUP = 'shallow-backup-test-copy-dir'
+BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
 TEST_TEXT_FILE = 'test-file.txt'
 DIRS = [DIR_TO_BACKUP, BACKUP_DIR]
 
@@ -26,7 +26,8 @@ class TestCopyMethods:
         f.close()
 
     def teardown_method(self):
-        shutil.rmtree(DIR_TO_BACKUP)
+        for directory in DIRS:
+            shutil.rmtree(directory)
         os.remove(TEST_TEXT_FILE)
 
     def test_copy_file(self):
@@ -37,14 +38,14 @@ class TestCopyMethods:
         process =_copy_file(TEST_TEXT_FILE, BACKUP_DIR)
         assert process.returncode == 0
         assert os.path.isfile(TEST_TEXT_FILE)
-        assert os.path.isfile(os.path.join(BACKUP_DIR, TEST_TEXT_FILE)
+        assert os.path.isfile(os.path.join(BACKUP_DIR, TEST_TEXT_FILE))
 
     def test_copy_dir(self):
         """
         Test that copying a directory works as expected
         """
         # TODO: Test that all subfiles and folders are copied.
-        test_dir = 'test'
+        test_dir = 'test/'
         test_path = os.path.join(DIR_TO_BACKUP, test_dir)
         os.mkdir(test_path)
         process = _copy_dir(test_path, BACKUP_DIR)

@@ -229,6 +229,10 @@ def get_configs_path_mapping():
 	return {
 		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
 		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
+		"Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018.2",
+		"Library/Preferences/PyCharm2018.2/":"pycharm_2018.2",
+		"Library/Preferences/CLion2018.2/":"clion_2018.2",
+		"Library/Preferences/PhpStorm2018.2":"phpstorm_2018.2",
 	}
 
 
@@ -614,9 +618,35 @@ def get_default_config():
 	}
 
 
+def create_config_file_if_needed():
+	"""
+	Creates config file if it doesn't exist already.
+	"""
+	backup_config_path = get_config_path()
+	if not os.path.exists(backup_config_path):
+		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
+		backup_config = get_default_config()
+		write_config(backup_config)
+
+
+
 #######
 # CLI
 #######
+
+def move_git_folder_to_path(source_path, new_path):
+	"""
+	Moves git folder and .gitignore to the new backup directory.
+	"""
+	git_dir = os.path.join(source_path, '.git')
+	git_ignore_file = os.path.join(source_path, '.gitignore')
+
+	try:
+		shutil.move(git_dir, new_path)
+		shutil.move(git_ignore_file, new_path)
+		print(Fore.BLUE + Style.BRIGHT + "Moving git repo to new destination" + Style.RESET_ALL)
+	except FileNotFoundError:
+		pass
 
 
 def prompt_for_path_update(config):
@@ -624,9 +654,10 @@ def prompt_for_path_update(config):
 	Ask user if they'd like to update the backup path or not.
 	If yes, update. If no... don't.
 	"""
+	current_path = config["backup_path"]
 	print(
 		Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(
-			config["backup_path"]) + Style.RESET_ALL)
+			current_path) + Style.RESET_ALL)
 
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
 		print(Fore.GREEN + Style.BRIGHT +
@@ -638,6 +669,8 @@ def prompt_for_path_update(config):
 			abs_path) + Style.RESET_ALL)
 		config["backup_path"] = abs_path
 		write_config(config)
+		make_dir_warn_overwrite(abs_path)
+		move_git_folder_to_path(current_path, abs_path)
 
 
 # custom help options
@@ -674,16 +707,11 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 
 	splash_screen()
 
-	# If config file doesn't exist, create it.
-	if not os.path.exists(backup_config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
-		backup_config = get_default_config()
-		write_config(backup_config)
-
 	#####
 	# Update backup path from CLI args, prompt user, or skip updating
 	#####
 
+	create_config_file_if_needed()
 	backup_config = get_config()
 
 	# User entered a new path, so update the config
@@ -695,12 +723,10 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		backup_config["backup_path"] = abs_path
 		write_config(backup_config)
 
-	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
-	elif old_path or complete or dotfiles or packages or fonts:
-		pass
-	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
-	else:
+	# User didn't enter any CLI args so prompt for path update before showing menu
+	elif not (old_path or complete or dotfiles or packages or fonts):
 		prompt_for_path_update(backup_config)
+
 
 	###
 	# Create backup directory and set up git stuff
