@@ -110,7 +110,7 @@ def backup_prompt():
 	                                    ' Back up everything',
                                         ' Reinstall configs',
 	                                    ' Reinstall packages',
-										' Destroy backups'
+										' Destroy backup'
                                     	],
 	                           ),
 	             ]
@@ -790,7 +790,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 			reinstall_package(packages_path)
 		elif selection == "reinstall configs":
 			reinstall_config_files(configs_path)
-		elif selection == "destroy backups":
+		elif selection == "destroy backup":
 			if prompt_yes_no("Erase backup directory {}?".format(backup_home_path), Fore.RED):
 				destroy_backup_dir(backup_home_path)
 			else:
