@@ -34,16 +34,7 @@ def splash_screen():
 	"""
 	Display splash graphic, and then version info
 	"""
-	print(Fore.YELLOW + Style.BRIGHT + "\n" +
-		  "            dP                dP dP                        dP                         dP                         \n" +
-		  "            88                88 88                        88                         88                         \n" +
-		  "   ,d8888'  88d888b. .d8888b. 88 88 .d8888b. dP  dP  dP    88d888b. .d8888b. .d8888b. 88  .dP  dP    dP 88d888b. \n" +
-		  "   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88    88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
-		  "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
-		  "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
-		  "                                                                                                        88		\n" +
-		  "                                                                                                        dP		\n" + Style.RESET_ALL)
-
+	print(Fore.YELLOW + Style.BRIGHT + "\n" + Constants.LOGO + Style.RESET_ALL)
 	print_version_info()
 
 
