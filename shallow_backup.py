@@ -362,7 +362,7 @@ def backup_fonts(path):
 	print_section_header("FONTS", Fore.BLUE)
 	make_dir_warn_overwrite(path)
 	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
-	fonts_path = _home_prefix("/Library/Fonts/")
+	fonts_path = _home_prefix("Library/Fonts/")
 	# TODO: For some reason, this doesn't get all the fonts in fonts_path dir
 	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if font.endswith(".otf") or font.endswith(".ttf")]
 
