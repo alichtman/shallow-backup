@@ -77,11 +77,15 @@ def prompt_yes_no(message, color):
 
 def run_shell_cmd(command):
 	"""
-	Wrapper on subprocess.run that splits the command string into a list.
+	Wrapper on subprocess.run that handles both lists and strings as commands.
 	"""
 	try:
-		process = sp.run(command.split(), stdout=sp.PIPE)
-		return process
+		if not isinstance(command, list):
+			process = sp.run(command.split(), stdout=sp.PIPE)
+			return process
+		else:
+			process = sp.run(command, stdout=sp.PIPE)
+			return process
 	except FileNotFoundError: # If package manager is missing
 		return None
 
@@ -185,8 +189,8 @@ def get_configs_path_mapping():
 	Gets a dictionary mapping directories to back up to their destination path.
 	"""
 	return {
-		"Library/Application\ Support/Sublime\ Text\ 2/Packages/User/": "sublime_2",
-		"Library/Application\ Support/Sublime\ Text\ 3/Packages/User/": "sublime_3",
+		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
+		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
 		"Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018.2",
 		"Library/Preferences/PyCharm2018.2/":"pycharm_2018.2",
 		"Library/Preferences/CLion2018.2/":"clion_2018.2",
@@ -276,6 +280,8 @@ def backup_configs(backup_path):
 	print_section_header("CONFIGS", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
 
+	# TODO: Fix this method
+
 	configs_dir_mapping = get_configs_path_mapping()
 	plist_files = [plist_map[0] for plist_map in get_plist_mapping()]
 
@@ -286,7 +292,6 @@ def backup_configs(backup_path):
 			_mkdir_or_pass(configs_backup_path)
 			_copy_dir_content(_home_prefix(config), configs_backup_path)
 
-	# TODO: Fix this
 	# backup plist files in backup_path/configs/plist/
 	plist_backup_path = os.path.join(backup_path, "plist")
 	_mkdir_or_pass(plist_backup_path)
@@ -351,20 +356,22 @@ def backup_packages(backup_path):
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# sublime text 2 packages
-	if os.path.isdir(_home_prefix("Library/Application\ Support/Sublime\ Text\ 2")):
+	sublime_2_path = _home_prefix("Library/Application Support/Sublime Text 2/Packages/")
+	if os.path.isdir(sublime_2_path):
 		print(Fore.BLUE + "Backing up Sublime Text 2 packages..." + Style.RESET_ALL)
-		source_path = _home_prefix("Library/Application\ Support/Sublime\ Text\ 2/Packages/")
-		command = "ls {}".format(source_path)
+		command = ["ls", sublime_2_path]
 		dest = "{}/sublime2_list.txt".format(backup_path)
 		run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# sublime text 3 packages
-	if os.path.isdir(_home_prefix("Library/Application\ Support/Sublime\ Text\ 3")):
+	sublime_3_path = _home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
+	if os.path.isdir(sublime_3_path):
 		print(Fore.BLUE + "Backing up Sublime Text 3 packages..." + Style.RESET_ALL)
-		source_path = _home_prefix("Library/Application\ Support/Sublime\ Text\ 3/Installed\ Packages/")
-		command = "ls {}".format(source_path)
+		command = ["ls", sublime_3_path]
 		dest = "{}/sublime3_list.txt".format(backup_path)
 		run_shell_cmd_write_stdout_to_file(command, dest)
+	else:
+		print(sublime_3_path, "IS NOT DIR")
 
 	# macports
 	print(Fore.BLUE + "Backing up macports packages..." + Style.RESET_ALL)
