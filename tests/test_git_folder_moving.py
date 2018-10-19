@@ -26,6 +26,7 @@ class TestGitFolderCopying:
 
     def test_copy_git_folder(self):
         """
+        Test copying the .git folder and .gitignore from an old directory to a new one
         """
         git_init_if_needed(OLD_BACKUP_DIR)
         create_gitignore_if_needed(OLD_BACKUP_DIR)

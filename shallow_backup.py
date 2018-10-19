@@ -622,7 +622,7 @@ def get_default_config():
 # CLI
 #######
 
-def move_git_folder_to_path(source_path, new_path, made_new_config):
+def move_git_folder_to_path(source_path, new_path):
 	"""
 	Moves git folder and .gitignore to the new backup directory.
 	"""
@@ -632,13 +632,12 @@ def move_git_folder_to_path(source_path, new_path, made_new_config):
 	try:
 		shutil.move(git_dir, new_path)
 		shutil.move(git_ignore_file, new_path)
-		print(Fore.BLUE + "Moving git repo to new destination" + Style.RESET_ALL)
-	except FileNotFoundError as e:
-		if not made_new_config:
-			print(Fore.RED + Style.NORMAL + "Could not detect {}... will initialize".format(e.filename) + Style.RESET_ALL)
+		print(Fore.BLUE + Style.BRIGHT + "Moving git repo to new destination" + Style.RESET_ALL)
+	except FileNotFoundError:
+		pass
 
 
-def prompt_for_path_update(config, made_new_config):
+def prompt_for_path_update(config):
 	"""
 	Ask user if they'd like to update the backup path or not.
 	If yes, update. If no... don't.
@@ -659,7 +658,7 @@ def prompt_for_path_update(config, made_new_config):
 		config["backup_path"] = abs_path
 		write_config(config)
 		make_dir_warn_overwrite(abs_path)
-		move_git_folder_to_path(current_path, abs_path, made_new_config)
+		move_git_folder_to_path(current_path, abs_path)
 
 
 
@@ -702,10 +701,6 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
 		backup_config = get_default_config()
 		write_config(backup_config)
-		made_new_config = True
-	else:
-		made_new_config = False
-
 
 	#####
 	# Update backup path from CLI args, prompt user, or skip updating
@@ -727,7 +722,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		pass
 	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
 	else:
-		prompt_for_path_update(backup_config, made_new_config)
+		prompt_for_path_update(backup_config)
 
 	###
 	# Create backup directory and set up git stuff
