@@ -21,9 +21,9 @@ from shutil import copy, copyfile, copytree
 
 def print_version_info():
 	version = "{} v{} by {} -> (Github: {})".format(Constants.PROJECT_NAME,
-	                                                Constants.VERSION,
-	                                                Constants.AUTHOR_FULL_NAME,
-	                                                Constants.AUTHOR_GITHUB)
+													Constants.VERSION,
+													Constants.AUTHOR_FULL_NAME,
+													Constants.AUTHOR_GITHUB)
 	line = "-" * (len(version))
 	print(Fore.RED + Style.BRIGHT + line)
 	print(version)
@@ -51,8 +51,6 @@ def print_section_header(title, COLOR):
 def prompt_yes_no(message, color):
 	"""
 	Print question and return True or False depending on user selection from list.
-	bottom_line should be used for one liners.
-	Otherwise, it's the second line you want printed.
 	"""
 	questions = [inquirer.List('choice',
 							   message=color + Style.BRIGHT + message + Fore.BLUE,
@@ -62,6 +60,7 @@ def prompt_yes_no(message, color):
 
 	answers = inquirer.prompt(questions)
 	return answers.get('choice').strip().lower() == 'yes'
+
 
 ###########
 # Utilities
@@ -79,7 +78,7 @@ def run_shell_cmd(command):
 		else:
 			process = sp.run(command, stdout=sp.PIPE)
 			return process
-	except FileNotFoundError: # If package manager is missing
+	except FileNotFoundError:  # If package manager is missing
 		return None
 
 
@@ -101,7 +100,7 @@ def make_dir_warn_overwrite(path):
 	subdirs = ["dotfiles", "packages", "fonts", "configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
 		print(Fore.RED + Style.BRIGHT +
-		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
+			  "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			shutil.rmtree(path)
 			os.makedirs(path)
@@ -161,10 +160,10 @@ def get_configs_path_mapping():
 	return {
 		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
 		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
-		"Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018.2",
-		"Library/Preferences/PyCharm2018.2/":"pycharm_2018.2",
-		"Library/Preferences/CLion2018.2/":"clion_2018.2",
-		"Library/Preferences/PhpStorm2018.2":"phpstorm_2018.2",
+		"Library/Preferences/IntelliJIdea2018.2/": "intellijidea_2018.2",
+		"Library/Preferences/PyCharm2018.2/": "pycharm_2018.2",
+		"Library/Preferences/CLion2018.2/": "clion_2018.2",
+		"Library/Preferences/PhpStorm2018.2": "phpstorm_2018.2",
 	}
 
 
@@ -204,15 +203,11 @@ def backup_dotfiles(backup_path):
 		dotfolders_mp_in.append(
 			(os.path.join(home_path, dotfolder), backup_path))
 
-
 	dotfiles_mp_in = []
 	for dotfile in dotfiles:
 		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
 
-	####
 	# Back up System and Application Preferences and Settings
-	####
-
 	# TODO: Extract these paths to constants
 
 	# Sublime Text Configs
@@ -364,7 +359,8 @@ def backup_fonts(path):
 	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
 	fonts_path = _home_prefix("/Library/Fonts/")
 	# TODO: For some reason, this doesn't get all the fonts in fonts_path dir
-	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if font.endswith(".otf") or font.endswith(".ttf")]
+	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if
+			 font.endswith(".otf") or font.endswith(".ttf")]
 
 	# pprint(fonts)
 	for font in fonts:
@@ -453,11 +449,10 @@ def reinstall_package(packages_path):
 		elif pm == "macports":
 			print(Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
 		elif pm == "gem":
-			print(
-				Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
+			print(Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
 		elif pm == "cargo":
-			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment. "
-			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
+			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment."
+							 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
 
 	print_section_header("SUCCESSFUL PACKAGE REINSTALLATION", Fore.BLUE)
 	sys.exit()
@@ -514,7 +509,7 @@ def create_gitignore_if_needed(dir_path):
 def git_init_if_needed(dir_path):
 	"""
 	If there is no git repo inside the dir_path, intialize one.
-	Returns a Repo object
+	Returns git.Repo object
 	"""
 	if not os.path.isdir(os.path.join(dir_path, ".git")):
 		print(Fore.GREEN + Style.BRIGHT + "Initializing new git repo..." + Style.RESET_ALL)
@@ -555,7 +550,8 @@ def git_push_if_possible(repo):
 	"""
 	if "origin" in [remote.name for remote in repo.remotes]:
 		origin = repo.remotes.origin
-		print(Fore.GREEN + Style.BRIGHT + "Pushing to master at " + Fore.RED+ "{}...".format(origin.url) + Style.RESET_ALL)
+		print(Fore.GREEN + Style.BRIGHT + "Pushing to master at " + Fore.RED + "{}...".format(
+			origin.url) + Style.RESET_ALL)
 		repo.heads.master.set_tracking_branch(origin.refs.master)
 		origin.pull()
 		origin.push(refspec='master:master')
@@ -594,7 +590,7 @@ def get_default_config():
 	"""
 	return {
 		"backup_path": "~/shallow-backup",
-		"dotfiles"   : [
+		"dotfiles": [
 			".bashrc",
 			".bash_profile",
 			".gitconfig",
@@ -604,11 +600,11 @@ def get_default_config():
 			".vimrc",
 			".zshrc"
 		],
-		"dotfolders" : [
+		"dotfolders": [
 			".ssh",
 			".vim"
 		],
-		"gitignore"  : [
+		"gitignore": [
 			"dotfiles/.ssh",
 			"packages/",
 			"dotfiles/.pypirc",
@@ -627,10 +623,9 @@ def create_config_file_if_needed():
 		write_config(backup_config)
 
 
-
-#######
+#####
 # CLI
-#######
+#####
 
 def move_git_folder_to_path(source_path, new_path):
 	"""
@@ -653,18 +648,12 @@ def prompt_for_path_update(config):
 	If yes, update. If no... don't.
 	"""
 	current_path = config["backup_path"]
-	print(
-		Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(
-			current_path) + Style.RESET_ALL)
+	print(Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(current_path) + Style.RESET_ALL)
 
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
-		print(Fore.GREEN + Style.BRIGHT +
-		      "Enter relative path:" + Style.RESET_ALL)
-
+		print(Fore.GREEN + Style.BRIGHT + "Enter relative path:" + Style.RESET_ALL)
 		abs_path = os.path.abspath(input())
-
-		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(
-			abs_path) + Style.RESET_ALL)
+		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(abs_path) + Style.RESET_ALL)
 		config["backup_path"] = abs_path
 		write_config(config)
 		make_dir_warn_overwrite(abs_path)
@@ -676,17 +665,17 @@ def backup_prompt():
 	Use pick library to prompt user with choice of what to backup.
 	"""
 	questions = [inquirer.List('choice',
-	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
-	                           choices=[' Back up dotfiles',
-                                        ' Back up configs',
-	                                    ' Back up packages',
-                                        ' Back up fonts',
-	                                    ' Back up everything',
-                                        ' Reinstall configs',
-	                                    ' Reinstall packages'
-                                    	],
-	                           ),
-	             ]
+							   message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
+							   choices=[' Back up dotfiles',
+										' Back up configs',
+										' Back up packages',
+										' Back up fonts',
+										' Back up everything',
+										' Reinstall configs',
+										' Reinstall packages'
+										],
+							   ),
+				 ]
 
 	answers = inquirer.prompt(questions)
 	return answers.get('choice').strip().lower()
@@ -706,7 +695,8 @@ def backup_prompt():
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v):
+def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs,
+		delete_config, v):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
@@ -720,22 +710,17 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	elif delete_config:
 		os.remove(backup_config_path)
 		print(Fore.RED + Style.BRIGHT +
-		      "Removed config file..." + Style.RESET_ALL)
+			  "Removed config file..." + Style.RESET_ALL)
 		sys.exit()
 
+	# Start CLI
 	splash_screen()
-
-	#####
-	# Update backup path from CLI args, prompt user, or skip updating
-	#####
-
 	create_config_file_if_needed()
 	backup_config = get_config()
 
 	# User entered a new path, so update the config
 	if new_path != "":
 		abs_path = os.path.abspath(new_path)
-
 		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
 			abs_path) + Style.RESET_ALL)
 		backup_config["backup_path"] = abs_path
@@ -745,11 +730,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	elif not (old_path or complete or dotfiles or packages or fonts):
 		prompt_for_path_update(backup_config)
 
-
-	###
-	# Create backup directory and set up git stuff
-	###
-
+	# Create backup directory and do git setup
 	backup_home_path = get_config()["backup_path"]
 	make_dir_warn_overwrite(backup_home_path)
 	repo = git_init_if_needed(backup_home_path)
