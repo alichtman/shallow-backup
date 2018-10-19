@@ -30,7 +30,7 @@ class TestGitFolderCopying:
         """
         git_init_if_needed(OLD_BACKUP_DIR)
         create_gitignore_if_needed(OLD_BACKUP_DIR)
-        move_git_folder_to_path(OLD_BACKUP_DIR, NEW_BACKUP_DIR, False)
+        move_git_folder_to_path(OLD_BACKUP_DIR, NEW_BACKUP_DIR)
         assert os.path.isdir(os.path.join(NEW_BACKUP_DIR, '.git/'))
         assert os.path.isfile(os.path.join(NEW_BACKUP_DIR, '.gitignore'))
         assert not os.path.isdir(os.path.join(OLD_BACKUP_DIR, '.git/'))

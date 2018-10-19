@@ -1,9 +1,7 @@
-
+.cache/
 .DS_Store
 *.pyc
 *.txt
-shallow-backup/dotfiles/ssh/known_hosts
-shallow-backup/dotfiles/vim/.netrwhist
 *.xml
 *.iml
 *.whl
