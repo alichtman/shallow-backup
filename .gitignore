@@ -1,8 +1,8 @@
-.cache/
+.cache/*
 .DS_Store
 *.pyc
 *.txt
 *.xml
 *.iml
 *.whl
-shallow_backup.egg-info/PKG-INFO
+shallow_backup.egg-info/*
