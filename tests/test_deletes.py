@@ -1,0 +1,43 @@
+import os
+import shutil
+
+from shallow_backup import clean_backup_dir
+
+BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
+DIRS = [BACKUP_DIR]
+
+
+class TestDeleteMethods:
+    """
+    Test the functionality of deleting
+    """
+
+    def setup_method(self):
+        for directory in DIRS:
+            try:
+                os.mkdir(directory)
+            except FileExistsError:
+                shutil.rmtree(directory)
+                os.mkdir(directory)
+
+    def teardown_method(self):
+        for directory in DIRS:
+            try:
+                shutil.rmtree(directory)
+            except OSError:
+                pass
+
+    def test_clean_an_existing_backup_directory(self):
+        """
+        Test that deleting the backup directory works as expected
+        """
+        clean_backup_dir(BACKUP_DIR)
+        assert not os.path.isdir(BACKUP_DIR)
+
+    def test_can_handle_cleaning_non_existing_backup_directory(self):
+        """
+        Test that we exit gracefully when cleaning an non existing backup directory
+        """
+        nonexist_backup_dir = BACKUP_DIR + "-dummy"
+        clean_backup_dir(nonexist_backup_dir)
+        assert not os.path.isdir(nonexist_backup_dir)

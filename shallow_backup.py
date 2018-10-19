@@ -657,18 +657,12 @@ def prompt_for_path_update(config):
 		move_git_folder_to_path(current_path, abs_path)
 
 
-def clean_backup_dir():
-	backup_home_path = get_config()["backup_path"]
-	if prompt_yes_no("Erase backup directory {}?".format(backup_home_path), Fore.RED):
-		try:
-			shutil.rmtree(backup_home_path)
-			print("{} Deleted backup directory {} {}".format(Fore.BLUE, backup_home_path, Style.RESET_ALL))
-		except OSError as e:
-			print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
-	else:
-		print("{} Exiting to prevent accidental deletion of backup directory. {}".format(Fore.RED, Style.RESET_ALL))
-
-
+def clean_backup_dir(backup_path):
+	try:
+		shutil.rmtree(backup_path)
+		print("{} Deleted backup directory {} {}".format(Fore.BLUE, backup_path, Style.RESET_ALL))
+	except OSError as e:
+		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
 
 
 # custom help options
@@ -704,7 +698,11 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		      "Removed config file..." + Style.RESET_ALL)
 		sys.exit()
 	elif clean:
-		clean_backup_dir()
+		backup_home_path = get_config()["backup_path"]
+		if prompt_yes_no("Erase backup directory {}?".format(backup_home_path), Fore.RED):
+			clean_backup_dir(backup_home_path)
+		else:
+			print("{} Exiting to prevent accidental deletion of backup directory. {}".format(Fore.RED, Style.RESET_ALL))
 		sys.exit()
 
 	splash_screen()
