@@ -657,6 +657,19 @@ def prompt_for_path_update(config):
 		move_git_folder_to_path(current_path, abs_path)
 
 
+def clean_backup_dir():
+	backup_home_path = get_config()["backup_path"]
+	if prompt_yes_no("Erase backup directory {}?".format(backup_home_path), Fore.RED):
+		try:
+			shutil.rmtree(backup_home_path)
+			print("{} Deleted backup directory {} {}".format(Fore.BLUE, backup_home_path, Style.RESET_ALL))
+		except OSError as e:
+			print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
+	else:
+		print("{} Exiting to prevent accidental deletion of backup directory. {}".format(Fore.RED, Style.RESET_ALL))
+
+
+
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
@@ -672,7 +685,8 @@ def prompt_for_path_update(config):
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v):
+@click.option('-clean', is_flag=True, default=False, help='Remove backup directory.')
+def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v, clean):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
@@ -688,6 +702,9 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		os.remove(backup_config_path)
 		print(Fore.RED + Style.BRIGHT +
 		      "Removed config file..." + Style.RESET_ALL)
+		sys.exit()
+	elif clean:
+		clean_backup_dir()
 		sys.exit()
 
 	splash_screen()
