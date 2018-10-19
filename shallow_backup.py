@@ -618,15 +618,30 @@ def get_default_config():
 # CLI
 #######
 
+def move_git_folder_to_path(source_path, new_path):
+	"""
+	Moves git folder and .gitignore to the new backup directory.
+	"""
+	git_dir = os.path.join(source_path, '.git')
+	git_ignore_file = os.path.join(source_path, '.gitignore')
+
+	try:
+		shutil.move(git_dir, new_path)
+		shutil.move(git_ignore_file, new_path)
+		print(Fore.BLUE + Style.BRIGHT + "Moving git repo to new destination" + Style.RESET_ALL)
+	except FileNotFoundError:
+		pass
+
 
 def prompt_for_path_update(config):
 	"""
 	Ask user if they'd like to update the backup path or not.
 	If yes, update. If no... don't.
 	"""
+	current_path = config["backup_path"]
 	print(
 		Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(
-			config["backup_path"]) + Style.RESET_ALL)
+			current_path) + Style.RESET_ALL)
 
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
 		print(Fore.GREEN + Style.BRIGHT +
@@ -638,6 +653,9 @@ def prompt_for_path_update(config):
 			abs_path) + Style.RESET_ALL)
 		config["backup_path"] = abs_path
 		write_config(config)
+		make_dir_warn_overwrite(abs_path)
+		move_git_folder_to_path(current_path, abs_path)
+
 
 
 # custom help options
