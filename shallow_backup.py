@@ -229,6 +229,10 @@ def get_configs_path_mapping():
 	return {
 		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
 		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
+		"Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018-2",
+		"Library/Preferences/PyCharm2018.2/":"pycharm_2018-2",
+		"Library/Preferences/CLion2018.2/":"clion_2018-2",
+		"Library/Preferences/PhpStorm2018.2":"phpstorm_2018-2", 
 	}
 
 
@@ -249,18 +253,8 @@ def backup_configs(backup_path):
 	print_section_header("CONFIGS", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
 
-<<<<<<< HEAD
-	configs_dir_mapping = {"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
-						   "Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018-2",
-						   "Library/Preferences/PyCharm2018.2/":"pycharm_2018-2",
-						   "Library/Preferences/CLion2018.2/":"clion_2018-2",
-						   "Library/Preferences/PhpStorm2018.2":"phpstorm_2018-2",}
-	plist_files = ["Library/Preferences/com.apple.Terminal.plist"]
-=======
 	configs_dir_mapping = get_configs_path_mapping()
 	plist_files = [plist_map[0] for plist_map in get_plist_mapping()]
->>>>>>> upstream/master
 
 	# backup config dirs in backup_path/configs/<target>/
 	for config, target in configs_dir_mapping.items():
@@ -404,18 +398,8 @@ def reinstall_config_files(configs_path):
 	def backup_prefix(path):
 		return os.path.join(configs_path, path)
 
-<<<<<<< HEAD
-	configs_dir_mapping = {"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-						   "Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
-						   "Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018-2",
-						   "Library/Preferences/PyCharm2018.2/":"pycharm_2018-2",
-						   "Library/Preferences/CLion2018.2/":"clion_2018-2",
-						   "Library/Preferences/PhpStorm2018.2":"phpstorm_2018-2", }
-	plist_files = {"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist"}
-=======
 	configs_dir_mapping = get_configs_path_mapping()
 	plist_files = get_plist_mapping()
->>>>>>> upstream/master
 
 	for target, backup in configs_dir_mapping.items():
 		if os.path.isdir(backup_prefix(backup)):

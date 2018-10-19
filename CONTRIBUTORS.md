@@ -2,8 +2,5 @@
 
 - [Caleb Jasik](https://github.com/jasikpark)
 - [Moritz Schillinger](https://github.com/schilli91)
-<<<<<<< HEAD
 - [Brandon Temple](https://github.com/Brand-Temp)
-=======
 - [Peter Yasi](https://github.com/pyasi)
->>>>>>> upstream/master
