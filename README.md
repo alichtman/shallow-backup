@@ -83,6 +83,7 @@ Options:
   -reinstall_packages  Reinstall packages from package lists.
   -reinstall_configs   Reinstall configs from configs backup.
   -delete_config       Remove config file.
+  -remove_backup       Remove backup directory.
   -v                   Display version and author information and exit.
   -h, -help, --help    Show this message and exit.
 ```

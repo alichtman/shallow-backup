@@ -109,7 +109,8 @@ def backup_prompt():
                                         ' Back up fonts',
 	                                    ' Back up everything',
                                         ' Reinstall configs',
-	                                    ' Reinstall packages'
+	                                    ' Reinstall packages',
+	                                    	' Remove backup'
                                     	],
 	                           ),
 	             ]
@@ -464,6 +465,21 @@ def reinstall_package(packages_path):
 	print_section_header("SUCCESSFUL PACKAGE REINSTALLATION", Fore.BLUE)
 	sys.exit()
 
+def remove_backup_directory(backup_path):
+	"""
+	Completely remove the backup directory containing all files.
+	"""
+	if os.path.exists(backup_path):
+		if prompt_yes_no("Completely erase backup directory?", Fore.RED):
+			cmd = "rm -rf {0}".format(backup_path)
+			print(cmd)
+			result = sp.run(cmd, shell=True, stdout=sp.PIPE, stderr=sp.PIPE)
+			if result.returncode != 0 and result.stderr:
+				print(Fore.RED + "Failed to remove backup data." + Style.RESET_ALL)
+		else:
+			print(Fore.RED + "Exiting to prevent backup data deletion." + Style.RESET_ALL)
+		sys.exit()
+
 
 #####
 # Git
@@ -686,8 +702,9 @@ def prompt_for_path_update(config):
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages from package lists.")
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
+@click.option('-delete_backup', is_flag=True, default=False, help="Remove backup directory.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v):
+def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, delete_backup, v):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
@@ -745,7 +762,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	fonts_path = os.path.join(backup_home_path, "fonts")
 
 	# Command line options
-	if complete or dotfiles or configs or packages or fonts or reinstall_packages or reinstall_configs:
+	if complete or dotfiles or configs or packages or fonts or reinstall_packages or reinstall_configs or delete_backup:
 		if reinstall_packages:
 			reinstall_package(packages_path)
 		elif reinstall_configs:
@@ -760,6 +777,8 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 			backup_packages(packages_path)
 		elif fonts:
 			backup_fonts(fonts_path)
+		elif delete_backup:
+			remove_backup_directory(backup_home_path)
 
 		git_add_all_commit(repo, backup_home_path)
 		git_push_if_possible(repo)
@@ -782,6 +801,8 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 			reinstall_package(packages_path)
 		elif selection == "reinstall configs":
 			reinstall_config_files(configs_path)
+		elif selection == "remove backup":
+			remove_backup_directory(backup_home_path)
 
 		git_add_all_commit(repo, backup_home_path)
 		git_push_if_possible(repo)
