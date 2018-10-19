@@ -8,4 +8,5 @@ class Constants:
 	AUTHOR_EMAIL='aaronlichtman@gmail.com'
 	CONFIG_PATH='.shallow-backup'
 	INVALID_DIRS = [".Trash", ".npm", ".cache", ".rvm"]
+	PACKAGE_MANAGERS = ["gem", "brew-cask", "cargo", "npm", "pip", "brew", "apm"]
 

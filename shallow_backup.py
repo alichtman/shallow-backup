@@ -1,18 +1,18 @@
 import os
 import git
 import sys
-from glob import glob
 import json
 import click
-import inquirer
 import shutil
-from shutil import copy, copyfile
+import inquirer
+from glob import glob
 import subprocess as sp
+from pprint import pprint
 import multiprocessing as mp
 from os.path import expanduser
-from colorama import Fore, Style
-from pprint import pprint
 from constants import Constants
+from colorama import Fore, Style
+from shutil import copy, copyfile, copytree
 
 
 #########
@@ -124,7 +124,7 @@ def make_dir_warn_overwrite(path):
 
 def get_subfiles(directory):
 	"""
-	Returns list of immediate subfiles of a directory
+	Returns list of absolute paths of immediate subfiles of a directory
 	"""
 	file_paths = []
 	for path, subdirs, files in os.walk(directory):
@@ -139,40 +139,14 @@ def _copy_dir(source_dir, backup_path):
 	"""
 	invalid = set(Constants.INVALID_DIRS)
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
-		return
+		pass
 
-	# TODO: REPLACE WITH COPY AND COPY_FILE
 	if "Application\ Support" not in source_dir:
-		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-2] + "'"
+		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-2]), symlinks=True)
 	elif "Sublime" in source_dir:
-		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-3] + "'"
+		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-3]), symlinks=True)
 	else:
-		command = "cp -a '" + source_dir + "' '" + backup_path + "/'"
-
-	process = sp.run(command, shell=True, stdout=sp.PIPE)
-	return process
-
-
-# TODO: Refactor this method out? I think there was a good reason for it, idk. Check @schilli's PR
-def _copy_dir_content(source, target):
-	"""
-	Copies the contents of a dir to a specified target path.
-	"""
-	# TODO: REPLACE WITH COPY AND COPY_FILE
-	cmd = "cp -a '" + source + "' '" + target + "/'"
-	# print(cmd)
-	sp.run(cmd, shell=True, stdout=sp.PIPE)
-
-
-def _copy_file(source, target):
-	"""
-	Copy dotfile from $HOME.
-	"""
-	# TODO: REPLACE WITH COPY AND COPY_FILE
-	command = "cp -a '" + source + "' '" + target + "'"
-	# print(command)
-	process = sp.run(command, shell=True, stdout=sp.PIPE)
-	return process
+		copytree(source_dir, backup_path, symlinks=True)
 
 
 def _mkdir_or_pass(dir):
@@ -234,15 +208,15 @@ def backup_dotfiles(backup_path):
 		os.path.join(home_path, folder))]
 
 	# dotfiles/folders multiprocessing format: [(full_dotfile_path, full_dest_path), ...]
-
 	dotfolders_mp_in = []
 	for dotfolder in dotfolders:
 		dotfolders_mp_in.append(
 			(os.path.join(home_path, dotfolder), backup_path))
 
+
 	dotfiles_mp_in = []
 	for dotfile in dotfiles:
-		dotfiles_mp_in.append((os.path.join(home_path, dotfile), backup_path))
+		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
 
 	####
 	# Back up System and Application Preferences and Settings
@@ -257,15 +231,9 @@ def backup_dotfiles(backup_path):
 	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 3")):
 		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 3/Packages/User"), backup_path))
 
-	# pprint(dotfiles_mp_in)
-	# pprint(dotfolders_mp_in)
-
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
-
-		print(Fore.BLUE + Style.BRIGHT +
-			  "Backing up dotfolders..." + Style.RESET_ALL)
-
+		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
 		for x in dotfolders_mp_in:
 			x = list(x)
 			mp.Process(target=_copy_dir, args=(x[0], x[1],)).start()
@@ -275,7 +243,7 @@ def backup_dotfiles(backup_path):
 			  "Backing up dotfiles..." + Style.RESET_ALL)
 		for x in dotfiles_mp_in:
 			x = list(x)
-			mp.Process(target=_copy_file, args=(x[0], x[1],)).start()
+			mp.Process(target=shutil.copyfile, args=(x[0], x[1],)).start()
 
 
 def backup_configs(backup_path):
@@ -295,14 +263,14 @@ def backup_configs(backup_path):
 		if os.path.isdir(_home_prefix(config)):
 			configs_backup_path = os.path.join(backup_path, target)
 			_mkdir_or_pass(configs_backup_path)
-			_copy_dir_content(_home_prefix(config), configs_backup_path)
+			copytree(_home_prefix(config), configs_backup_path)
 
 	# backup plist files in backup_path/configs/plist/
 	plist_backup_path = os.path.join(backup_path, "plist")
 	_mkdir_or_pass(plist_backup_path)
 	for plist in plist_files:
 		if os.path.exists(_home_prefix(plist)):
-			_copy_dir_content(_home_prefix(plist), plist_backup_path)
+			copytree(_home_prefix(plist), plist_backup_path)
 
 
 def backup_packages(backup_path):
@@ -443,11 +411,11 @@ def reinstall_config_files(configs_path):
 
 	for target, backup in configs_dir_mapping.items():
 		if os.path.isdir(backup_prefix(backup)):
-			_copy_dir_content(backup_prefix(backup), _home_prefix(target))
+			copytree(backup_prefix(backup), _home_prefix(target))
 
 	for target, backup in plist_files.items():
 		if os.path.exists(backup_prefix(backup)):
-			_copy_file(backup_prefix(backup), _home_prefix(target))
+			copyfile(backup_prefix(backup), _home_prefix(target))
 
 	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", Fore.BLUE)
 	sys.exit()
@@ -461,39 +429,38 @@ def reinstall_package(packages_path):
 
 	# Figure out which install lists they have saved
 	package_mgrs = set()
-	for file in get_subfiles(packages_path):
+	for file in os.listdir(packages_path):
 		# print(file)
 		manager = file.split("_")[0].replace("-", " ")
-		if manager != "installed":
+		if manager in Constants.PACKAGE_MANAGERS:
 			package_mgrs.add(file.split("_")[0])
 
-	print(Fore.BLUE + "Package Managers detected:" + Style.RESET_ALL)
-	pprint(package_mgrs)
+	print(Fore.BLUE + Style.BRIGHT + "Package Managers detected:" + Style.RESET_ALL)
+	for mgr in package_mgrs:
+		print(Fore.BLUE + Style.BRIGHT + "\t" + mgr)
+	print(Style.RESET_ALL)
 
 	# construct commands
 	for pm in package_mgrs:
 		if pm in ["brew", "brew-cask"]:
-			cmd = "xargs {0} install < {1}/{2}_list.txt".format(
-				pm.replace("-", " "), packages_path, pm)
-			print(cmd)
-			sp.run(cmd, shell=True, stdout=sp.PIPE)
+			pm_formatted = pm.replace("-", " ")
+			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm_formatted) + Style.RESET_ALL)
+			cmd = "xargs {0} install < {1}/{2}_list.txt".format(pm.replace("-", " "), packages_path, pm_formatted)
+			run_shell_cmd(cmd)
 		elif pm == "npm":
-			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(
-				packages_path)
-			print(cmd)
-			sp.run(cmd, shell=True, stdout=sp.PIPE)
+			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(packages_path)
+			run_shell_cmd(cmd)
 		elif pm == "pip":
+			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
 			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
-			print(cmd)
-			sp.run(cmd, shell=True, stdout=sp.PIPE)
+			run_shell_cmd(cmd)
 		elif pm == "apm":
-			cmd = "apm install --packages-file {0}/apm_list.txt".format(
-				packages_path)
-			print(cmd)
-			sp.run(cmd, shell=True, stdout=sp.PIPE)
+			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			cmd = "apm install --packages-file {0}/apm_list.txt".format(packages_path)
+			run_shell_cmd(cmd)
 		elif pm == "macports":
-			print(
-				Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
+			print(Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
 		elif pm == "gem":
 			print(
 				Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
@@ -647,8 +614,8 @@ def get_default_config():
 			".zshrc"
 		],
 		"dotfolders" : [
-			".ssh/",
-			".vim/"
+			".ssh",
+			".vim"
 		],
 		"gitignore"  : [
 			"dotfiles/.ssh",
@@ -752,7 +719,6 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
-
 	backup_config_path = get_config_path()
 
 	# Print version information
