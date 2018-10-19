@@ -3,15 +3,21 @@ import git
 import sys
 import json
 import click
-import inquirer
 import shutil
+import inquirer
+from glob import glob
 import subprocess as sp
+from pprint import pprint
 import multiprocessing as mp
 from os.path import expanduser
-from colorama import Fore, Style
-from pprint import pprint
 from constants import Constants
+from colorama import Fore, Style
+from shutil import copy, copyfile, copytree
 
+
+#########
+# Display
+#########
 
 def print_version_info():
 	version = "{} v{} by {} -> (Github: {})".format(Constants.PROJECT_NAME,
@@ -28,17 +34,18 @@ def splash_screen():
 	"""
 	Display splash graphic, and then version info
 	"""
-	print(Fore.YELLOW + Style.BRIGHT + "\n" +
-		  "            dP                dP dP                        dP                         dP                         \n" +
-		  "            88                88 88                        88                         88                         \n" +
-		  "   ,d8888'  88d888b. .d8888b. 88 88 .d8888b. dP  dP  dP    88d888b. .d8888b. .d8888b. 88  .dP  dP    dP 88d888b. \n" +
-		  "   Y8ooooo, 88'  `88 88'  `88 88 88 88'  `88 88  88  88    88'  `88 88'  `88 88'  `\"\" 88888\"   88    88 88'  `88 \n" +
-		  "         88 88    88 88.  .88 88 88 88.  .88 88.88b.88'    88.  .88 88.  .88 88.  ... 88  `8b. 88.  .88 88.  .88 \n" +
-		  "   `88888P' dP    dP `88888P8 dP dP `88888P' 8888P Y8P     88Y8888' `88888P8 `88888P' dP   `YP `88888P' 88Y888P' \n" +
-		  "                                                                                                        88		\n" +
-		  "                                                                                                        dP		\n" + Style.RESET_ALL)
-
+	print(Fore.YELLOW + Style.BRIGHT + "\n" + Constants.LOGO + Style.RESET_ALL)
 	print_version_info()
+
+
+def print_section_header(title, COLOR):
+	"""
+	Prints variable sized section header
+	"""
+	block = "#" * (len(title) + 2)
+	print("\n" + COLOR + Style.BRIGHT + block)
+	print("#", title)
+	print(block + "\n" + Style.RESET_ALL)
 
 
 def prompt_yes_no(message, color):
@@ -56,26 +63,35 @@ def prompt_yes_no(message, color):
 	answers = inquirer.prompt(questions)
 	return answers.get('choice').strip().lower() == 'yes'
 
-
-def print_section_header(title, COLOR):
-	"""
-	Prints variable sized section header
-	"""
-	block = "#" * (len(title) + 2)
-	print("\n" + COLOR + Style.BRIGHT + block)
-	print("#", title)
-	print(block + "\n" + Style.RESET_ALL)
+###########
+# Utilities
+###########
 
 
-def get_subfiles(directory):
+def run_shell_cmd(command):
 	"""
-	Returns list of immediate subfiles of a directory
+	Wrapper on subprocess.run that handles both lists and strings as commands.
 	"""
-	file_paths = []
-	for path, subdirs, files in os.walk(directory):
-		for name in files:
-			file_paths.append(os.path.join(path, name))
-	return file_paths
+	try:
+		if not isinstance(command, list):
+			process = sp.run(command.split(), stdout=sp.PIPE)
+			return process
+		else:
+			process = sp.run(command, stdout=sp.PIPE)
+			return process
+	except FileNotFoundError: # If package manager is missing
+		return None
+
+
+def run_shell_cmd_write_stdout_to_file(command, filepath):
+	"""
+	Runs a command and then writes its stdout to a file
+	:param: command String representing command to run and write output of to file
+	"""
+	process = run_shell_cmd(command)
+	if process:
+		with open(filepath, "w+") as f:
+			f.write(process.stdout.decode('utf-8'))
 
 
 def make_dir_warn_overwrite(path):
@@ -97,26 +113,15 @@ def make_dir_warn_overwrite(path):
 		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
 
 
-def backup_prompt():
+def get_subfiles(directory):
 	"""
-	Use pick library to prompt user with choice of what to backup.
+	Returns list of absolute paths of immediate subfiles of a directory
 	"""
-	questions = [inquirer.List('choice',
-	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
-	                           choices=[' Back up dotfiles',
-                                        ' Back up configs',
-	                                    ' Back up packages',
-                                        ' Back up fonts',
-	                                    ' Back up everything',
-                                        ' Reinstall configs',
-	                                    ' Reinstall packages',
-										' Destroy backup'
-                                    	],
-	                           ),
-	             ]
-
-	answers = inquirer.prompt(questions)
-	return answers.get('choice').strip().lower()
+	file_paths = []
+	for path, subdirs, files in os.walk(directory):
+		for name in files:
+			file_paths.append(os.path.join(path, name))
+	return file_paths
 
 
 def _copy_dir(source_dir, backup_path):
@@ -128,24 +133,11 @@ def _copy_dir(source_dir, backup_path):
 		return
 
 	if "Application\ Support" not in source_dir:
-		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-2] + "'"
+		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-2]), symlinks=True)
 	elif "Sublime" in source_dir:
-		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-3] + "'"
+		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-3]), symlinks=True)
 	else:
-		command = "cp -a '" + source_dir + "' '" + backup_path + "/'"
-
-	process = sp.run(command, shell=True, stdout=sp.PIPE)
-	return process
-
-
-def _copy_file(source, target):
-	"""
-	Copy dotfile from $HOME.
-	"""
-	command = "cp -a '" + source + "' '" + target + "'"
-	# print(command)
-	process = sp.run(command, shell=True, stdout=sp.PIPE)
-	return process
+		copytree(source_dir, backup_path, symlinks=True)
 
 
 def _mkdir_or_pass(dir):
@@ -158,11 +150,37 @@ def _home_prefix(path):
 	return os.path.join(os.path.expanduser('~'), path)
 
 
+################
+# BACKUP METHODS
+################
+
+def get_configs_path_mapping():
+	"""
+	Gets a dictionary mapping directories to back up to their destination path.
+	"""
+	return {
+		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
+		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
+		"Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018.2",
+		"Library/Preferences/PyCharm2018.2/":"pycharm_2018.2",
+		"Library/Preferences/CLion2018.2/":"clion_2018.2",
+		"Library/Preferences/PhpStorm2018.2":"phpstorm_2018.2",
+	}
+
+
+def get_plist_mapping():
+	"""
+	Gets a dictionary mapping plist files to back up to their destination path.
+	"""
+	return {
+		"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist"
+	}
+
+
 def backup_dotfiles(backup_path):
 	"""
 	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
 	"""
-
 	print_section_header("DOTFILES", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
 
@@ -181,19 +199,21 @@ def backup_dotfiles(backup_path):
 		os.path.join(home_path, folder))]
 
 	# dotfiles/folders multiprocessing format: [(full_dotfile_path, full_dest_path), ...]
-
 	dotfolders_mp_in = []
 	for dotfolder in dotfolders:
 		dotfolders_mp_in.append(
 			(os.path.join(home_path, dotfolder), backup_path))
 
+
 	dotfiles_mp_in = []
 	for dotfile in dotfiles:
-		dotfiles_mp_in.append((os.path.join(home_path, dotfile), backup_path))
+		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
 
 	####
 	# Back up System and Application Preferences and Settings
 	####
+
+	# TODO: Extract these paths to constants
 
 	# Sublime Text Configs
 	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 2")):
@@ -202,15 +222,9 @@ def backup_dotfiles(backup_path):
 	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 3")):
 		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 3/Packages/User"), backup_path))
 
-	# pprint(dotfiles_mp_in)
-	# pprint(dotfolders_mp_in)
-
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
-
-		print(Fore.BLUE + Style.BRIGHT +
-			  "Backing up dotfolders..." + Style.RESET_ALL)
-
+		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
 		for x in dotfolders_mp_in:
 			x = list(x)
 			mp.Process(target=_copy_dir, args=(x[0], x[1],)).start()
@@ -220,26 +234,7 @@ def backup_dotfiles(backup_path):
 			  "Backing up dotfiles..." + Style.RESET_ALL)
 		for x in dotfiles_mp_in:
 			x = list(x)
-			mp.Process(target=_copy_file, args=(x[0], x[1],)).start()
-
-
-def get_configs_path_mapping():
-	"""
-	Gets a dictionary mapping directories to back up to their destination path.
-	"""
-	return {
-		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
-	}
-
-
-def get_plist_mapping():
-	"""
-	Gets a dictionary mapping plist files to back up to their destination path.
-	"""
-	return {
-		"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist"
-	}
+			mp.Process(target=shutil.copyfile, args=(x[0], x[1],)).start()
 
 
 def backup_configs(backup_path):
@@ -251,103 +246,107 @@ def backup_configs(backup_path):
 	make_dir_warn_overwrite(backup_path)
 
 	configs_dir_mapping = get_configs_path_mapping()
-	plist_files = [plist_map[0] for plist_map in get_plist_mapping()]
+	plist_files = get_plist_mapping().keys()
 
+	# TODO: Stop SUBLIME folders from being called `Packages`
 	# backup config dirs in backup_path/configs/<target>/
 	for config, target in configs_dir_mapping.items():
 		if os.path.isdir(_home_prefix(config)):
 			configs_backup_path = os.path.join(backup_path, target)
 			_mkdir_or_pass(configs_backup_path)
-			_copy_dir_content(_home_prefix(config), configs_backup_path)
+			copytree(_home_prefix(config), configs_backup_path)
 
 	# backup plist files in backup_path/configs/plist/
 	plist_backup_path = os.path.join(backup_path, "plist")
 	_mkdir_or_pass(plist_backup_path)
 	for plist in plist_files:
 		if os.path.exists(_home_prefix(plist)):
-			_copy_dir_content(_home_prefix(plist), plist_backup_path)
-
-
-def _copy_dir_content(source, target):
-	"""
-	Copies the contents of a dir to a specified target path.
-	"""
-	cmd = "cp -a '" + source + "' '" + target + "/'"
-	# print(cmd)
-	sp.run(cmd, shell=True, stdout=sp.PIPE)
+			copytree(_home_prefix(plist), plist_backup_path)
 
 
 def backup_packages(backup_path):
 	"""
 	Creates `packages` directory and places install list text files there.
 	"""
-
 	print_section_header("PACKAGES", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
 
-	std_backup_package_managers = [
+	std_package_managers = [
 		"brew",
 		"brew cask",
 		"gem"
 	]
 
-	for mgr in std_backup_package_managers:
+	for mgr in std_package_managers:
 		# deal with package managers that have spaces in them.
 		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
-		command = "{0} list > {1}/{2}_list.txt".format(mgr,
-		                                               backup_path, mgr.replace(" ", "-"), True)
-		sp.run(command, shell=True, stdout=sp.PIPE)
+		command = "{} list".format(mgr)
+		dest = "{}/{}_list.txt".format(backup_path, mgr.replace(" ", "-"))
+		run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# cargo
-	print(Fore.BLUE + "Backing up cargo package list..." + Style.RESET_ALL)
-	sp.run("ls {0}/.cargo/bin/ > {1}/cargo_list.txt".format(os.path.expanduser('~'),
-	                                                        backup_path), shell=True, stdout=sp.PIPE)
+	print(Fore.BLUE + "Backing up cargo packages..." + Style.RESET_ALL)
+	command = "ls {}".format(_home_prefix(".cargo/bin/"))
+	dest = "{}/cargo_list.txt".format(backup_path)
+	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# pip
-	print(Fore.BLUE + "Backing up pip package list..." + Style.RESET_ALL)
-	sp.run("pip list --format=freeze > {}/pip_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	print(Fore.BLUE + "Backing up pip packages..." + Style.RESET_ALL)
+	command = "pip list --format=freeze".format(backup_path)
+	dest = "{}/pip_list.txt".format(backup_path)
+	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# npm
-	print(Fore.BLUE + "Backing up npm package list..." + Style.RESET_ALL)
-	sp.run("npm ls --global --parseable=true --depth=0 > {}/npm_temp_list.txt".format(backup_path),
-	       shell=True, stdout=sp.PIPE)
+	print(Fore.BLUE + "Backing up npm packages..." + Style.RESET_ALL)
+	command = "npm ls --global --parseable=true --depth=0"
+	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
+	run_shell_cmd_write_stdout_to_file(command, temp_file_path)
+	npm_dest_file = "{0}/npm_list.txt".format(backup_path)
 	# Parse npm output
-	with open("{0}/npm_temp_list.txt".format(backup_path), mode="r+") as f:
+	with open(temp_file_path, mode="r+") as temp_file:
 		# Skip first line of file
-		skip = True
-		sp.run("touch {0}/npm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
-		with open("{0}/npm_list.txt".format(backup_path), mode="r+") as dest:
-			for line in f:
-				if not skip:
-					dest.write(line.split("/")[-1])
-				skip = False
+		temp_file.seek(1)
+		with open(npm_dest_file, mode="w+") as dest:
+			for line in temp_file:
+				dest.write(line.split("/")[-1])
 
-	# remove temp file
-	os.remove("{}/npm_temp_list.txt".format(backup_path))
+	os.remove(temp_file_path)
 
 	# atom package manager
-	print(Fore.BLUE + "Backing up Atom package list..." + Style.RESET_ALL)
-	sp.run("apm list --installed --bare > {}/apm_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	print(Fore.BLUE + "Backing up Atom packages..." + Style.RESET_ALL)
+	command = "apm list --installed --bare"
+	dest = "{}/apm_list.txt".format(backup_path)
+	run_shell_cmd_write_stdout_to_file(command, dest)
 
-	# sublime text packages
-	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 2")):
-		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
-		source_path = _home_prefix("Library/Application Support/Sublime Text 2/Packages/")
-		sp.run("ls {} > {}/sublime2_list.txt".format(source_path, backup_path), shell=True, stdout=sp.PIPE)
+	# sublime text 2 packages
+	sublime_2_path = _home_prefix("Library/Application Support/Sublime Text 2/Packages/")
+	if os.path.isdir(sublime_2_path):
+		print(Fore.BLUE + "Backing up Sublime Text 2 packages..." + Style.RESET_ALL)
+		command = ["ls", sublime_2_path]
+		dest = "{}/sublime2_list.txt".format(backup_path)
+		run_shell_cmd_write_stdout_to_file(command, dest)
 
-	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 3")):
-		print(Fore.BLUE + "Backing up Sublime Text package list..." + Style.RESET_ALL)
-		source_path = _home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
-		sp.run("ls {} > {}/sublime3_list.txt".format(source_path, backup_path), shell=True, stdout=sp.PIPE)
+	# sublime text 3 packages
+	sublime_3_path = _home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
+	if os.path.isdir(sublime_3_path):
+		print(Fore.BLUE + "Backing up Sublime Text 3 packages..." + Style.RESET_ALL)
+		command = ["ls", sublime_3_path]
+		dest = "{}/sublime3_list.txt".format(backup_path)
+		run_shell_cmd_write_stdout_to_file(command, dest)
+	else:
+		print(sublime_3_path, "IS NOT DIR")
 
 	# macports
-	print(Fore.BLUE + "Backing up macports package list..." + Style.RESET_ALL)
-	sp.run("port installed requested > {}/macports_list.txt".format(backup_path),
-	       shell=True, stdout=sp.PIPE)
+	print(Fore.BLUE + "Backing up macports packages..." + Style.RESET_ALL)
+	command = "port installed requested"
+	dest = "{}/macports_list.txt".format(backup_path)
+	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# system installs
-	print(Fore.BLUE + "Backing up system application list..." + Style.RESET_ALL)
-	sp.run("ls /Applications/ > {}/installed_apps_list.txt".format(backup_path), shell=True, stdout=sp.PIPE)
+	print(Fore.BLUE + "Documenting system applications..." + Style.RESET_ALL)
+	command = "ls /Applications/"
+	dest = "{}/system_apps_list.txt".format(backup_path)
+	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# Clean up empty package list files
 	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
@@ -358,22 +357,20 @@ def backup_packages(backup_path):
 
 def backup_fonts(path):
 	"""
-	Creates list of all .ttf and .otf files in ~/Library/Fonts
+	Creates list of all .ttf and .otf files in ~/Library/Fonts/
 	"""
-
 	print_section_header("FONTS", Fore.BLUE)
 	make_dir_warn_overwrite(path)
-
-	# Copy fonts
 	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
-	copy_ttf = "cp ~/Library/Fonts/*.ttf {}/".format(path)
-	copy_otf = "cp ~/Library/Fonts/*.otf {}/".format(path)
+	fonts_path = _home_prefix("/Library/Fonts/")
+	# TODO: For some reason, this doesn't get all the fonts in fonts_path dir
+	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if font.endswith(".otf") or font.endswith(".ttf")]
 
-	print(copy_otf)
-	print(copy_ttf, "\n")
-
-	sp.run(copy_otf, shell=True, stdout=sp.PIPE)
-	sp.run(copy_ttf, shell=True, stdout=sp.PIPE)
+	# pprint(fonts)
+	for font in fonts:
+		# print(font, " TO ", os.path.join(path, font.split("/")[-1]))
+		if os.path.exists(font):
+			copyfile(font, os.path.join(path, font.split("/")[-1]))
 
 
 def backup_all(dotfiles_path, packages_path, fonts_path, configs_path):
@@ -384,6 +381,11 @@ def backup_all(dotfiles_path, packages_path, fonts_path, configs_path):
 	backup_packages(packages_path)
 	backup_fonts(fonts_path)
 	backup_configs(configs_path)
+
+
+################
+# Reinstallation
+################
 
 
 def reinstall_config_files(configs_path):
@@ -400,11 +402,11 @@ def reinstall_config_files(configs_path):
 
 	for target, backup in configs_dir_mapping.items():
 		if os.path.isdir(backup_prefix(backup)):
-			_copy_dir_content(backup_prefix(backup), _home_prefix(target))
+			copytree(backup_prefix(backup), _home_prefix(target))
 
 	for target, backup in plist_files.items():
 		if os.path.exists(backup_prefix(backup)):
-			_copy_file(backup_prefix(backup), _home_prefix(target))
+			copyfile(backup_prefix(backup), _home_prefix(target))
 
 	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", Fore.BLUE)
 	sys.exit()
@@ -418,39 +420,38 @@ def reinstall_package(packages_path):
 
 	# Figure out which install lists they have saved
 	package_mgrs = set()
-	for file in get_subfiles(packages_path):
+	for file in os.listdir(packages_path):
 		# print(file)
 		manager = file.split("_")[0].replace("-", " ")
-		if manager != "installed":
+		if manager in Constants.PACKAGE_MANAGERS:
 			package_mgrs.add(file.split("_")[0])
 
-	print(Fore.BLUE + "Package Managers detected:" + Style.RESET_ALL)
-	pprint(package_mgrs)
+	print(Fore.BLUE + Style.BRIGHT + "Package Managers detected:" + Style.RESET_ALL)
+	for mgr in package_mgrs:
+		print(Fore.BLUE + Style.BRIGHT + "\t" + mgr)
+	print(Style.RESET_ALL)
 
 	# construct commands
 	for pm in package_mgrs:
 		if pm in ["brew", "brew-cask"]:
-			cmd = "xargs {0} install < {1}/{2}_list.txt".format(
-				pm.replace("-", " "), packages_path, pm)
-			print(cmd)
-			sp.run(cmd, shell=True, stdout=sp.PIPE)
+			pm_formatted = pm.replace("-", " ")
+			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm_formatted) + Style.RESET_ALL)
+			cmd = "xargs {0} install < {1}/{2}_list.txt".format(pm.replace("-", " "), packages_path, pm_formatted)
+			run_shell_cmd(cmd)
 		elif pm == "npm":
-			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(
-				packages_path)
-			print(cmd)
-			sp.run(cmd, shell=True, stdout=sp.PIPE)
+			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(packages_path)
+			run_shell_cmd(cmd)
 		elif pm == "pip":
+			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
 			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
-			print(cmd)
-			sp.run(cmd, shell=True, stdout=sp.PIPE)
+			run_shell_cmd(cmd)
 		elif pm == "apm":
-			cmd = "apm install --packages-file {0}/apm_list.txt".format(
-				packages_path)
-			print(cmd)
-			sp.run(cmd, shell=True, stdout=sp.PIPE)
+			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			cmd = "apm install --packages-file {0}/apm_list.txt".format(packages_path)
+			run_shell_cmd(cmd)
 		elif pm == "macports":
-			print(
-				Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
+			print(Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
 		elif pm == "gem":
 			print(
 				Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
@@ -560,9 +561,9 @@ def git_push_if_possible(repo):
 		origin.push(refspec='master:master')
 
 
-######
+########
 # Config
-######
+########
 
 
 def get_config_path():
@@ -604,8 +605,8 @@ def get_default_config():
 			".zshrc"
 		],
 		"dotfolders" : [
-			".ssh/",
-			".vim/"
+			".ssh",
+			".vim"
 		],
 		"gitignore"  : [
 			"dotfiles/.ssh",
@@ -613,6 +614,18 @@ def get_default_config():
 			"dotfiles/.pypirc",
 		]
 	}
+
+
+def create_config_file_if_needed():
+	"""
+	Creates config file if it doesn't exist already.
+	"""
+	backup_config_path = get_config_path()
+	if not os.path.exists(backup_config_path):
+		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
+		backup_config = get_default_config()
+		write_config(backup_config)
+
 
 
 #######
@@ -668,6 +681,27 @@ def destroy_backup_dir(backup_path):
 	except OSError as e:
 		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
 
+def backup_prompt():
+	"""
+	Use pick library to prompt user with choice of what to backup.
+	"""
+	questions = [inquirer.List('choice',
+	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
+	                           choices=[' Back up dotfiles',
+                                        ' Back up configs',
+	                                    ' Back up packages',
+                                        ' Back up fonts',
+	                                    ' Back up everything',
+                                        ' Reinstall configs',
+	                                    ' Reinstall packages',
+                                        ' Destroy backup'
+                                    	],
+	                           ),
+	             ]
+
+	answers = inquirer.prompt(questions)
+	return answers.get('choice').strip().lower()
+
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
@@ -688,7 +722,6 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
-
 	backup_config_path = get_config_path()
 
 	# Print version information
@@ -708,16 +741,11 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 
 	splash_screen()
 
-	# If config file doesn't exist, create it.
-	if not os.path.exists(backup_config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
-		backup_config = get_default_config()
-		write_config(backup_config)
-
 	#####
 	# Update backup path from CLI args, prompt user, or skip updating
 	#####
 
+	create_config_file_if_needed()
 	backup_config = get_config()
 
 	# User entered a new path, so update the config
@@ -729,12 +757,10 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		backup_config["backup_path"] = abs_path
 		write_config(backup_config)
 
-	# User didn't enter the same_path flag but entered a backup option, so no path update prompt
-	elif old_path or complete or dotfiles or packages or fonts:
-		pass
-	# User didn't enter a new path, didn't use the same_path flag or any backup options, so prompt
-	else:
+	# User didn't enter any CLI args so prompt for path update before showing menu
+	elif not (old_path or complete or dotfiles or packages or fonts):
 		prompt_for_path_update(backup_config)
+
 
 	###
 	# Create backup directory and set up git stuff
