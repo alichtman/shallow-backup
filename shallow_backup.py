@@ -542,7 +542,8 @@ def git_add_all_commit(repo, dir_path):
 	packages_path = os.path.join(dir_path, "packages")
 	configs_path = os.path.join(dir_path, "configs")
 	gitignore_path = os.path.join(dir_path, ".gitignore")
-	repo.index.add([gitignore_path])
+	if os.path.exists(gitignore_path):
+		repo.index.add([gitignore_path])
 	if os.path.exists(dotfiles_path):
 		repo.index.add([dotfiles_path])
 	if os.path.exists(fonts_path):
