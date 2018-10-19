@@ -1,10 +1,12 @@
 import os
 import git
 import sys
+from glob import glob
 import json
 import click
 import inquirer
 import shutil
+from shutil import copy, copyfile
 import subprocess as sp
 import multiprocessing as mp
 from os.path import expanduser
@@ -139,6 +141,7 @@ def _copy_dir(source_dir, backup_path):
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
 
+	# TODO: REPLACE WITH COPY AND COPY_FILE
 	if "Application\ Support" not in source_dir:
 		command = "cp -aRp '" + source_dir + "' '" + backup_path + "/" + source_dir.split("/")[-2] + "'"
 	elif "Sublime" in source_dir:
@@ -155,6 +158,7 @@ def _copy_dir_content(source, target):
 	"""
 	Copies the contents of a dir to a specified target path.
 	"""
+	# TODO: REPLACE WITH COPY AND COPY_FILE
 	cmd = "cp -a '" + source + "' '" + target + "/'"
 	# print(cmd)
 	sp.run(cmd, shell=True, stdout=sp.PIPE)
@@ -164,6 +168,7 @@ def _copy_file(source, target):
 	"""
 	Copy dotfile from $HOME.
 	"""
+	# TODO: REPLACE WITH COPY AND COPY_FILE
 	command = "cp -a '" + source + "' '" + target + "'"
 	# print(command)
 	process = sp.run(command, shell=True, stdout=sp.PIPE)
@@ -211,7 +216,6 @@ def backup_dotfiles(backup_path):
 	"""
 	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
 	"""
-
 	print_section_header("DOTFILES", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
 
@@ -243,6 +247,8 @@ def backup_dotfiles(backup_path):
 	####
 	# Back up System and Application Preferences and Settings
 	####
+
+	# TODO: Extract these paths to constants
 
 	# Sublime Text Configs
 	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 2")):
@@ -280,11 +286,10 @@ def backup_configs(backup_path):
 	print_section_header("CONFIGS", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
 
-	# TODO: Fix this method
-
 	configs_dir_mapping = get_configs_path_mapping()
-	plist_files = [plist_map[0] for plist_map in get_plist_mapping()]
+	plist_files = get_plist_mapping().keys()
 
+	# TODO: Stop SUBLIME folders from being called `Packages`
 	# backup config dirs in backup_path/configs/<target>/
 	for config, target in configs_dir_mapping.items():
 		if os.path.isdir(_home_prefix(config)):
@@ -304,17 +309,16 @@ def backup_packages(backup_path):
 	"""
 	Creates `packages` directory and places install list text files there.
 	"""
-
 	print_section_header("PACKAGES", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
 
-	std_backup_package_managers = [
+	std_package_managers = [
 		"brew",
 		"brew cask",
 		"gem"
 	]
 
-	for mgr in std_backup_package_managers:
+	for mgr in std_package_managers:
 		# deal with package managers that have spaces in them.
 		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
 		command = "{} list".format(mgr)
@@ -394,13 +398,20 @@ def backup_packages(backup_path):
 
 def backup_fonts(path):
 	"""
-	Creates list of all .ttf and .otf files in ~/Library/Fonts
+	Creates list of all .ttf and .otf files in ~/Library/Fonts/
 	"""
 	print_section_header("FONTS", Fore.BLUE)
 	make_dir_warn_overwrite(path)
 	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
-	run_shell_cmd("cp ~/Library/Fonts/*.ttf {}/".format(path))
-	run_shell_cmd("cp ~/Library/Fonts/*.otf {}/".format(path))
+	fonts_path = _home_prefix("/Library/Fonts/")
+	# TODO: For some reason, this doesn't get all the fonts in fonts_path dir
+	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if font.endswith(".otf") or font.endswith(".ttf")]
+
+	# pprint(fonts)
+	for font in fonts:
+		# print(font, " TO ", os.path.join(path, font.split("/")[-1]))
+		if os.path.exists(font):
+			copyfile(font, os.path.join(path, font.split("/")[-1]))
 
 
 def backup_all(dotfiles_path, packages_path, fonts_path, configs_path):
