@@ -84,6 +84,7 @@ Options:
   -reinstall_configs   Reinstall configs from configs backup.
   -delete_config       Remove config file.
   -v                   Display version and author information and exit.
+  -destroy_backup      Removes the backup directory and its content.
   -h, -help, --help    Show this message and exit.
 ```
 
