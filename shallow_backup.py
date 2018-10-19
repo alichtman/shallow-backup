@@ -791,7 +791,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		elif selection == "reinstall configs":
 			reinstall_config_files(configs_path)
 		elif selection == "destroy backup":
-			if prompt_yes_no("Erase backup directory {}?".format(backup_home_path), Fore.RED):
+			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
 				destroy_backup_dir(backup_home_path)
 			else:
 				print("{} Exiting to prevent accidental deletion of backup directory... {}".format(

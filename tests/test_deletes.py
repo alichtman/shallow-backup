@@ -4,7 +4,7 @@ import shutil
 from shallow_backup import destroy_backup_dir
 
 BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
-TEST_BACKUP_TEXT_FILE = BACKUP_DIR + '/test-file.txt'
+TEST_BACKUP_TEXT_FILE = os.path.join(BACKUP_DIR, 'test-file.txt')
 DIRS = [BACKUP_DIR]
 
 
