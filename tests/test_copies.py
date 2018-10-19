@@ -4,8 +4,8 @@ import shutil
 from shallow_backup import _copy_file, _copy_dir
 from constants import Constants
 
-DIR_TO_BACKUP = 'shallow-backup-test-dir'
-BACKUP_DIR = 'shallow-backup-test-backup-dir'
+DIR_TO_BACKUP = 'shallow-backup-test-copy-dir'
+BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
 TEST_TEXT_FILE = 'test-file.txt'
 DIRS = [DIR_TO_BACKUP, BACKUP_DIR]
 
@@ -26,8 +26,8 @@ class TestCopyMethods:
         f.close()
 
     def teardown_method(self):
-        shutil.rmtree(DIR_TO_BACKUP)
-        shutil.rmtree(BACKUP_DIR)
+        for directory in DIRS:
+            shutil.rmtree(directory)
         os.remove(TEST_TEXT_FILE)
 
     def test_copy_file(self):
