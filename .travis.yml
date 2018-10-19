@@ -1,8 +1,13 @@
+sudo: false
 language: python
-os: osx
+python:
+  - "3.6"
+install:
+  - pip install pipenv
+  - pipenv install --dev
+# command to run tests
+script:
+  - pipenv run python3 -m pytest
+
 git:
   depth: false
-
-branches:
-  only:
-  - /.*/
