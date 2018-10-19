@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from shallow_backup import clean_backup_dir
+from shallow_backup import destroy_backup_dir
 
 BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
 TEST_BACKUP_TEXT_FILE = BACKUP_DIR + '/test-file.txt'
@@ -36,7 +36,7 @@ class TestDeleteMethods:
         """
         assert os.path.isdir(BACKUP_DIR)
         assert os.path.isfile(TEST_BACKUP_TEXT_FILE)
-        clean_backup_dir(BACKUP_DIR)
+        destroy_backup_dir(BACKUP_DIR)
         assert not os.path.isdir(BACKUP_DIR)
         assert not os.path.isfile(TEST_BACKUP_TEXT_FILE)
 
@@ -46,5 +46,5 @@ class TestDeleteMethods:
         """
         nonexist_backup_dir = BACKUP_DIR + "-dummy"
         assert not os.path.isdir(nonexist_backup_dir)
-        clean_backup_dir(nonexist_backup_dir)
+        destroy_backup_dir(nonexist_backup_dir)
         assert not os.path.isdir(nonexist_backup_dir)
