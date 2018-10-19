@@ -27,11 +27,11 @@ class TestGitFunctionality:
         assert os.path.isdir(os.path.join(BACKUP_DIR, '.git/'))
 
     def test_commiting_works_for_git_repo(self):
-        file_of_commits = os.path.join(BACKUP_DIR, 'default/.git/logs/refs/heads/master')
+        file_of_commits = os.path.join(BACKUP_DIR, '.git/logs/refs/heads/master')
         assert not os.path.isfile(file_of_commits)
         repo = git_init_if_needed(BACKUP_DIR)
         create_gitignore_if_needed(BACKUP_DIR)
-        git_add_all_commit(repo, BACKUP_DIR)
+        git_add_all_commit(repo, '.gitignore')
         assert os.path.isfile(file_of_commits)
 
 
