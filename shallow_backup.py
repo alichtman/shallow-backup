@@ -232,7 +232,7 @@ def get_configs_path_mapping():
 		"Library/Preferences/IntelliJIdea2018.2/":"intellijidea_2018-2",
 		"Library/Preferences/PyCharm2018.2/":"pycharm_2018-2",
 		"Library/Preferences/CLion2018.2/":"clion_2018-2",
-		"Library/Preferences/PhpStorm2018.2":"phpstorm_2018-2", 
+		"Library/Preferences/PhpStorm2018.2":"phpstorm_2018-2",
 	}
 
 
