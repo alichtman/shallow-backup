@@ -217,13 +217,13 @@ def backup_dotfiles(backup_path):
 
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
-		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
+		print(Fore.GREEN + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
 		for x in dotfolders_mp_in:
 			x = list(x)
 			mp.Process(target=_copy_dir, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
-		print(Fore.BLUE + Style.BRIGHT +
+		print(Fore.GREEN + Style.BRIGHT +
 			  "Backing up dotfiles..." + Style.RESET_ALL)
 		for x in dotfiles_mp_in:
 			x = list(x)
@@ -272,25 +272,25 @@ def backup_packages(backup_path):
 
 	for mgr in std_package_managers:
 		# deal with package managers that have spaces in them.
-		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
+		print(Fore.GREEN + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
 		command = "{} list".format(mgr)
 		dest = "{}/{}_list.txt".format(backup_path, mgr.replace(" ", "-"))
 		run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# cargo
-	print(Fore.BLUE + "Backing up cargo packages..." + Style.RESET_ALL)
+	print(Fore.GREEN + "Backing up cargo packages..." + Style.RESET_ALL)
 	command = "ls {}".format(_home_prefix(".cargo/bin/"))
 	dest = "{}/cargo_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# pip
-	print(Fore.BLUE + "Backing up pip packages..." + Style.RESET_ALL)
+	print(Fore.GREEN + "Backing up pip packages..." + Style.RESET_ALL)
 	command = "pip list --format=freeze".format(backup_path)
 	dest = "{}/pip_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# npm
-	print(Fore.BLUE + "Backing up npm packages..." + Style.RESET_ALL)
+	print(Fore.GREEN + "Backing up npm packages..." + Style.RESET_ALL)
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, temp_file_path)
@@ -306,7 +306,7 @@ def backup_packages(backup_path):
 	os.remove(temp_file_path)
 
 	# atom package manager
-	print(Fore.BLUE + "Backing up Atom packages..." + Style.RESET_ALL)
+	print(Fore.GREEN + "Backing up Atom packages..." + Style.RESET_ALL)
 	command = "apm list --installed --bare"
 	dest = "{}/apm_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
@@ -314,7 +314,7 @@ def backup_packages(backup_path):
 	# sublime text 2 packages
 	sublime_2_path = _home_prefix("Library/Application Support/Sublime Text 2/Packages/")
 	if os.path.isdir(sublime_2_path):
-		print(Fore.BLUE + "Backing up Sublime Text 2 packages..." + Style.RESET_ALL)
+		print(Fore.GREEN + "Backing up Sublime Text 2 packages..." + Style.RESET_ALL)
 		command = ["ls", sublime_2_path]
 		dest = "{}/sublime2_list.txt".format(backup_path)
 		run_shell_cmd_write_stdout_to_file(command, dest)
@@ -322,7 +322,7 @@ def backup_packages(backup_path):
 	# sublime text 3 packages
 	sublime_3_path = _home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
 	if os.path.isdir(sublime_3_path):
-		print(Fore.BLUE + "Backing up Sublime Text 3 packages..." + Style.RESET_ALL)
+		print(Fore.GREEN + "Backing up Sublime Text 3 packages..." + Style.RESET_ALL)
 		command = ["ls", sublime_3_path]
 		dest = "{}/sublime3_list.txt".format(backup_path)
 		run_shell_cmd_write_stdout_to_file(command, dest)
@@ -330,19 +330,19 @@ def backup_packages(backup_path):
 		print(sublime_3_path, "IS NOT DIR")
 
 	# macports
-	print(Fore.BLUE + "Backing up macports packages..." + Style.RESET_ALL)
+	print(Fore.GREEN + "Backing up macports packages..." + Style.RESET_ALL)
 	command = "port installed requested"
 	dest = "{}/macports_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# system installs
-	print(Fore.BLUE + "Documenting system applications..." + Style.RESET_ALL)
+	print(Fore.GREEN + "Documenting system applications..." + Style.RESET_ALL)
 	command = "ls /Applications/"
 	dest = "{}/system_apps_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# Clean up empty package list files
-	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
+	print(Fore.GREEN + "Cleaning up empty package lists..." + Style.RESET_ALL)
 	for file in get_subfiles(backup_path):
 		if os.path.getsize(file) == 0:
 			os.remove(file)
