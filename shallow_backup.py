@@ -210,10 +210,10 @@ def backup_dotfiles(backup_path):
 
 	# Sublime Text Configs
 	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 2")):
-		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 2/Packages/User"), backup_path))
+		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 2/sublime-2-packages/User"), backup_path))
 
 	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 3")):
-		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 3/Packages/User"), backup_path))
+		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 3/sublime-3-packages/User"), backup_path))
 
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
