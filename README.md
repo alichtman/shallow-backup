@@ -72,24 +72,29 @@ But you can add/remove whatever you want by modifying the `~/.shallow-backup` co
 ```shell
 Usage: shallow_backup.py [OPTIONS]
 
-  Easily back up installed packages, dotfiles, and more.
-  You can edit which dotfiles are backed up in ~/.shallow-backup.
+  Easily back up installed packages, dotfiles, and more. You can edit which
+  dotfiles are backed up in ~/.shallow-backup.
 
 Options:
-  -complete            Back up everything.
-  -dotfiles            Back up dotfiles.
-  -configs             Back up app config files.
-  -fonts               Back up installed fonts.
-  -packages            Back up package libraries and installed applications.
-  -old_path            Skip setting new back up directory path.
-  --new_path TEXT      Input a new back up directory path.
-  --remote TEXT        Input a URL for a git repository.
-  -reinstall_packages  Reinstall packages from package lists.
-  -reinstall_configs   Reinstall configs from configs backup.
-  -delete_config       Remove config file.
-  -v                   Display version and author information and exit.
-  -destroy_backup      Removes the backup directory and its content.
-  -h, -help, --help    Show this message and exit.
+  --add <CHOICE TEXT>...  Add path (relative to home dir) to be backed up. Arg
+                          format: [dots, configs, other] <PATH>
+  --rm <CHOICE TEXT>...   Remove path (relative to home dir) from config. Arg
+                          format: [dots, configs, other] <PATH>
+  -complete               Back up everything.
+  -dotfiles               Back up dotfiles.
+  -configs                Back up app config files.
+  -fonts                  Back up installed fonts.
+  -packages               Back up package libraries and installed
+                          applications.
+  -old_path               Skip setting new back up directory path.
+  --new_path TEXT         Input a new back up directory path.
+  --remote TEXT           Input a URL for a git repository.
+  -reinstall_packages     Reinstall packages from package lists.
+  -reinstall_configs      Reinstall configs from configs backup.
+  -delete_config          Remove config file.
+  -v                      Display version and author information and exit.
+  -destroy_backup         Removes the backup directory and its content.
+  -help, -h, --help       Show this message and exit.
 ```
 
 NOTE: `shallow-backup` works best when it's populating an empty directory.
