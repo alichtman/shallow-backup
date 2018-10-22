@@ -236,6 +236,7 @@ def backup_configs(backup_path):
 		src_dir = _home_prefix(config)
 		configs_backup_path = os.path.join(backup_path, target)
 		if os.path.isdir(src_dir):
+			# TODO: Exclude Sublime/Atom/VS Code Packages here to speed things up
 			copytree(src_dir, configs_backup_path, symlinks=True)
 
 	# backup plist files in backup_path/configs/plist/
@@ -393,7 +394,7 @@ def reinstall_config_files(configs_path):
 	sys.exit()
 
 
-def reinstall_package(packages_path):
+def reinstall_packages_from_lists(packages_path):
 	"""
 	Reinstall all packages from the files in backup/installs.
 	"""
@@ -746,7 +747,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	# Command line options
 	if complete or dotfiles or configs or packages or fonts or reinstall_packages or reinstall_configs:
 		if reinstall_packages:
-			reinstall_package(packages_path)
+			reinstall_packages_from_lists(packages_path)
 		elif reinstall_configs:
 			reinstall_config_files(configs_path)
 		elif complete:
@@ -778,7 +779,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 		elif selection == "back up fonts":
 			backup_fonts(fonts_path)
 		elif selection == "reinstall packages":
-			reinstall_package(packages_path)
+			reinstall_packages_from_lists(packages_path)
 		elif selection == "reinstall configs":
 			reinstall_config_files(configs_path)
 		elif selection == "destroy backup":

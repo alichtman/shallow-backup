@@ -38,7 +38,7 @@ class TestCopyMethods:
         test_dir = 'test/'
         test_path = os.path.join(DIR_TO_BACKUP, test_dir)
         os.mkdir(test_path)
-        process = _copy_dir(test_path, BACKUP_DIR)
+        _copy_dir(test_path, BACKUP_DIR)
         assert os.path.isdir(test_path)
         assert os.path.isdir(os.path.join(BACKUP_DIR, test_dir))
 

@@ -36,4 +36,3 @@ class TestGitFolderCopying:
         assert os.path.isfile(os.path.join(NEW_BACKUP_DIR, '.gitignore'))
         assert not os.path.isdir(os.path.join(OLD_BACKUP_DIR, '.git/'))
         assert not os.path.isfile(os.path.join(OLD_BACKUP_DIR, '.gitignore'))
-

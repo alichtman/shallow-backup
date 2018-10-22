@@ -23,6 +23,8 @@ Contents
 ### What can I back up?
 ---
 
+By default, `shallow-backup` backs these up.
+
 1. `dotfiles` and `dotfolders`.
     * `.bashrc`
     * `.bash_profile`
@@ -34,7 +36,7 @@ Contents
     * `.zshrc`
 
 2. Application Preferences
-    * Atom (Coming soon!)
+    * Atom
     * Sublime Text
     * Terminal
     * JetBrains IDEs
@@ -52,6 +54,8 @@ Contents
     * `~/Applications/` directory
 
 4. User installed `fonts`.
+
+But you can add/remove whatever you want by modifying the `~/.shallow-backup` config file. The ability to modify this file from the CLI is coming soon!
 
 ### Installation
 ---
