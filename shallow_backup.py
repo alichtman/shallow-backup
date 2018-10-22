@@ -5,14 +5,11 @@ import json
 import click
 import shutil
 import inquirer
-from glob import glob
 import subprocess as sp
-from pprint import pprint
 import multiprocessing as mp
-from os.path import expanduser
 from constants import Constants
 from colorama import Fore, Style
-from shutil import copy, copyfile, copytree
+from shutil import copyfile, copytree
 
 
 #########
@@ -53,10 +50,10 @@ def prompt_yes_no(message, color):
 	Print question and return True or False depending on user selection from list.
 	"""
 	questions = [inquirer.List('choice',
-							   message=color + Style.BRIGHT + message + Fore.BLUE,
-							   choices=[' Yes', ' No'],
-							   ),
-				 ]
+	                           message=color + Style.BRIGHT + message + Fore.BLUE,
+	                           choices=[' Yes', ' No'],
+	                           )
+	]
 
 	answers = inquirer.prompt(questions)
 	return answers.get('choice').strip().lower() == 'yes'
@@ -64,6 +61,7 @@ def prompt_yes_no(message, color):
 ###########
 # Utilities
 ###########
+
 
 def run_shell_cmd(command):
 	"""
@@ -129,7 +127,7 @@ def _copy_dir(source_dir, backup_path):
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
 
-	if "Application\ Support" not in source_dir:
+	if "Application Support" not in source_dir:
 		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-2]), symlinks=True)
 	elif "Sublime" in source_dir:
 		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-3]), symlinks=True)
@@ -162,6 +160,7 @@ def get_configs_path_mapping():
 		"Library/Preferences/PyCharm2018.2/": "pycharm_2018.2",
 		"Library/Preferences/CLion2018.2/": "clion_2018.2",
 		"Library/Preferences/PhpStorm2018.2": "phpstorm_2018.2",
+		".atom/": "atom",
 	}
 
 
@@ -170,7 +169,7 @@ def get_plist_mapping():
 	Gets a dictionary mapping plist files to back up to their destination path.
 	"""
 	return {
-		"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist"
+		"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist",
 	}
 
 
@@ -205,16 +204,6 @@ def backup_dotfiles(backup_path):
 	for dotfile in dotfiles:
 		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
 
-	# Back up System and Application Preferences and Settings
-	# TODO: Extract these paths to constants
-
-	# Sublime Text Configs
-	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 2")):
-		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 2/Packages/User"), backup_path))
-
-	if os.path.isdir(_home_prefix("Library/Application Support/Sublime Text 3")):
-		dotfolders_mp_in.append((_home_prefix("Library/Application Support/Sublime Text 3/Packages/User"), backup_path))
-
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
 		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
@@ -223,8 +212,7 @@ def backup_dotfiles(backup_path):
 			mp.Process(target=_copy_dir, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
-		print(Fore.BLUE + Style.BRIGHT +
-			  "Backing up dotfiles..." + Style.RESET_ALL)
+		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfiles..." + Style.RESET_ALL)
 		for x in dotfiles_mp_in:
 			x = list(x)
 			mp.Process(target=shutil.copyfile, args=(x[0], x[1],)).start()
@@ -239,22 +227,25 @@ def backup_configs(backup_path):
 	make_dir_warn_overwrite(backup_path)
 
 	configs_dir_mapping = get_configs_path_mapping()
-	plist_files = get_plist_mapping().keys()
+	plist_files = get_plist_mapping()
 
-	# TODO: Stop SUBLIME folders from being called `Packages`
-	# backup config dirs in backup_path/configs/<target>/
+	print(Fore.BLUE + Style.BRIGHT + "Backing up configs..." + Style.RESET_ALL)
+
+	# backup config dirs in backup_path/<target>/
 	for config, target in configs_dir_mapping.items():
-		if os.path.isdir(_home_prefix(config)):
-			configs_backup_path = os.path.join(backup_path, target)
-			_mkdir_or_pass(configs_backup_path)
-			copytree(_home_prefix(config), configs_backup_path)
+		src_dir = _home_prefix(config)
+		configs_backup_path = os.path.join(backup_path, target)
+		if os.path.isdir(src_dir):
+			copytree(src_dir, configs_backup_path, symlinks=True)
 
 	# backup plist files in backup_path/configs/plist/
+	print(Fore.BLUE + Style.BRIGHT + "Backing up plist files..." + Style.RESET_ALL)
 	plist_backup_path = os.path.join(backup_path, "plist")
 	_mkdir_or_pass(plist_backup_path)
-	for plist in plist_files:
-		if os.path.exists(_home_prefix(plist)):
-			copytree(_home_prefix(plist), plist_backup_path)
+	for plist, dest in plist_files.items():
+		plist_path = _home_prefix(plist)
+		if os.path.exists(plist_path):
+			copyfile(plist_path, os.path.join(backup_path, dest))
 
 
 def backup_packages(backup_path):
