@@ -10,6 +10,7 @@ import multiprocessing as mp
 from constants import Constants
 from colorama import Fore, Style
 from shutil import copyfile, copytree
+from pprint import pprint
 
 
 #########
@@ -685,6 +686,25 @@ def rm_path_from_config(section, path):
 	write_config(config)
 
 
+def show_config():
+	"""
+	Print the config. Colorize section titles and indent contents.
+	"""
+	config = get_config()
+	for section, contents in config.items():
+		# Hide gitignore config
+		if section == "gitignore":
+			continue
+		# Print backup path on same line
+		if section == "backup_path":
+			print(Fore.RED + Style.BRIGHT + "Backup Path: ".format(section) + Style.RESET_ALL + " {}".format(contents))
+		# Print section header and then contents indented.
+		else:
+			print(Fore.RED + Style.BRIGHT + "\n{}: ".format(section.capitalize()) + Style.RESET_ALL)
+			for item in contents:
+				print("    {}".format(item))
+
+
 #####
 # CLI
 #####
@@ -732,6 +752,7 @@ def destroy_backup_dir(backup_path):
 	except OSError as e:
 		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
 
+
 def backup_prompt():
 	"""
 	Use pick library to prompt user with choice of what to backup.
@@ -746,6 +767,7 @@ def backup_prompt():
 	                                    ' Back up everything',
                                         ' Reinstall configs',
 	                                    ' Reinstall packages',
+	                                    ' Show config',
                                         ' Destroy backup'
                                     	],
 	                           ),
@@ -759,6 +781,7 @@ def backup_prompt():
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str), help="Add path (relative to home dir) to be backed up. Arg format: [dots, configs, other] <PATH>")
 @click.option('--rm', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str), help="Remove path (relative to home dir) from config. Arg format: [dots, configs, other] <PATH>")
+@click.option('-show', is_flag=True, default=False, help="Show config file.")
 @click.option('-complete', is_flag=True, default=False, help="Back up everything.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
@@ -772,14 +795,14 @@ def backup_prompt():
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 @click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
-def cli(add, rm, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v, destroy_backup):
+def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v, destroy_backup):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
 	backup_config_path = get_config_path()
 
 	# No interface going to be displayed
-	if any([v, delete_config, destroy_backup, add, rm]):
+	if any([v, delete_config, destroy_backup, add, rm, show]):
 		if v:
 			print_version_info()
 		elif delete_config:
@@ -792,6 +815,8 @@ def cli(add, rm, complete, dotfiles, configs, packages, fonts, old_path, new_pat
 			add_path_to_config(add[0], add[1])
 		elif None not in rm:
 			rm_path_from_config(rm[0], rm[1])
+		elif show:
+			show_config()
 		sys.exit()
 
 
@@ -863,6 +888,8 @@ def cli(add, rm, complete, dotfiles, configs, packages, fonts, old_path, new_pat
 			reinstall_packages_from_lists(packages_path)
 		elif selection == "reinstall configs":
 			reinstall_config_files(configs_path)
+		elif selection == "show config":
+			show_config()
 		elif selection == "destroy backup":
 			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
 				destroy_backup_dir(backup_home_path)
@@ -871,8 +898,10 @@ def cli(add, rm, complete, dotfiles, configs, packages, fonts, old_path, new_pat
 					Fore.RED, Style.RESET_ALL))
 			sys.exit()
 
-		git_add_all_commit(repo, backup_home_path)
-		git_push_if_possible(repo)
+		if selection.startswith("back up"):
+			git_add_all_commit(repo, backup_home_path)
+			git_push_if_possible(repo)
+
 		sys.exit()
 
 
