@@ -72,14 +72,15 @@ But you can add/remove whatever you want by modifying the `~/.shallow-backup` co
 ```shell
 Usage: shallow_backup.py [OPTIONS]
 
-  Easily back up installed packages, dotfiles, and more. You can edit which
-  dotfiles are backed up in ~/.shallow-backup.
+  Easily back up installed packages, dotfiles, and more. 
+  You can edit which dotfiles are backed up in ~/.shallow-backup.
 
 Options:
   --add <CHOICE TEXT>...  Add path (relative to home dir) to be backed up. Arg
                           format: [dots, configs, other] <PATH>
   --rm <CHOICE TEXT>...   Remove path (relative to home dir) from config. Arg
                           format: [dots, configs, other] <PATH>
+  -show                   Show config file.
   -complete               Back up everything.
   -dotfiles               Back up dotfiles.
   -configs                Back up app config files.
@@ -96,8 +97,6 @@ Options:
   -destroy_backup         Removes the backup directory and its content.
   -help, -h, --help       Show this message and exit.
 ```
-
-NOTE: `shallow-backup` works best when it's populating an empty directory.
 
 #### Example Commands
 ---

@@ -690,6 +690,7 @@ def show_config():
 	"""
 	Print the config. Colorize section titles and indent contents.
 	"""
+	print_section_header("SHALLOW BACKUP CONFIG", Fore.RED)
 	config = get_config()
 	for section, contents in config.items():
 		# Hide gitignore config
@@ -697,12 +698,14 @@ def show_config():
 			continue
 		# Print backup path on same line
 		if section == "backup_path":
-			print(Fore.RED + Style.BRIGHT + "Backup Path: ".format(section) + Style.RESET_ALL + " {}".format(contents))
+			print(Fore.RED + Style.BRIGHT + "Backup Path:" + Style.RESET_ALL + contents)
 		# Print section header and then contents indented.
 		else:
 			print(Fore.RED + Style.BRIGHT + "\n{}: ".format(section.capitalize()) + Style.RESET_ALL)
 			for item in contents:
 				print("    {}".format(item))
+
+	print()
 
 
 #####
@@ -753,9 +756,9 @@ def destroy_backup_dir(backup_path):
 		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
 
 
-def backup_prompt():
+def actions_menu_prompt():
 	"""
-	Use pick library to prompt user with choice of what to backup.
+	Prompt user for an action.
 	"""
 	# TODO: Implement `add` and `rm` path here.
 	questions = [inquirer.List('choice',
@@ -873,7 +876,7 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 
 	# No CL options, prompt for selection
 	else:
-		selection = backup_prompt().lower().strip()
+		selection = actions_menu_prompt().lower().strip()
 		if selection == "back up everything":
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif selection == "back up dotfiles":
