@@ -10,6 +10,7 @@ import multiprocessing as mp
 from constants import Constants
 from colorama import Fore, Style
 from shutil import copyfile, copytree
+from pprint import pprint
 
 
 #########
@@ -604,9 +605,107 @@ def create_config_file_if_needed():
 	"""
 	backup_config_path = get_config_path()
 	if not os.path.exists(backup_config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path))
+		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path) + Style.RESET_ALL)
 		backup_config = get_default_config()
 		write_config(backup_config)
+
+
+def add_path_to_config(section, path):
+	"""
+	Adds the path under the correct section in the config file.
+	FIRST ARG: [dot, config, other]
+	SECOND ARG: path, relative to home directory for dotfiles, absolute for configs
+	"""
+	full_path = _home_prefix(path)
+	if not os.path.exists(full_path):
+		print(Fore.RED + Style.BRIGHT + "ERR: {} doesn't exist.".format(full_path) + Style.RESET_ALL)
+		sys.exit(1)
+
+	if section == "dot":
+		# Make sure dotfile starts with a period
+		if path[0] != ".":
+			print(Fore.RED + Style.BRIGHT + "ERR: Not a dotfile." + Style.RESET_ALL)
+			sys.exit(1)
+
+		if not os.path.isdir(full_path):
+			section = "dotfiles"
+			print(Fore.BLUE + Style.BRIGHT + "Adding {} to dotfile backup.".format(full_path) + Style.RESET_ALL)
+		else:
+			section = "dotfolders"
+			if path[-1] != "/":
+				full_path += "/"
+				path += "/"
+			print(Fore.BLUE + Style.BRIGHT + "Adding {} to dotfolder backup.".format(full_path) + Style.RESET_ALL)
+
+	# TODO: Add config section once configs backup prefs are moved to the config file
+	elif section == "config":
+		print(Fore.RED + Style.BRIGHT + "ERR: Option not currently supported." + Style.RESET_ALL)
+		sys.exit(1)
+	elif section == "other":
+		print(Fore.RED + Style.BRIGHT + "ERR: Option not currently supported." + Style.RESET_ALL)
+		sys.exit(1)
+
+
+	config = get_config()
+	print(config)
+	file_set = set(config[section])
+	file_set.update([path])
+	config[section] = list(file_set)
+	write_config(config)
+
+
+def rm_path_from_config(section, path):
+	"""
+	Removes the path from the section in the config file. Exits if the path doesn't exist.
+	For dots, path should be relative to home dir.
+	FIRST ARG: [dot, config, other]
+	SECOND ARG: path, relative to home directory for dotfiles, absolute for configs
+	"""
+	config = get_config()
+	if section == "dot":
+		# Make sure dotfile starts with a period
+		if path[0] != ".":
+			print(Fore.RED + Style.BRIGHT + "ERR: Not a dotfile." + Style.RESET_ALL)
+			sys.exit(1)
+		full_path = _home_prefix(path)
+		if not os.path.isdir(full_path):
+			section = "dotfiles"
+			print(Fore.BLUE + Style.BRIGHT + "Removing {} from dotfile backup.".format(full_path) + Style.RESET_ALL)
+		else:
+			section = "dotfolders"
+			if path[-1] != "/":
+				full_path += "/"
+				path += "/"
+			print(Fore.BLUE + Style.BRIGHT + "Removing {} from dotfolder backup.".format(full_path) + Style.RESET_ALL)
+
+	if path not in config[section]:
+		print(Fore.RED + Style.BRIGHT + "ERR: Not currently backing that path up..." + Style.RESET_ALL)
+	else:
+		print(Fore.RED + Style.BRIGHT + "No longer backing up {}...".format(path) + Style.RESET_ALL)
+		config[section] = list(set(config[section]).remove(path))
+	write_config(config)
+
+
+def show_config():
+	"""
+	Print the config. Colorize section titles and indent contents.
+	"""
+	print_section_header("SHALLOW BACKUP CONFIG", Fore.RED)
+	config = get_config()
+	for section, contents in config.items():
+		# Hide gitignore config
+		if section == "gitignore":
+			continue
+		# Print backup path on same line
+		if section == "backup_path":
+			print(Fore.RED + Style.BRIGHT + "Backup Path:" + Style.RESET_ALL + contents)
+		# Print section header and then contents indented.
+		else:
+			print(Fore.RED + Style.BRIGHT + "\n{}: ".format(section.capitalize()) + Style.RESET_ALL)
+			for item in contents:
+				print("    {}".format(item))
+
+	print()
 
 
 #####
@@ -656,10 +755,12 @@ def destroy_backup_dir(backup_path):
 	except OSError as e:
 		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
 
-def backup_prompt():
+
+def actions_menu_prompt():
 	"""
-	Use pick library to prompt user with choice of what to backup.
+	Prompt user for an action.
 	"""
+	# TODO: Implement `add` and `rm` path here.
 	questions = [inquirer.List('choice',
 	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
 	                           choices=[' Back up dotfiles',
@@ -669,6 +770,7 @@ def backup_prompt():
 	                                    ' Back up everything',
                                         ' Reinstall configs',
 	                                    ' Reinstall packages',
+	                                    ' Show config',
                                         ' Destroy backup'
                                     	],
 	                           ),
@@ -680,6 +782,9 @@ def backup_prompt():
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
+@click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str), help="Add path (relative to home dir) to be backed up. Arg format: [dots, configs, other] <PATH>")
+@click.option('--rm', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str), help="Remove path (relative to home dir) from config. Arg format: [dots, configs, other] <PATH>")
+@click.option('-show', is_flag=True, default=False, help="Show config file.")
 @click.option('-complete', is_flag=True, default=False, help="Back up everything.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
@@ -693,26 +798,30 @@ def backup_prompt():
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 @click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
-def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v, destroy_backup):
+def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v, destroy_backup):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
 	backup_config_path = get_config_path()
 
-	# Print version information
-	if v:
-		print_version_info()
+	# No interface going to be displayed
+	if any([v, delete_config, destroy_backup, add, rm, show]):
+		if v:
+			print_version_info()
+		elif delete_config:
+			os.remove(backup_config_path)
+			print(Fore.RED + Style.BRIGHT + "Removed config file..." + Style.RESET_ALL)
+		elif destroy_backup:
+			backup_home_path = get_config()["backup_path"]
+			destroy_backup_dir(backup_home_path)
+		elif None not in add:
+			add_path_to_config(add[0], add[1])
+		elif None not in rm:
+			rm_path_from_config(rm[0], rm[1])
+		elif show:
+			show_config()
 		sys.exit()
 
-	elif delete_config:
-		os.remove(backup_config_path)
-		print(Fore.RED + Style.BRIGHT +
-			  "Removed config file..." + Style.RESET_ALL)
-		sys.exit()
-	elif destroy_backup:
-		backup_home_path = get_config()["backup_path"]
-		destroy_backup_dir(backup_home_path)
-		sys.exit()
 
 	# Start CLI
 	splash_screen()
@@ -745,7 +854,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 	fonts_path = os.path.join(backup_home_path, "fonts")
 
 	# Command line options
-	if complete or dotfiles or configs or packages or fonts or reinstall_packages or reinstall_configs:
+	if any([complete, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs]):
 		if reinstall_packages:
 			reinstall_packages_from_lists(packages_path)
 		elif reinstall_configs:
@@ -767,7 +876,7 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 
 	# No CL options, prompt for selection
 	else:
-		selection = backup_prompt().lower().strip()
+		selection = actions_menu_prompt().lower().strip()
 		if selection == "back up everything":
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif selection == "back up dotfiles":
@@ -782,6 +891,8 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 			reinstall_packages_from_lists(packages_path)
 		elif selection == "reinstall configs":
 			reinstall_config_files(configs_path)
+		elif selection == "show config":
+			show_config()
 		elif selection == "destroy backup":
 			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
 				destroy_backup_dir(backup_home_path)
@@ -790,8 +901,10 @@ def cli(complete, dotfiles, configs, packages, fonts, old_path, new_path, remote
 					Fore.RED, Style.RESET_ALL))
 			sys.exit()
 
-		git_add_all_commit(repo, backup_home_path)
-		git_push_if_possible(repo)
+		if selection.startswith("back up"):
+			git_add_all_commit(repo, backup_home_path)
+			git_push_if_possible(repo)
+
 		sys.exit()
 
 
