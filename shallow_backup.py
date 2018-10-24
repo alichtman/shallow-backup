@@ -19,9 +19,9 @@ from pprint import pprint
 
 def print_version_info():
 	version = "{} v{} by {} -> (Github: {})".format(Constants.PROJECT_NAME,
-													Constants.VERSION,
-													Constants.AUTHOR_FULL_NAME,
-													Constants.AUTHOR_GITHUB)
+	                                                Constants.VERSION,
+	                                                Constants.AUTHOR_FULL_NAME,
+	                                                Constants.AUTHOR_GITHUB)
 	line = "-" * (len(version))
 	print(Fore.RED + Style.BRIGHT + line)
 	print(version)
@@ -54,10 +54,11 @@ def prompt_yes_no(message, color):
 	                           message=color + Style.BRIGHT + message + Fore.BLUE,
 	                           choices=[' Yes', ' No'],
 	                           )
-	]
+	             ]
 
 	answers = inquirer.prompt(questions)
 	return answers.get('choice').strip().lower() == 'yes'
+
 
 ###########
 # Utilities
@@ -97,7 +98,7 @@ def make_dir_warn_overwrite(path):
 	subdirs = ["dotfiles", "packages", "fonts", "configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
 		print(Fore.RED + Style.BRIGHT +
-			  "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
+		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			shutil.rmtree(path)
 			os.makedirs(path)
@@ -157,11 +158,11 @@ def get_configs_path_mapping():
 	return {
 		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
 		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
-		"Library/Preferences/IntelliJIdea2018.2/": "intellijidea_2018.2",
-		"Library/Preferences/PyCharm2018.2/": "pycharm_2018.2",
-		"Library/Preferences/CLion2018.2/": "clion_2018.2",
-		"Library/Preferences/PhpStorm2018.2": "phpstorm_2018.2",
-		".atom/": "atom",
+		"Library/Preferences/IntelliJIdea2018.2/"                  : "intellijidea_2018.2",
+		"Library/Preferences/PyCharm2018.2/"                       : "pycharm_2018.2",
+		"Library/Preferences/CLion2018.2/"                         : "clion_2018.2",
+		"Library/Preferences/PhpStorm2018.2"                       : "phpstorm_2018.2",
+		".atom/"                                                   : "atom",
 	}
 
 
@@ -349,7 +350,8 @@ def backup_fonts(path):
 	make_dir_warn_overwrite(path)
 	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
 	fonts_path = _home_prefix("Library/Fonts/")
-	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if font.endswith(".otf") or font.endswith(".ttf")]
+	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if
+	         font.endswith(".otf") or font.endswith(".ttf")]
 
 	for font in fonts:
 		if os.path.exists(font):
@@ -439,7 +441,7 @@ def reinstall_packages_from_lists(packages_path):
 			print(Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
 		elif pm == "cargo":
 			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment."
-							 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
+			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
 
 	print_section_header("SUCCESSFUL PACKAGE REINSTALLATION", Fore.BLUE)
 	sys.exit()
@@ -450,31 +452,21 @@ def reinstall_packages_from_lists(packages_path):
 #####
 
 
-def create_remote(repo, remote_url):
-	"""
-	Creates a remote for a repo and fetches data.
-	"""
-	origin = repo.create_remote('origin', remote_url)
-	origin.fetch()
-	return origin
-
-
 def git_set_remote(repo, remote_url):
 	"""
 	Sets git repo upstream URL and fast-forwards history.
 	"""
-	print(Fore.GREEN + Style.BRIGHT + "Setting remote URL to {}...".format(remote_url) + Style.RESET_ALL)
-	remotes = [remote for remote in repo.remotes]
-	# pprint([remote.url for remote in remotes])
-	# Repo has no remotes, just create a new remote and pull.
-	if len(remotes) == 0:
-		origin = create_remote(repo, remote_url)
-		if not repo.head:
-			repo.create_head('master', origin.refs.master)
-	# Update push URL with new URL.
-	else:
+	print(Fore.GREEN + Style.BRIGHT + "Setting remote URL to -> " + Style.NORMAL + "{}...".format(
+		remote_url) + Style.RESET_ALL)
+
+	try:
+		origin = repo.create_remote('origin', remote_url)
+		origin.fetch()
+	except git.CommandError:
+		print("Updating existing remote URL...")
 		repo.delete_remote(repo.remotes.origin)
-		origin = create_remote(repo, remote_url)
+		origin = repo.create_remote('origin', remote_url)
+		origin.fetch()
 
 
 def create_gitignore_if_needed(dir_path):
@@ -486,7 +478,7 @@ def create_gitignore_if_needed(dir_path):
 		print(Fore.GREEN + Style.BRIGHT + ".gitignore detected." + Style.RESET_ALL)
 		pass
 	else:
-		print(Fore.GREEN + Style.BRIGHT + "Creating .gitignore..." + Style.RESET_ALL)
+		print(Fore.GREEN + Style.BRIGHT + "Creating default .gitignore..." + Style.RESET_ALL)
 		files_to_ignore = get_config()["gitignore"]
 		with open(gitignore_path, "w+") as f:
 			for ignore in files_to_ignore:
@@ -496,16 +488,16 @@ def create_gitignore_if_needed(dir_path):
 def git_init_if_needed(dir_path):
 	"""
 	If there is no git repo inside the dir_path, intialize one.
-	Returns git.Repo object
+	Returns tuple of (git.Repo, bool new_git_repo_created)
 	"""
 	if not os.path.isdir(os.path.join(dir_path, ".git")):
 		print(Fore.GREEN + Style.BRIGHT + "Initializing new git repo..." + Style.RESET_ALL)
 		repo = git.Repo.init(dir_path)
-		return repo
+		return repo, True
 	else:
 		print(Fore.GREEN + Style.BRIGHT + "Detected git repo." + Style.RESET_ALL)
 		repo = git.Repo(dir_path)
-		return repo
+		return repo, False
 
 
 def git_add_all_commit(repo, dir_path):
@@ -513,22 +505,13 @@ def git_add_all_commit(repo, dir_path):
 	Stages all changed files in dir_path and its children folders for commit,
 	commits them and pushes to a remote if it's configured.
 	"""
-	print(Fore.GREEN + Style.BRIGHT + "Making new commit..." + Style.RESET_ALL)
-	dotfiles_path = os.path.join(dir_path, "dotfiles")
-	fonts_path = os.path.join(dir_path, "fonts")
-	packages_path = os.path.join(dir_path, "packages")
-	configs_path = os.path.join(dir_path, "configs")
-	gitignore_path = os.path.join(dir_path, ".gitignore")
-	repo.index.add([gitignore_path])
-	if os.path.exists(dotfiles_path):
-		repo.index.add([dotfiles_path])
-	if os.path.exists(fonts_path):
-		repo.index.add([fonts_path])
-	if os.path.exists(packages_path):
-		repo.index.add([packages_path])
-	if os.path.exists(configs_path):
-		repo.index.add([configs_path])
-	repo.index.commit("shallow-backup update.")
+	if repo.index.diff(None) or repo.untracked_files:
+		print(Fore.GREEN + Style.BRIGHT + "Making new commit..." + Style.RESET_ALL)
+		git = repo.git
+		git.add(A=True)
+		git.commit(m="shallow-backup update.")
+	else:
+		print(Fore.GREEN + Style.BRIGHT + "No changes to commit..." + Style.RESET_ALL)
 
 
 def git_push_if_possible(repo):
@@ -536,12 +519,10 @@ def git_push_if_possible(repo):
 	Push commits to origin after fast-forwarding branch.
 	"""
 	if "origin" in [remote.name for remote in repo.remotes]:
-		origin = repo.remotes.origin
-		print(Fore.GREEN + Style.BRIGHT + "Pushing to master at " + Fore.RED + "{}...".format(
-			origin.url) + Style.RESET_ALL)
-		repo.heads.master.set_tracking_branch(origin.refs.master)
-		origin.pull()
-		origin.push(refspec='master:master')
+		print(Fore.GREEN + Style.BRIGHT + "Pushing to master at " + Fore.RED + "{}...".format(repo.remotes.origin.url) + Style.RESET_ALL)
+		git = repo.git
+		git.fetch()
+		git.push("--set-upstream", "origin", "master")
 
 
 ########
@@ -577,7 +558,7 @@ def get_default_config():
 	"""
 	return {
 		"backup_path": "~/shallow-backup",
-		"dotfiles": [
+		"dotfiles"   : [
 			".bashrc",
 			".bash_profile",
 			".gitconfig",
@@ -587,11 +568,11 @@ def get_default_config():
 			".vimrc",
 			".zshrc"
 		],
-		"dotfolders": [
+		"dotfolders" : [
 			".ssh",
 			".vim"
 		],
-		"gitignore": [
+		"gitignore"  : [
 			"dotfiles/.ssh",
 			"packages/",
 			"dotfiles/.pypirc",
@@ -644,7 +625,6 @@ def add_path_to_config(section, path):
 	elif section == "other":
 		print(Fore.RED + Style.BRIGHT + "ERR: Option not currently supported." + Style.RESET_ALL)
 		sys.exit(1)
-
 
 	config = get_config()
 	print(config)
@@ -733,7 +713,8 @@ def prompt_for_path_update(config):
 	If yes, update. If no... don't.
 	"""
 	current_path = config["backup_path"]
-	print(Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(current_path) + Style.RESET_ALL)
+	print(Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(
+		current_path) + Style.RESET_ALL)
 
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
 		print(Fore.GREEN + Style.BRIGHT + "Enter relative path:" + Style.RESET_ALL)
@@ -743,6 +724,17 @@ def prompt_for_path_update(config):
 		write_config(config)
 		make_dir_warn_overwrite(abs_path)
 		move_git_folder_to_path(current_path, abs_path)
+
+
+def prompt_for_git_url(repo):
+	"""
+	Ask user if they'd like to add a remote URL to their git repo.
+	If yes, do it.
+	"""
+	if prompt_yes_no("Would you like to set a remote URL for this git repo?", Fore.GREEN):
+		print(Fore.GREEN + Style.BRIGHT + "Enter URL:" + Style.RESET_ALL)
+		remote_url = input()
+		git_set_remote(repo, remote_url)
 
 
 def destroy_backup_dir(backup_path):
@@ -764,15 +756,15 @@ def actions_menu_prompt():
 	questions = [inquirer.List('choice',
 	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
 	                           choices=[' Back up dotfiles',
-                                        ' Back up configs',
+	                                    ' Back up configs',
 	                                    ' Back up packages',
-                                        ' Back up fonts',
+	                                    ' Back up fonts',
 	                                    ' Back up everything',
-                                        ' Reinstall configs',
+	                                    ' Reinstall configs',
 	                                    ' Reinstall packages',
 	                                    ' Show config',
-                                        ' Destroy backup'
-                                    	],
+	                                    ' Destroy backup'
+	                                    ],
 	                           ),
 	             ]
 
@@ -782,8 +774,10 @@ def actions_menu_prompt():
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
-@click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str), help="Add path (relative to home dir) to be backed up. Arg format: [dots, configs, other] <PATH>")
-@click.option('--rm', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str), help="Remove path (relative to home dir) from config. Arg format: [dots, configs, other] <PATH>")
+@click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str),
+              help="Add path (relative to home dir) to be backed up. Arg format: [dots, configs, other] <PATH>")
+@click.option('--rm', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str),
+              help="Remove path (relative to home dir) from config. Arg format: [dots, configs, other] <PATH>")
 @click.option('-show', is_flag=True, default=False, help="Show config file.")
 @click.option('-complete', is_flag=True, default=False, help="Back up everything.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
@@ -791,21 +785,22 @@ def actions_menu_prompt():
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
 @click.option('-packages', is_flag=True, default=False, help="Back up package libraries and installed applications.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
-@click.option('--new_path', default="", help="Input a new back up directory path.")
-@click.option('--remote', default="", help="Input a URL for a git repository.")
+@click.option('--new_path', default=None, help="Input a new back up directory path.")
+@click.option('--remote', default=None, help="Input a URL for a git repository.")
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages from package lists.")
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 @click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
-def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages, reinstall_configs, delete_config, v, destroy_backup):
+def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages,
+        reinstall_configs, delete_config, v, destroy_backup):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
 	backup_config_path = get_config_path()
 
 	# No interface going to be displayed
-	if any([v, delete_config, destroy_backup, add, rm, show]):
+	if any([v, delete_config, destroy_backup, show]) or None not in add or None not in rm:
 		if v:
 			print_version_info()
 		elif delete_config:
@@ -822,14 +817,13 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			show_config()
 		sys.exit()
 
-
 	# Start CLI
 	splash_screen()
 	create_config_file_if_needed()
 	backup_config = get_config()
 
 	# User entered a new path, so update the config
-	if new_path != "":
+	if new_path:
 		abs_path = os.path.abspath(new_path)
 		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
 			abs_path) + Style.RESET_ALL)
@@ -843,9 +837,17 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 	# Create backup directory and do git setup
 	backup_home_path = get_config()["backup_path"]
 	make_dir_warn_overwrite(backup_home_path)
-	repo = git_init_if_needed(backup_home_path)
-	create_gitignore_if_needed(backup_home_path)
-	if remote != "":
+	repo, new_git_repo_created = git_init_if_needed(backup_home_path)
+
+	# Create default gitignore if we just ran git init
+	if new_git_repo_created:
+		create_gitignore_if_needed(backup_home_path)
+		# Prompt user for remote URL
+		if not remote:
+			prompt_for_git_url(repo)
+
+	# Set remote URL from CLI arg
+	if remote:
 		git_set_remote(repo, remote)
 
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
