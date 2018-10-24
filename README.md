@@ -44,8 +44,7 @@ Usage: shallow_backup.py [OPTIONS]
 Options:
   --add <CHOICE TEXT>...  Add path (relative to home dir) to be backed up. Arg
                           format: [dots, configs, other] <PATH>
-  --rm <CHOICE TEXT>...   Remove path (relative to home dir) from config. Arg
-                          format: [dots, configs, other] <PATH>
+  --rm TEXT               Remove path from config.
   -show                   Show config file.
   -complete               Back up everything.
   -dotfiles               Back up dotfiles.
@@ -103,7 +102,7 @@ By default, `shallow-backup` backs these up.
 If you'd like to modify which files are backed up, you have to edit the `~/.shallow-backup` file. There are two recommended ways of doing this.
 
 1. You can open this up in a regular text editor and make your changes.
-2. You can use the `--add SECTION PATH` or `--rm SECTION PATH` args to modify the config file.
+2. You can use the `--add SECTION PATH` or `--rm PATH` args to modify the config file.
 
 NOTE: Dotfile paths should be added relative to the home directory.
 

@@ -646,43 +646,30 @@ def add_path_to_config(section, path):
 		sys.exit(1)
 
 	config = get_config()
-	print(config)
 	file_set = set(config[section])
 	file_set.update([path])
 	config[section] = list(file_set)
 	write_config(config)
 
 
-def rm_path_from_config(section, path):
+def rm_path_from_config(path):
 	"""
-	Removes the path from the section in the config file. Exits if the path doesn't exist.
-	For dots, path should be relative to home dir.
-	FIRST ARG: [dot, config, other]
-	SECOND ARG: path, relative to home directory for dotfiles, absolute for configs
+	Removes the path from a section in the config file. Exits if the path doesn't exist.
+	Path, relative to home directory for dotfiles, absolute for configs
 	"""
+	flag = False
 	config = get_config()
-	if section == "dot":
-		# Make sure dotfile starts with a period
-		if path[0] != ".":
-			print(Fore.RED + Style.BRIGHT + "ERR: Not a dotfile." + Style.RESET_ALL)
-			sys.exit(1)
-		full_path = _home_prefix(path)
-		if not os.path.isdir(full_path):
-			section = "dotfiles"
-			print(Fore.BLUE + Style.BRIGHT + "Removing {} from dotfile backup.".format(full_path) + Style.RESET_ALL)
-		else:
-			section = "dotfolders"
-			if path[-1] != "/":
-				full_path += "/"
-				path += "/"
-			print(Fore.BLUE + Style.BRIGHT + "Removing {} from dotfolder backup.".format(full_path) + Style.RESET_ALL)
+	for section, items in config.items():
+		if path in items:
+			print(Fore.BLUE + Style.BRIGHT + "Removing {} from backup...".format(path) + Style.RESET_ALL)
+			items.remove(path)
+			config[section] = items
+			flag = True
 
-	if path not in config[section]:
+	if not flag:
 		print(Fore.RED + Style.BRIGHT + "ERR: Not currently backing that path up..." + Style.RESET_ALL)
 	else:
-		print(Fore.RED + Style.BRIGHT + "No longer backing up {}...".format(path) + Style.RESET_ALL)
-		config[section] = list(set(config[section]).remove(path))
-	write_config(config)
+		write_config(config)
 
 
 def show_config():
@@ -794,8 +781,7 @@ def actions_menu_prompt():
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str),
               help="Add path (relative to home dir) to be backed up. Arg format: [dots, configs, other] <PATH>")
-@click.option('--rm', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str),
-              help="Remove path (relative to home dir) from config. Arg format: [dots, configs, other] <PATH>")
+@click.option('--rm', default=None, type=str, help="Remove path from config.")
 @click.option('-show', is_flag=True, default=False, help="Show config file.")
 @click.option('-complete', is_flag=True, default=False, help="Back up everything.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
@@ -818,7 +804,7 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 	backup_config_path = get_config_path()
 
 	# No interface going to be displayed
-	if any([v, delete_config, destroy_backup, show]) or None not in add or None not in rm:
+	if any([v, delete_config, destroy_backup, show, rm]) or None not in add:
 		if v:
 			print_version_info()
 		elif delete_config:
@@ -829,8 +815,8 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			destroy_backup_dir(backup_home_path)
 		elif None not in add:
 			add_path_to_config(add[0], add[1])
-		elif None not in rm:
-			rm_path_from_config(rm[0], rm[1])
+		elif rm:
+			rm_path_from_config(rm)
 		elif show:
 			show_config()
 		sys.exit()
