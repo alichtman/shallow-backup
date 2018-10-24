@@ -10,7 +10,18 @@ import multiprocessing as mp
 from constants import Constants
 from colorama import Fore, Style
 from shutil import copyfile, copytree
-from pprint import pprint
+
+########
+# Globals
+########
+
+COMMIT_MSG = {
+	"fonts"   : "Back up fonts.",
+	"packages": "Back up packages.",
+	"configs" : "Back up configs.",
+	"complete": "Back up everything.",
+	"dotfiles": "Back up dotfiles.,"
+}
 
 
 #########
@@ -500,29 +511,23 @@ def git_init_if_needed(dir_path):
 		return repo, False
 
 
-def git_add_all_commit(repo, dir_path):
+def git_add_all_commit_push(repo, message):
 	"""
 	Stages all changed files in dir_path and its children folders for commit,
 	commits them and pushes to a remote if it's configured.
 	"""
 	if repo.index.diff(None) or repo.untracked_files:
 		print(Fore.GREEN + Style.BRIGHT + "Making new commit..." + Style.RESET_ALL)
-		git = repo.git
-		git.add(A=True)
-		git.commit(m="shallow-backup update.")
+		repo.git.add(A=True)
+		repo.git.commit(m=message)
+
+		if "origin" in [remote.name for remote in repo.remotes]:
+			print(Fore.GREEN + Style.BRIGHT + "Pushing to master at " + Fore.RED + "{}...".format(
+				repo.remotes.origin.url) + Style.RESET_ALL)
+			repo.git.fetch()
+			repo.git.push("--set-upstream", "origin", "master")
 	else:
 		print(Fore.GREEN + Style.BRIGHT + "No changes to commit..." + Style.RESET_ALL)
-
-
-def git_push_if_possible(repo):
-	"""
-	Push commits to origin after fast-forwarding branch.
-	"""
-	if "origin" in [remote.name for remote in repo.remotes]:
-		print(Fore.GREEN + Style.BRIGHT + "Pushing to master at " + Fore.RED + "{}...".format(repo.remotes.origin.url) + Style.RESET_ALL)
-		git = repo.git
-		git.fetch()
-		git.push("--set-upstream", "origin", "master")
 
 
 ########
@@ -863,32 +868,37 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			reinstall_config_files(configs_path)
 		elif complete:
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["everything"])
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["dotfiles"])
 		elif configs:
 			backup_configs(configs_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["configs"])
 		elif packages:
 			backup_packages(packages_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["packages"])
 		elif fonts:
 			backup_fonts(fonts_path)
-
-		git_add_all_commit(repo, backup_home_path)
-		git_push_if_possible(repo)
-		sys.exit()
-
+			git_add_all_commit_push(repo, COMMIT_MSG["fonts"])
 	# No CL options, prompt for selection
 	else:
 		selection = actions_menu_prompt().lower().strip()
 		if selection == "back up everything":
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["everything"])
 		elif selection == "back up dotfiles":
 			backup_dotfiles(dotfiles_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["dotfiles"])
 		elif selection == "back up configs":
 			backup_configs(configs_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["configs"])
 		elif selection == "back up packages":
 			backup_packages(packages_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["packages"])
 		elif selection == "back up fonts":
 			backup_fonts(fonts_path)
+			git_add_all_commit_push(repo, COMMIT_MSG["fonts"])
 		elif selection == "reinstall packages":
 			reinstall_packages_from_lists(packages_path)
 		elif selection == "reinstall configs":
@@ -901,13 +911,8 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			else:
 				print("{} Exiting to prevent accidental deletion of backup directory... {}".format(
 					Fore.RED, Style.RESET_ALL))
-			sys.exit()
 
-		if selection.startswith("back up"):
-			git_add_all_commit(repo, backup_home_path)
-			git_push_if_possible(repo)
-
-		sys.exit()
+	sys.exit()
 
 
 if __name__ == '__main__':
