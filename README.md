@@ -51,16 +51,15 @@ Options:
   -dotfiles               Back up dotfiles.
   -configs                Back up app config files.
   -fonts                  Back up installed fonts.
-  -packages               Back up package libraries and installed
-                          applications.
+  -packages               Back up package libraries.
   -old_path               Skip setting new back up directory path.
   --new_path TEXT         Input a new back up directory path.
   --remote TEXT           Input a URL for a git repository.
   -reinstall_packages     Reinstall packages from package lists.
   -reinstall_configs      Reinstall configs from configs backup.
   -delete_config          Remove config file.
-  -v                      Display version and author information and exit.
   -destroy_backup         Removes the backup directory and its content.
+  -v                      Display version and author information and exit.
   -help, -h, --help       Show this message and exit.
 ```
 

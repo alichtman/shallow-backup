@@ -801,17 +801,17 @@ def actions_menu_prompt():
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
-@click.option('-packages', is_flag=True, default=False, help="Back up package libraries and installed applications.")
+@click.option('-packages', is_flag=True, default=False, help="Back up package libraries.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
 @click.option('--new_path', default=None, help="Input a new back up directory path.")
 @click.option('--remote', default=None, help="Input a URL for a git repository.")
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages from package lists.")
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
-@click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 @click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
+@click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages,
-        reinstall_configs, delete_config, v, destroy_backup):
+        reinstall_configs, delete_config, destroy_backup, v):
 	"""
 	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
 	"""
