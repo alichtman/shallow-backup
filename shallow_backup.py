@@ -28,15 +28,15 @@ COMMIT_MSG = {
 # Display
 #########
 
-def print_version_info():
-	version = "{} v{} by {} -> (Github: {})".format(Constants.PROJECT_NAME,
-	                                                Constants.VERSION,
-	                                                Constants.AUTHOR_FULL_NAME,
-	                                                Constants.AUTHOR_GITHUB)
-	line = "-" * (len(version))
-	print(Fore.RED + Style.BRIGHT + line)
-	print(version)
-	print(line + "\n" + Style.RESET_ALL)
+def print_version_info(cli=True):
+
+	version = "v{} by {} (@{})".format(Constants.VERSION,
+	                                      Constants.AUTHOR_FULL_NAME,
+	                                      Constants.AUTHOR_GITHUB)
+	if not cli:
+		print(Fore.RED + Style.BRIGHT + "\t{}\n".format(version) + Style.RESET_ALL)
+	else:
+		print(version)
 
 
 def splash_screen():
@@ -44,7 +44,7 @@ def splash_screen():
 	Display splash graphic, and then version info
 	"""
 	print(Fore.YELLOW + Style.BRIGHT + "\n" + Constants.LOGO + Style.RESET_ALL)
-	print_version_info()
+	print_version_info(False)
 
 
 def print_section_header(title, COLOR):
