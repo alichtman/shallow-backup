@@ -29,10 +29,12 @@ COMMIT_MSG = {
 #########
 
 def print_version_info(cli=True):
-
+	"""
+	Formats version differently for CLI and splash screen.
+	"""
 	version = "v{} by {} (@{})".format(Constants.VERSION,
-	                                      Constants.AUTHOR_FULL_NAME,
-	                                      Constants.AUTHOR_GITHUB)
+	                                   Constants.AUTHOR_FULL_NAME,
+	                                   Constants.AUTHOR_GITHUB)
 	if not cli:
 		print(Fore.RED + Style.BRIGHT + "\t{}\n".format(version) + Style.RESET_ALL)
 	else:
@@ -41,7 +43,7 @@ def print_version_info(cli=True):
 
 def splash_screen():
 	"""
-	Display splash graphic, and then version info
+	Display splash graphic, and then stylized version
 	"""
 	print(Fore.YELLOW + Style.BRIGHT + "\n" + Constants.LOGO + Style.RESET_ALL)
 	print_version_info(False)
@@ -55,6 +57,15 @@ def print_section_header(title, COLOR):
 	print("\n" + COLOR + Style.BRIGHT + block)
 	print("#", title)
 	print(block + "\n" + Style.RESET_ALL)
+
+
+def print_pkg_mgr_backup(mgr):
+	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
+
+
+# TODO: Integrate this in the reinstallation section
+def print_pkg_mgr_reinstall(mgr):
+	print("{}Reinstalling {}{}{}{}{} packages...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
 def prompt_yes_no(message, color):
@@ -277,25 +288,25 @@ def backup_packages(backup_path):
 
 	for mgr in std_package_managers:
 		# deal with package managers that have spaces in them.
-		print(Fore.BLUE + "Backing up {} package list...".format(mgr) + Style.RESET_ALL)
+		print_pkg_mgr_backup(mgr)
 		command = "{} list".format(mgr)
 		dest = "{}/{}_list.txt".format(backup_path, mgr.replace(" ", "-"))
 		run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# cargo
-	print(Fore.BLUE + "Backing up cargo packages..." + Style.RESET_ALL)
+	print_pkg_mgr_backup("cargo")
 	command = "ls {}".format(_home_prefix(".cargo/bin/"))
 	dest = "{}/cargo_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# pip
-	print(Fore.BLUE + "Backing up pip packages..." + Style.RESET_ALL)
+	print_pkg_mgr_backup("pip")
 	command = "pip list --format=freeze".format(backup_path)
 	dest = "{}/pip_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# npm
-	print(Fore.BLUE + "Backing up npm packages..." + Style.RESET_ALL)
+	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, temp_file_path)
@@ -311,7 +322,7 @@ def backup_packages(backup_path):
 	os.remove(temp_file_path)
 
 	# atom package manager
-	print(Fore.BLUE + "Backing up Atom packages..." + Style.RESET_ALL)
+	print_pkg_mgr_backup("Atom")
 	command = "apm list --installed --bare"
 	dest = "{}/apm_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
@@ -319,7 +330,7 @@ def backup_packages(backup_path):
 	# sublime text 2 packages
 	sublime_2_path = _home_prefix("Library/Application Support/Sublime Text 2/Packages/")
 	if os.path.isdir(sublime_2_path):
-		print(Fore.BLUE + "Backing up Sublime Text 2 packages..." + Style.RESET_ALL)
+		print_pkg_mgr_backup("Sublime Text 2")
 		command = ["ls", sublime_2_path]
 		dest = "{}/sublime2_list.txt".format(backup_path)
 		run_shell_cmd_write_stdout_to_file(command, dest)
@@ -327,7 +338,7 @@ def backup_packages(backup_path):
 	# sublime text 3 packages
 	sublime_3_path = _home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
 	if os.path.isdir(sublime_3_path):
-		print(Fore.BLUE + "Backing up Sublime Text 3 packages..." + Style.RESET_ALL)
+		print_pkg_mgr_backup("Sublime Text 3")
 		command = ["ls", sublime_3_path]
 		dest = "{}/sublime3_list.txt".format(backup_path)
 		run_shell_cmd_write_stdout_to_file(command, dest)
@@ -335,13 +346,13 @@ def backup_packages(backup_path):
 		print(sublime_3_path, "IS NOT DIR")
 
 	# macports
-	print(Fore.BLUE + "Backing up macports packages..." + Style.RESET_ALL)
+	print_pkg_mgr_backup("macports")
 	command = "port installed requested"
 	dest = "{}/macports_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# system installs
-	print(Fore.BLUE + "Documenting system applications..." + Style.RESET_ALL)
+	print_pkg_mgr_backup("macOS Applications")
 	command = "ls /Applications/"
 	dest = "{}/system_apps_list.txt".format(backup_path)
 	run_shell_cmd_write_stdout_to_file(command, dest)
@@ -422,11 +433,14 @@ def reinstall_packages_from_lists(packages_path):
 		if manager in Constants.PACKAGE_MANAGERS:
 			package_mgrs.add(file.split("_")[0])
 
+	# TODO: USE print_pkg_mgr_reinstall()
+	# TODO: Restylize this printing
 	print(Fore.BLUE + Style.BRIGHT + "Package Managers detected:" + Style.RESET_ALL)
 	for mgr in package_mgrs:
 		print(Fore.BLUE + Style.BRIGHT + "\t" + mgr)
 	print(Style.RESET_ALL)
 
+	# TODO: Multithreading for reinstallation.
 	# construct commands
 	for pm in package_mgrs:
 		if pm in ["brew", "brew-cask"]:
@@ -467,14 +481,14 @@ def git_set_remote(repo, remote_url):
 	"""
 	Sets git repo upstream URL and fast-forwards history.
 	"""
-	print(Fore.GREEN + Style.BRIGHT + "Setting remote URL to -> " + Style.NORMAL + "{}...".format(
+	print(Fore.YELLOW + Style.BRIGHT + "Setting remote URL to -> " + Style.NORMAL + "{}...".format(
 		remote_url) + Style.RESET_ALL)
 
 	try:
 		origin = repo.create_remote('origin', remote_url)
 		origin.fetch()
 	except git.CommandError:
-		print("Updating existing remote URL...")
+		print(Fore.YELLOW + Style.BRIGHT + "Updating existing remote URL..." + Style.RESET_ALL)
 		repo.delete_remote(repo.remotes.origin)
 		origin = repo.create_remote('origin', remote_url)
 		origin.fetch()
@@ -486,10 +500,10 @@ def create_gitignore_if_needed(dir_path):
 	"""
 	gitignore_path = os.path.join(dir_path, ".gitignore")
 	if os.path.exists(gitignore_path):
-		print(Fore.GREEN + Style.BRIGHT + ".gitignore detected." + Style.RESET_ALL)
+		print(Fore.YELLOW + Style.BRIGHT + ".gitignore detected." + Style.RESET_ALL)
 		pass
 	else:
-		print(Fore.GREEN + Style.BRIGHT + "Creating default .gitignore..." + Style.RESET_ALL)
+		print(Fore.YELLOW + Style.BRIGHT + "Creating default .gitignore..." + Style.RESET_ALL)
 		files_to_ignore = get_config()["gitignore"]
 		with open(gitignore_path, "w+") as f:
 			for ignore in files_to_ignore:
@@ -502,11 +516,11 @@ def git_init_if_needed(dir_path):
 	Returns tuple of (git.Repo, bool new_git_repo_created)
 	"""
 	if not os.path.isdir(os.path.join(dir_path, ".git")):
-		print(Fore.GREEN + Style.BRIGHT + "Initializing new git repo..." + Style.RESET_ALL)
+		print(Fore.YELLOW + Style.BRIGHT + "Initializing new git repo..." + Style.RESET_ALL)
 		repo = git.Repo.init(dir_path)
 		return repo, True
 	else:
-		print(Fore.GREEN + Style.BRIGHT + "Detected git repo." + Style.RESET_ALL)
+		print(Fore.YELLOW + Style.BRIGHT + "Detected git repo." + Style.RESET_ALL)
 		repo = git.Repo(dir_path)
 		return repo, False
 
@@ -517,17 +531,17 @@ def git_add_all_commit_push(repo, message):
 	commits them and pushes to a remote if it's configured.
 	"""
 	if repo.index.diff(None) or repo.untracked_files:
-		print(Fore.GREEN + Style.BRIGHT + "Making new commit..." + Style.RESET_ALL)
+		print(Fore.YELLOW + Style.BRIGHT + "Making new commit..." + Style.RESET_ALL)
 		repo.git.add(A=True)
 		repo.git.commit(m=message)
 
 		if "origin" in [remote.name for remote in repo.remotes]:
-			print(Fore.GREEN + Style.BRIGHT + "Pushing to master at " + Fore.RED + "{}...".format(
+			print(Fore.YELLOW + Style.BRIGHT + "Pushing to master: " + Style.NORMAL + "{}...".format(
 				repo.remotes.origin.url) + Style.RESET_ALL)
 			repo.git.fetch()
 			repo.git.push("--set-upstream", "origin", "master")
 	else:
-		print(Fore.GREEN + Style.BRIGHT + "No changes to commit..." + Style.RESET_ALL)
+		print(Fore.YELLOW + Style.BRIGHT + "No changes to commit..." + Style.RESET_ALL)
 
 
 ########
@@ -718,8 +732,7 @@ def prompt_for_path_update(config):
 	If yes, update. If no... don't.
 	"""
 	current_path = config["backup_path"]
-	print(Fore.BLUE + Style.BRIGHT + "Current shallow-backup path -> " + Style.NORMAL + "{}".format(
-		current_path) + Style.RESET_ALL)
+	print("{}{}Current shallow-backup path: {}{}{}".format(Fore.BLUE, Style.BRIGHT, Style.NORMAL, current_path, Style.RESET_ALL))
 
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
 		print(Fore.GREEN + Style.BRIGHT + "Enter relative path:" + Style.RESET_ALL)
