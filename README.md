@@ -10,64 +10,30 @@
 Contents
 ========
 
- * [What can I back up?](#what-can-i-back-up)
  * [Installation](#installation)
  * [Usage](#usage)
-    * [Example Commands](#example-commands)
-    * [Use Cases](#use-cases)
-    * [Output Structure](#output-structure)
+ * [What can I back up?](#what-can-i-back-up)
+ * [Customization](#customization)
+ * [Use Cases](#use-cases)
+ * [Output Structure](#output-structure)
  * [Inspiration](#inspiration)
- * [Featured On](#featured-on)
  * [Want to contribute?](#want-to-contribute)
-
-### What can I back up?
----
-
-By default, `shallow-backup` backs these up.
-
-1. `dotfiles` and `dotfolders`.
-    * `.bashrc`
-    * `.bash_profile`
-    * `.gitconfig`
-    * `.pypirc`
-    * `.shallow-backup`
-    * `.ssh/`
-    * `.vim/`
-    * `.zshrc`
-
-2. Application Preferences
-    * Atom
-    * Sublime Text
-    * Terminal
-    * JetBrains IDEs
-    * VS Code (Coming soon!)
-
-3. Installed `packages`.
-    * `Atom` Packages (`apm`)
-    * `brew` and `cask`
-    * `cargo`
-    * `gem`
-    * `pip`
-    * `npm`
-    * `macports`
-    * `Sublime Text` Packages
-    * `~/Applications/` directory
-
-4. User installed `fonts`.
-
-But you can add/remove whatever you want by modifying the `~/.shallow-backup` config file. The ability to modify this file from the CLI is coming soon!
 
 ### Installation
 ---
 
-1. Install with [`pip`](https://pypi.org/project/shallow-backup/)
-    + `$ pip install shallow-backup`
+1. Install with [`pip3`](https://pypi.org/project/shallow-backup/)
+    + `$ pip3 install shallow-backup`
     + `$ shallow-backup`
 
 2. Download the `shallow-backup` binary from Releases tab.
 
 ### Usage
 ---
+
+To start the interactive program, simply run `$ shallow-backup`.
+
+`shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line args.
 
 ```shell
 Usage: shallow_backup.py [OPTIONS]
@@ -98,14 +64,48 @@ Options:
   -help, -h, --help       Show this message and exit.
 ```
 
-#### Example Commands
+### What can I back up?
 ---
 
-```shell
-$ shallow-backup # Launch interactive CLI backup process
-$ shallow-backup -old_path -complete # Make complete backup using same path as in config file
-$ shallow-backup -new_path new_backup_dir -fonts # Back up fonts using path: `/new_backup_dir/`
-```
+By default, `shallow-backup` backs these up.
+
+1. `dotfiles` and `dotfolders`.
+    * `.bashrc`
+    * `.bash_profile`
+    * `.gitconfig`
+    * `.pypirc`
+    * `.shallow-backup`
+    * `.ssh/`
+    * `.vim/`
+    * `.zshrc`
+
+2. Development Related App Preferences
+    * Atom
+    * Sublime Text 2/3
+    * Terminal.app
+    * JetBrains IDEs
+    * VS Code (Coming soon!)
+
+3. Installed Packages
+    * `Atom` Packages (`apm`)
+    * `brew` and `cask`
+    * `cargo`
+    * `gem`
+    * `pip`
+    * `npm`
+    * `macports`
+    * `Sublime Text 2/3` Packages
+    * `~/Applications/` directory (macOS only)
+
+4. User installed `fonts`.
+
+### Customization
+
+If you'd like to modify which files are backed up, you have to edit the `~/.shallow-backup` file.
+
+1. You can open this up in a regular text editor and make your changes.
+2. You can use the `--add SECTION PATH` or `--rm SECTION PATH` args to modify the config file.
+
 
 #### Use Cases
 ---
@@ -163,24 +163,13 @@ backup_dir/
 ### Inspiration
 ---
 
-I back up system images of my MacBook Pro to an external SSD multiple times per week, and it always takes way too long. I wanted to speed this up, so I took a look at *what was actually being backed up*. I saw that my `brew`, `npm`, and `pip` libraries took up way more memory than I imagined.
+I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at what was actually being backed up. I saw that my `brew`, `npm`, and `pip` libraries took up a ton more space than I imagined.
 
-*And it's totally unnecessary!* All you really need to "back up" your package installs is a list of the installed packages from each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example. Additionally, you have the added bonus of always installing up-to-date packages after an OS wipe and reinstall.
+*And that's totally unnecessary.* When you back something up, you do it with the intention of being able to get back to that exact state at some point in the future. The minimum you need in order to recreate those package libraries later is just a list of the packages that are installed with each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example. 
 
-I cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` install libraries with simple text files, also cutting down the back up time significantly.
+I cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` libraries with simple text files. I also cut down the back up time significantly since many fewer files were being copied.
 
 Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
-
-### Featured On
----
-
-`shallow-backup` is featured on these awesome lists!
-
-* [awesome-mac](https://github.com/jaywcjlove/awesome-mac)
-* [awesome-shell](https://github.com/alebcay/awesome-shell)
-* [open-source-mac-os-apps](https://github.com/serhii-londar/open-source-mac-os-apps)
-* [tools-osx](https://github.com/morgant/tools-osx)
-* [agarrharr/awesome-cli-apps](https://github.com/agarrharr/awesome-cli-apps)
 
 ### Want to Contribute?
 ---
