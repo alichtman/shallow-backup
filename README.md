@@ -101,10 +101,12 @@ By default, `shallow-backup` backs these up.
 
 ### Customization
 
-If you'd like to modify which files are backed up, you have to edit the `~/.shallow-backup` file.
+If you'd like to modify which files are backed up, you have to edit the `~/.shallow-backup` file. There are two recommended ways of doing this.
 
 1. You can open this up in a regular text editor and make your changes.
 2. You can use the `--add SECTION PATH` or `--rm SECTION PATH` args to modify the config file.
+
+NOTE: Dotfile paths should be added relative to the home directory.
 
 
 #### Use Cases
