@@ -7,7 +7,6 @@ import inquirer
 import subprocess as sp
 import multiprocessing as mp
 from constants import Constants
-from colorama import Fore, Style
 from shutil import copyfile, copytree, rmtree, move
 
 ########
@@ -22,6 +21,18 @@ COMMIT_MSG = {
 	"dotfiles": "Back up dotfiles.,"
 }
 
+ANSI = {
+        "red"      : "\033[31m",
+        "green"    : "\033[92m",
+        "gray"     : "\033[90m",
+        "cyan"     : "\033[36m",
+        "yellow"   : "\033[33m",
+        "blue"     : "\033[34m",
+        "reset"    : "\033[0m",
+        "underline": "\033[4m",
+        "bright"   : "\033[1m",
+        "normal"   : "\033[22m"
+}
 
 #########
 # Display
@@ -35,7 +46,7 @@ def print_version_info(cli=True):
 	                                   Constants.AUTHOR_FULL_NAME,
 	                                   Constants.AUTHOR_GITHUB)
 	if not cli:
-		print(Fore.RED + Style.BRIGHT + "\t{}\n".format(version) + Style.RESET_ALL)
+		print(ANSI["red"] + ANSI["bright"] + "\t{}\n".format(version) + ANSI["reset"])
 	else:
 		print(version)
 
@@ -44,7 +55,7 @@ def splash_screen():
 	"""
 	Display splash graphic, and then stylized version
 	"""
-	print(Fore.YELLOW + Style.BRIGHT + "\n" + Constants.LOGO + Style.RESET_ALL)
+	print(ANSI["yellow"] + ANSI["bright"] + "\n" + Constants.LOGO + ANSI["reset"])
 	print_version_info(False)
 
 
@@ -53,18 +64,18 @@ def print_section_header(title, COLOR):
 	Prints variable sized section header
 	"""
 	block = "#" * (len(title) + 2)
-	print("\n" + COLOR + Style.BRIGHT + block)
+	print("\n" + COLOR + ANSI["bright"] + block)
 	print("#", title)
-	print(block + "\n" + Style.RESET_ALL)
+	print(block + "\n" + ANSI["reset"])
 
 
 def print_pkg_mgr_backup(mgr):
-	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
+	print("{}Backing up {}{}{}{}{} packages list...{}".format(ANSI["blue"], ANSI["bright"], ANSI["yellow"], mgr, ANSI["blue"], ANSI["normal"], ANSI["reset"]))
 
 
 # TODO: Integrate this in the reinstallation section
 def print_pkg_mgr_reinstall(mgr):
-	print("{}Reinstalling {}{}{}{}{} packages...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
+	print("{}Reinstalling {}{}{}{}{} packages...{}".format(ANSI["blue"], ANSI["bright"], ANSI["yellow"], mgr, ANSI["blue"], ANSI["normal"], ANSI["reset"]))
 
 
 def prompt_yes_no(message, color):
@@ -72,7 +83,7 @@ def prompt_yes_no(message, color):
 	Print question and return True or False depending on user selection from list.
 	"""
 	questions = [inquirer.List('choice',
-	                           message=color + Style.BRIGHT + message + Fore.BLUE,
+	                           message=color + ANSI["bright"] + message + ANSI["blue"],
 	                           choices=[' Yes', ' No'],
 	                           )
 	             ]
@@ -118,17 +129,17 @@ def make_dir_warn_overwrite(path):
 	"""
 	subdirs = ["dotfiles", "packages", "fonts", "configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
-		print(Fore.RED + Style.BRIGHT +
-		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
-		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
+		print(ANSI["red"] + ANSI["bright"] +
+		      "Directory {} already exists".format(path) + "\n" + ANSI["reset"])
+		if prompt_yes_no("Erase directory and make new back up?", ANSI["red"]):
 			rmtree(path)
 			os.makedirs(path)
 		else:
-			print(Fore.RED + "Exiting to prevent accidental deletion of user data." + Style.RESET_ALL)
+			print(ANSI["red"] + "Exiting to prevent accidental deletion of user data." + ANSI["reset"])
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
-		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
+		print(ANSI["red"] + ANSI["bright"] + "CREATED DIR: " + ANSI["normal"] + path + ANSI["reset"])
 
 
 def get_subfiles(directory):
@@ -200,7 +211,7 @@ def backup_dotfiles(backup_path):
 	"""
 	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
 	"""
-	print_section_header("DOTFILES", Fore.BLUE)
+	print_section_header("DOTFILES", ANSI["blue"])
 	make_dir_warn_overwrite(backup_path)
 
 	# assumes dotfiles are stored in home directory
@@ -229,13 +240,13 @@ def backup_dotfiles(backup_path):
 
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
-		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
+		print(ANSI["blue"] + ANSI["bright"] + "Backing up dotfolders..." + ANSI["reset"])
 		for x in dotfolders_mp_in:
 			x = list(x)
 			mp.Process(target=_copy_dir, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
-		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfiles..." + Style.RESET_ALL)
+		print(ANSI["blue"] + ANSI["bright"] + "Backing up dotfiles..." + ANSI["reset"])
 		for x in dotfiles_mp_in:
 			x = list(x)
 			mp.Process(target=copyfile, args=(x[0], x[1],)).start()
@@ -246,13 +257,13 @@ def backup_configs(backup_path):
 	Creates `configs` directory and places config backups there.
 	Configs are application settings, generally. .plist files count.
 	"""
-	print_section_header("CONFIGS", Fore.BLUE)
+	print_section_header("CONFIGS", ANSI["blue"])
 	make_dir_warn_overwrite(backup_path)
 
 	configs_dir_mapping = get_configs_path_mapping()
 	plist_files = get_plist_mapping()
 
-	print(Fore.BLUE + Style.BRIGHT + "Backing up configs..." + Style.RESET_ALL)
+	print(ANSI["blue"] + ANSI["bright"] + "Backing up configs..." + ANSI["reset"])
 
 	# backup config dirs in backup_path/<target>/
 	for config, target in configs_dir_mapping.items():
@@ -263,7 +274,7 @@ def backup_configs(backup_path):
 			copytree(src_dir, configs_backup_path, symlinks=True)
 
 	# backup plist files in backup_path/configs/plist/
-	print(Fore.BLUE + Style.BRIGHT + "Backing up plist files..." + Style.RESET_ALL)
+	print(ANSI["blue"] + ANSI["bright"] + "Backing up plist files..." + ANSI["reset"])
 	plist_backup_path = os.path.join(backup_path, "plist")
 	_mkdir_or_pass(plist_backup_path)
 	for plist, dest in plist_files.items():
@@ -276,7 +287,7 @@ def backup_packages(backup_path):
 	"""
 	Creates `packages` directory and places install list text files there.
 	"""
-	print_section_header("PACKAGES", Fore.BLUE)
+	print_section_header("PACKAGES", ANSI["blue"])
 	make_dir_warn_overwrite(backup_path)
 
 	std_package_managers = [
@@ -357,7 +368,7 @@ def backup_packages(backup_path):
 	run_shell_cmd_write_stdout_to_file(command, dest)
 
 	# Clean up empty package list files
-	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
+	print(ANSI["blue"] + "Cleaning up empty package lists..." + ANSI["reset"])
 	for file in get_subfiles(backup_path):
 		if os.path.getsize(file) == 0:
 			os.remove(file)
@@ -367,9 +378,9 @@ def backup_fonts(path):
 	"""
 	Creates list of all .ttf and .otf files in ~/Library/Fonts/
 	"""
-	print_section_header("FONTS", Fore.BLUE)
+	print_section_header("FONTS", ANSI["blue"])
 	make_dir_warn_overwrite(path)
-	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
+	print(ANSI["blue"] + "Copying '.otf' and '.ttf' fonts..." + ANSI["reset"])
 	fonts_path = _home_prefix("Library/Fonts/")
 	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if
 	         font.endswith(".otf") or font.endswith(".ttf")]
@@ -398,7 +409,7 @@ def reinstall_config_files(configs_path):
 	"""
 	Reinstall all configs from the backup.
 	"""
-	print_section_header("REINSTALLING CONFIG FILES", Fore.BLUE)
+	print_section_header("REINSTALLING CONFIG FILES", ANSI["blue"])
 
 	def backup_prefix(path):
 		return os.path.join(configs_path, path)
@@ -414,7 +425,7 @@ def reinstall_config_files(configs_path):
 		if os.path.exists(backup_prefix(backup)):
 			copyfile(backup_prefix(backup), _home_prefix(target))
 
-	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", Fore.BLUE)
+	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", ANSI["blue"])
 	sys.exit()
 
 
@@ -422,7 +433,7 @@ def reinstall_packages_from_lists(packages_path):
 	"""
 	Reinstall all packages from the files in backup/installs.
 	"""
-	print_section_header("REINSTALLING PACKAGES", Fore.BLUE)
+	print_section_header("REINSTALLING PACKAGES", ANSI["blue"])
 
 	# Figure out which install lists they have saved
 	package_mgrs = set()
@@ -434,40 +445,40 @@ def reinstall_packages_from_lists(packages_path):
 
 	# TODO: USE print_pkg_mgr_reinstall()
 	# TODO: Restylize this printing
-	print(Fore.BLUE + Style.BRIGHT + "Package Managers detected:" + Style.RESET_ALL)
+	print(ANSI["blue"] + ANSI["bright"] + "Package Managers detected:" + ANSI["reset"])
 	for mgr in package_mgrs:
-		print(Fore.BLUE + Style.BRIGHT + "\t" + mgr)
-	print(Style.RESET_ALL)
+		print(ANSI["blue"] + ANSI["bright"] + "\t" + mgr)
+	print(ANSI["reset"])
 
 	# TODO: Multithreading for reinstallation.
 	# construct commands
 	for pm in package_mgrs:
 		if pm in ["brew", "brew-cask"]:
 			pm_formatted = pm.replace("-", " ")
-			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm_formatted) + Style.RESET_ALL)
+			print(ANSI["blue"] + ANSI["bright"] + "Reinstalling {} packages...".format(pm_formatted) + ANSI["reset"])
 			cmd = "xargs {0} install < {1}/{2}_list.txt".format(pm.replace("-", " "), packages_path, pm_formatted)
 			run_shell_cmd(cmd)
 		elif pm == "npm":
-			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			print(ANSI["blue"] + ANSI["bright"] + "Reinstalling {} packages...".format(pm) + ANSI["reset"])
 			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(packages_path)
 			run_shell_cmd(cmd)
 		elif pm == "pip":
-			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			print(ANSI["blue"] + ANSI["bright"] + "Reinstalling {} packages...".format(pm) + ANSI["reset"])
 			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
 			run_shell_cmd(cmd)
 		elif pm == "apm":
-			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			print(ANSI["blue"] + ANSI["bright"] + "Reinstalling {} packages...".format(pm) + ANSI["reset"])
 			cmd = "apm install --packages-file {0}/apm_list.txt".format(packages_path)
 			run_shell_cmd(cmd)
 		elif pm == "macports":
-			print(Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
+			print(ANSI["red"] + "WARNING: Macports reinstallation is not supported." + ANSI["reset"])
 		elif pm == "gem":
-			print(Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
+			print(ANSI["red"] + "WARNING: Gem reinstallation is not supported." + ANSI["reset"])
 		elif pm == "cargo":
-			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment."
-			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
+			print(ANSI["red"] + "WARNING: Cargo reinstallation is not possible at the moment."
+			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + ANSI["reset"])
 
-	print_section_header("SUCCESSFUL PACKAGE REINSTALLATION", Fore.BLUE)
+	print_section_header("SUCCESSFUL PACKAGE REINSTALLATION", ANSI["blue"])
 	sys.exit()
 
 
@@ -480,14 +491,14 @@ def git_set_remote(repo, remote_url):
 	"""
 	Sets git repo upstream URL and fast-forwards history.
 	"""
-	print(Fore.YELLOW + Style.BRIGHT + "Setting remote URL to -> " + Style.NORMAL + "{}...".format(
-		remote_url) + Style.RESET_ALL)
+	print(ANSI["yellow"] + ANSI["bright"] + "Setting remote URL to -> " + ANSI["normal"] + "{}...".format(
+		remote_url) + ANSI["reset"])
 
 	try:
 		origin = repo.create_remote('origin', remote_url)
 		origin.fetch()
 	except git.CommandError:
-		print(Fore.YELLOW + Style.BRIGHT + "Updating existing remote URL..." + Style.RESET_ALL)
+		print(ANSI["yellow"] + ANSI["bright"] + "Updating existing remote URL..." + ANSI["reset"])
 		repo.delete_remote(repo.remotes.origin)
 		origin = repo.create_remote('origin', remote_url)
 		origin.fetch()
@@ -499,10 +510,10 @@ def create_gitignore_if_needed(dir_path):
 	"""
 	gitignore_path = os.path.join(dir_path, ".gitignore")
 	if os.path.exists(gitignore_path):
-		print(Fore.YELLOW + Style.BRIGHT + ".gitignore detected." + Style.RESET_ALL)
+		print(ANSI["yellow"] + ANSI["bright"] + ".gitignore detected." + ANSI["reset"])
 		pass
 	else:
-		print(Fore.YELLOW + Style.BRIGHT + "Creating default .gitignore..." + Style.RESET_ALL)
+		print(ANSI["yellow"] + ANSI["bright"] + "Creating default .gitignore..." + ANSI["reset"])
 		files_to_ignore = get_config()["gitignore"]
 		with open(gitignore_path, "w+") as f:
 			for ignore in files_to_ignore:
@@ -515,11 +526,11 @@ def git_init_if_needed(dir_path):
 	Returns tuple of (git.Repo, bool new_git_repo_created)
 	"""
 	if not os.path.isdir(os.path.join(dir_path, ".git")):
-		print(Fore.YELLOW + Style.BRIGHT + "Initializing new git repo..." + Style.RESET_ALL)
+		print(ANSI["yellow"] + ANSI["bright"] + "Initializing new git repo..." + ANSI["reset"])
 		repo = git.Repo.init(dir_path)
 		return repo, True
 	else:
-		print(Fore.YELLOW + Style.BRIGHT + "Detected git repo." + Style.RESET_ALL)
+		print(ANSI["yellow"] + ANSI["bright"] + "Detected git repo." + ANSI["reset"])
 		repo = git.Repo(dir_path)
 		return repo, False
 
@@ -530,17 +541,17 @@ def git_add_all_commit_push(repo, message):
 	commits them and pushes to a remote if it's configured.
 	"""
 	if repo.index.diff(None) or repo.untracked_files:
-		print(Fore.YELLOW + Style.BRIGHT + "Making new commit..." + Style.RESET_ALL)
+		print(ANSI["yellow"] + ANSI["bright"] + "Making new commit..." + ANSI["reset"])
 		repo.git.add(A=True)
 		repo.git.commit(m=message)
 
 		if "origin" in [remote.name for remote in repo.remotes]:
-			print(Fore.YELLOW + Style.BRIGHT + "Pushing to master: " + Style.NORMAL + "{}...".format(
-				repo.remotes.origin.url) + Style.RESET_ALL)
+			print(ANSI["yellow"] + ANSI["bright"] + "Pushing to master: " + ANSI["normal"] + "{}...".format(
+				repo.remotes.origin.url) + ANSI["reset"])
 			repo.git.fetch()
 			repo.git.push("--set-upstream", "origin", "master")
 	else:
-		print(Fore.YELLOW + Style.BRIGHT + "No changes to commit..." + Style.RESET_ALL)
+		print(ANSI["yellow"] + ANSI["bright"] + "No changes to commit..." + ANSI["reset"])
 
 
 ########
@@ -604,7 +615,7 @@ def create_config_file_if_needed():
 	"""
 	backup_config_path = get_config_path()
 	if not os.path.exists(backup_config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path) + Style.RESET_ALL)
+		print(ANSI["blue"] + ANSI["bright"] + "Creating config file at {}".format(backup_config_path) + ANSI["reset"])
 		backup_config = get_default_config()
 		write_config(backup_config)
 
@@ -617,31 +628,31 @@ def add_path_to_config(section, path):
 	"""
 	full_path = _home_prefix(path)
 	if not os.path.exists(full_path):
-		print(Fore.RED + Style.BRIGHT + "ERR: {} doesn't exist.".format(full_path) + Style.RESET_ALL)
+		print(ANSI["red"] + ANSI["bright"] + "ERR: {} doesn't exist.".format(full_path) + ANSI["reset"])
 		sys.exit(1)
 
 	if section == "dot":
 		# Make sure dotfile starts with a period
 		if path[0] != ".":
-			print(Fore.RED + Style.BRIGHT + "ERR: Not a dotfile." + Style.RESET_ALL)
+			print(ANSI["red"] + ANSI["bright"] + "ERR: Not a dotfile." + ANSI["reset"])
 			sys.exit(1)
 
 		if not os.path.isdir(full_path):
 			section = "dotfiles"
-			print(Fore.BLUE + Style.BRIGHT + "Adding {} to dotfile backup.".format(full_path) + Style.RESET_ALL)
+			print(ANSI["blue"] + ANSI["bright"] + "Adding {} to dotfile backup.".format(full_path) + ANSI["reset"])
 		else:
 			section = "dotfolders"
 			if path[-1] != "/":
 				full_path += "/"
 				path += "/"
-			print(Fore.BLUE + Style.BRIGHT + "Adding {} to dotfolder backup.".format(full_path) + Style.RESET_ALL)
+			print(ANSI["blue"] + ANSI["bright"] + "Adding {} to dotfolder backup.".format(full_path) + ANSI["reset"])
 
 	# TODO: Add config section once configs backup prefs are moved to the config file
 	elif section == "config":
-		print(Fore.RED + Style.BRIGHT + "ERR: Option not currently supported." + Style.RESET_ALL)
+		print(ANSI["red"] + ANSI["bright"] + "ERR: Option not currently supported." + ANSI["reset"])
 		sys.exit(1)
 	elif section == "other":
-		print(Fore.RED + Style.BRIGHT + "ERR: Option not currently supported." + Style.RESET_ALL)
+		print(ANSI["red"] + ANSI["bright"] + "ERR: Option not currently supported." + ANSI["reset"])
 		sys.exit(1)
 
 	config = get_config()
@@ -660,13 +671,13 @@ def rm_path_from_config(path):
 	config = get_config()
 	for section, items in config.items():
 		if path in items:
-			print(Fore.BLUE + Style.BRIGHT + "Removing {} from backup...".format(path) + Style.RESET_ALL)
+			print(ANSI["blue"] + ANSI["bright"] + "Removing {} from backup...".format(path) + ANSI["reset"])
 			items.remove(path)
 			config[section] = items
 			flag = True
 
 	if not flag:
-		print(Fore.RED + Style.BRIGHT + "ERR: Not currently backing that path up..." + Style.RESET_ALL)
+		print(ANSI["red"] + ANSI["bright"] + "ERR: Not currently backing that path up..." + ANSI["reset"])
 	else:
 		write_config(config)
 
@@ -675,7 +686,7 @@ def show_config():
 	"""
 	Print the config. Colorize section titles and indent contents.
 	"""
-	print_section_header("SHALLOW BACKUP CONFIG", Fore.RED)
+	print_section_header("SHALLOW BACKUP CONFIG", ANSI["red"])
 	config = get_config()
 	for section, contents in config.items():
 		# Hide gitignore config
@@ -683,10 +694,10 @@ def show_config():
 			continue
 		# Print backup path on same line
 		if section == "backup_path":
-			print(Fore.RED + Style.BRIGHT + "Backup Path:" + Style.RESET_ALL + contents)
+			print(ANSI["red"] + ANSI["bright"] + "Backup Path:" + ANSI["reset"] + contents)
 		# Print section header and then contents indented.
 		else:
-			print(Fore.RED + Style.BRIGHT + "\n{}: ".format(section.capitalize()) + Style.RESET_ALL)
+			print(ANSI["red"] + ANSI["bright"] + "\n{}: ".format(section.capitalize()) + ANSI["reset"])
 			for item in contents:
 				print("    {}".format(item))
 
@@ -707,7 +718,7 @@ def move_git_folder_to_path(source_path, new_path):
 	try:
 		move(git_dir, new_path)
 		move(git_ignore_file, new_path)
-		print(Fore.BLUE + Style.BRIGHT + "Moving git repo to new destination" + Style.RESET_ALL)
+		print(ANSI["blue"] + ANSI["bright"] + "Moving git repo to new destination" + ANSI["reset"])
 	except FileNotFoundError:
 		pass
 
@@ -718,12 +729,12 @@ def prompt_for_path_update(config):
 	If yes, update. If no... don't.
 	"""
 	current_path = config["backup_path"]
-	print("{}{}Current shallow-backup path: {}{}{}".format(Fore.BLUE, Style.BRIGHT, Style.NORMAL, current_path, Style.RESET_ALL))
+	print("{}{}Current shallow-backup path: {}{}{}".format(ANSI["blue"], ANSI["bright"], ANSI["normal"], current_path, ANSI["reset"]))
 
-	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
-		print(Fore.GREEN + Style.BRIGHT + "Enter relative path:" + Style.RESET_ALL)
+	if prompt_yes_no("Would you like to update this?", ANSI["green"]):
+		print(ANSI["green"] + ANSI["bright"] + "Enter relative path:" + ANSI["reset"])
 		abs_path = os.path.abspath(input())
-		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(abs_path) + Style.RESET_ALL)
+		print(ANSI["blue"] + "\nUpdating shallow-backup path to {}".format(abs_path) + ANSI["reset"])
 		config["backup_path"] = abs_path
 		write_config(config)
 		make_dir_warn_overwrite(abs_path)
@@ -735,8 +746,8 @@ def prompt_for_git_url(repo):
 	Ask user if they'd like to add a remote URL to their git repo.
 	If yes, do it.
 	"""
-	if prompt_yes_no("Would you like to set a remote URL for this git repo?", Fore.GREEN):
-		print(Fore.GREEN + Style.BRIGHT + "Enter URL:" + Style.RESET_ALL)
+	if prompt_yes_no("Would you like to set a remote URL for this git repo?", ANSI["green"]):
+		print(ANSI["green"] + ANSI["bright"] + "Enter URL:" + ANSI["reset"])
 		remote_url = input()
 		git_set_remote(repo, remote_url)
 
@@ -746,10 +757,10 @@ def destroy_backup_dir(backup_path):
 	Deletes the backup directory and its content
 	"""
 	try:
-		print("{} Deleting backup directory {} {}...".format(Fore.RED, backup_path, Style.BRIGHT))
+		print("{} Deleting backup directory {} {}...".format(ANSI["red"], backup_path, ANSI["bright"]))
 		rmtree(backup_path)
 	except OSError as e:
-		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
+		print("{} Error: {} - {}. {}".format(ANSI["red"], e.filename, e.strerror, ANSI["reset"]))
 
 
 def actions_menu_prompt():
@@ -758,7 +769,7 @@ def actions_menu_prompt():
 	"""
 	# TODO: Implement `add` and `rm` path here.
 	questions = [inquirer.List('choice',
-	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
+	                           message=ANSI["green"] + ANSI["bright"] + "What would you like to do?" + ANSI["blue"],
 	                           choices=[' Back up dotfiles',
 	                                    ' Back up configs',
 	                                    ' Back up packages',
@@ -808,7 +819,7 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			print_version_info()
 		elif delete_config:
 			os.remove(backup_config_path)
-			print(Fore.RED + Style.BRIGHT + "Removed config file..." + Style.RESET_ALL)
+			print(ANSI["red"] + ANSI["bright"] + "Removed config file..." + ANSI["reset"])
 		elif destroy_backup:
 			backup_home_path = get_config()["backup_path"]
 			destroy_backup_dir(backup_home_path)
@@ -828,8 +839,8 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 	# User entered a new path, so update the config
 	if new_path:
 		abs_path = os.path.abspath(new_path)
-		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
-			abs_path) + Style.RESET_ALL)
+		print(ANSI["blue"] + ANSI["normal"] + "\nUpdating shallow-backup path to -> " + ANSI["bright"] + "{}".format(
+			abs_path) + ANSI["reset"])
 		backup_config["backup_path"] = abs_path
 		write_config(backup_config)
 
@@ -904,11 +915,11 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 		elif selection == "show config":
 			show_config()
 		elif selection == "destroy backup":
-			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
+			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), ANSI["red"]):
 				destroy_backup_dir(backup_home_path)
 			else:
 				print("{} Exiting to prevent accidental deletion of backup directory... {}".format(
-					Fore.RED, Style.RESET_ALL))
+					ANSI["red"], ANSI["reset"]))
 
 	sys.exit()
 
