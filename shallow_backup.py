@@ -3,13 +3,12 @@ import git
 import sys
 import json
 import click
-import shutil
 import inquirer
 import subprocess as sp
 import multiprocessing as mp
 from constants import Constants
 from colorama import Fore, Style
-from shutil import copyfile, copytree
+from shutil import copyfile, copytree, rmtree, move
 
 ########
 # Globals
@@ -122,7 +121,7 @@ def make_dir_warn_overwrite(path):
 		print(Fore.RED + Style.BRIGHT +
 		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
-			shutil.rmtree(path)
+			rmtree(path)
 			os.makedirs(path)
 		else:
 			print(Fore.RED + "Exiting to prevent accidental deletion of user data." + Style.RESET_ALL)
@@ -239,7 +238,7 @@ def backup_dotfiles(backup_path):
 		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfiles..." + Style.RESET_ALL)
 		for x in dotfiles_mp_in:
 			x = list(x)
-			mp.Process(target=shutil.copyfile, args=(x[0], x[1],)).start()
+			mp.Process(target=copyfile, args=(x[0], x[1],)).start()
 
 
 def backup_configs(backup_path):
@@ -706,8 +705,8 @@ def move_git_folder_to_path(source_path, new_path):
 	git_ignore_file = os.path.join(source_path, '.gitignore')
 
 	try:
-		shutil.move(git_dir, new_path)
-		shutil.move(git_ignore_file, new_path)
+		move(git_dir, new_path)
+		move(git_ignore_file, new_path)
 		print(Fore.BLUE + Style.BRIGHT + "Moving git repo to new destination" + Style.RESET_ALL)
 	except FileNotFoundError:
 		pass
@@ -748,7 +747,7 @@ def destroy_backup_dir(backup_path):
 	"""
 	try:
 		print("{} Deleting backup directory {} {}...".format(Fore.RED, backup_path, Style.BRIGHT))
-		shutil.rmtree(backup_path)
+		rmtree(backup_path)
 	except OSError as e:
 		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
 
