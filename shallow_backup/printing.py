@@ -1,6 +1,6 @@
 import inquirer
 from colorama import Fore, Style
-from .constants import ProjInfo
+from constants import ProjInfo
 
 # TODO: ADD PRINT PATH STYLING. PATH SHOULD NOT BE BOLDED, BUT REST OF TEXT SHOULD.
 

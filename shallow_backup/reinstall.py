@@ -1,10 +1,10 @@
 import os
 from shutil import copytree, copyfile
 from colorama import Fore, Style
-from .config import get_config
-from .utils import home_prefix
-from .utils import run_cmd
-from .printing import print_section_header
+from config import get_config
+from utils import home_prefix
+from utils import run_cmd
+from printing import print_section_header
 
 
 def reinstall_config_files(configs_path):

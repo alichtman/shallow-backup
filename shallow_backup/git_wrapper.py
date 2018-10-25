@@ -1,8 +1,8 @@
 import os
 import git
 from shutil import move
-from .printing import *
-from .config import get_config
+from printing import *
+from config import get_config
 
 #########
 # GLOBALS

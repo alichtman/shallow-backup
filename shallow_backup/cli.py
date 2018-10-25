@@ -1,13 +1,13 @@
 import os
 import sys
 import click
-from .printing import *
-from .utils import mkdir_warn_overwrite, destroy_backup_dir
-from .reinstall import reinstall_packages_from_lists, reinstall_config_files
-from .prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
-from .backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
-from .git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
-from .config import get_config, show_config, add_path_to_config, rm_path_from_config, write_config, create_config_file_if_needed, get_config_path
+from printing import *
+from utils import mkdir_warn_overwrite, destroy_backup_dir
+from reinstall import reinstall_packages_from_lists, reinstall_config_files
+from prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
+from backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
+from git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
+from config import get_config, show_config, add_path_to_config, rm_path_from_config, write_config, create_config_file_if_needed, get_config_path
 
 
 # custom help options

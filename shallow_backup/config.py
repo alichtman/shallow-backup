@@ -1,8 +1,8 @@
 import os
 import sys
 import json
-from .utils import home_prefix
-from .printing import *
+from utils import home_prefix
+from printing import *
 
 
 def get_config_path():

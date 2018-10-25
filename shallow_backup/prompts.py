@@ -1,10 +1,10 @@
 import os
 import inquirer
 from colorama import Fore, Style
-from .config import write_config
-from .utils import mkdir_warn_overwrite
-from .printing import prompt_yes_no
-from .git_wrapper import git_set_remote, move_git_repo
+from config import write_config
+from utils import mkdir_warn_overwrite
+from printing import prompt_yes_no
+from git_wrapper import git_set_remote, move_git_repo
 
 
 def prompt_for_path_update(config):
