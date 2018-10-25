@@ -2,8 +2,8 @@ import os
 import sys
 import json
 from colorama import Fore, Style
-from printing import print_section_header
-from utils import _home_prefix
+from shallow_backup.utils import _home_prefix
+from shallow_backup.printing import print_section_header
 
 
 def get_config_path():

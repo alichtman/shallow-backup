@@ -1,8 +1,8 @@
 import git
 import os
 from shutil import move
-from config import get_config
 from colorama import Fore, Style
+from shallow_backup.config import get_config
 
 #########
 # GLOBALS

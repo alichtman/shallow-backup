@@ -2,8 +2,8 @@ import os
 import sys
 import subprocess as sp
 from colorama import Fore, Style
-from printing import prompt_yes_no
 from shutil import rmtree, copytree
+from shallow_backup.printing import prompt_yes_no
 
 
 def run_shell_cmd(command):

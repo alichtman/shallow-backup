@@ -1,6 +1,6 @@
-from colorama import Fore, Style
-from constants import ProjInfo
 import inquirer
+from colorama import Fore, Style
+from shallow_backup.constants import ProjInfo
 
 
 def print_version_info(cli=True):

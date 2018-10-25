@@ -1,10 +1,10 @@
 import os
 import multiprocessing as mp
-from config import get_config
 from colorama import Fore, Style
 from shutil import copytree, copyfile
-from printing import print_section_header, print_pkg_mgr_backup
-from utils import _home_prefix, make_dir_warn_overwrite, run_shell_cmd_write_stdout, _copy_dir, _mkdir_or_pass, get_subfiles
+from shallow_backup.config import get_config
+from shallow_backup.printing import print_section_header, print_pkg_mgr_backup
+from shallow_backup.utils import _home_prefix, make_dir_warn_overwrite, run_shell_cmd_write_stdout, _copy_dir, _mkdir_or_pass, get_subfiles
 
 
 def backup_dotfiles(backup_path):

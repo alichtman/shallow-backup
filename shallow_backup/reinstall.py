@@ -1,10 +1,10 @@
 import os
-from utils import run_shell_cmd
 from shutil import copytree, copyfile
 from colorama import Fore, Style
-from printing import print_section_header
-from utils import _home_prefix
-from config import get_config
+from shallow_backup.config import get_config
+from shallow_backup.utils import _home_prefix
+from shallow_backup.utils import run_shell_cmd
+from shallow_backup.printing import print_section_header
 
 
 def reinstall_config_files(configs_path):
