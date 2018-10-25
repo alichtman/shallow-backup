@@ -1,6 +1,6 @@
 import os
 import shutil
-from shallow_backup.git_wrapper import move_git_dir_to_path, safe_git_init, safe_create_gitignore
+from shallow_backup.git_wrapper import move_git_repo, safe_git_init, safe_create_gitignore
 from shallow_backup.config import create_config_file_if_needed
 
 OLD_BACKUP_DIR = 'shallow-backup-test-git-old-backup-dir'
@@ -34,7 +34,7 @@ class TestGitFolderCopying:
         """
         safe_git_init(OLD_BACKUP_DIR)
         safe_create_gitignore(OLD_BACKUP_DIR)
-        move_git_dir_to_path(OLD_BACKUP_DIR, NEW_BACKUP_DIR)
+        move_git_repo(OLD_BACKUP_DIR, NEW_BACKUP_DIR)
         assert os.path.isdir(os.path.join(NEW_BACKUP_DIR, '.git/'))
         assert os.path.isfile(os.path.join(NEW_BACKUP_DIR, '.gitignore'))
         assert not os.path.isdir(os.path.join(OLD_BACKUP_DIR, '.git/'))

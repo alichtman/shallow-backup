@@ -1,9 +1,8 @@
 import os
 import sys
 import json
-from colorama import Fore, Style
-from shallow_backup.utils import home_prefix
-from shallow_backup.printing import print_section_header
+from .utils import home_prefix
+from .printing import *
 
 
 def get_config_path():
@@ -74,7 +73,7 @@ def create_config_file_if_needed():
 	"""
 	backup_config_path = get_config_path()
 	if not os.path.exists(backup_config_path):
-		print(Fore.BLUE + Style.BRIGHT + "Creating config file at {}".format(backup_config_path) + Style.RESET_ALL)
+		print_bright_blue("Creating config file at {}".format(backup_config_path))
 		backup_config = get_default_config()
 		write_config(backup_config)
 
@@ -88,13 +87,13 @@ def add_path_to_config(section, path):
 	"""
 	full_path = home_prefix(path)
 	if not os.path.exists(full_path):
-		print(Fore.RED + Style.BRIGHT + "ERR: {} doesn't exist.".format(full_path) + Style.RESET_ALL)
+		print_bright_red("ERR: {} doesn't exist.".format(full_path))
 		sys.exit(1)
 
 	if section == "dot":
 		# Make sure dotfile starts with a period
 		if path[0] != ".":
-			print(Fore.RED + Style.BRIGHT + "ERR: Not a dotfile." + Style.RESET_ALL)
+			print_bright_red("ERR: Not a dotfile.")
 			sys.exit(1)
 
 		if not os.path.isdir(full_path):
@@ -153,8 +152,16 @@ def show_config():
 		if section == "default-gitignore":
 			continue
 		# Print backup path on same line
-		if section == "backup_path":
-			print(Fore.RED + Style.BRIGHT + "Backup Path:" + Style.RESET_ALL + contents)
+		elif section == "backup_path":
+			print(Fore.RED + Style.BRIGHT + "Backup Path: " + Style.RESET_ALL + contents)
+		elif section == "config_path_to_dest_map":
+			print(Fore.RED + Style.BRIGHT + "Configs to Backup Path Mapping: " + Style.RESET_ALL)
+			for path, dest in contents.items():
+				print("    {} -> {}".format(path, dest))
+		elif section == "plist_path_to_dest_map":
+			print(Fore.RED + Style.BRIGHT + "Plist to Backup Path Mapping: " + Style.RESET_ALL)
+			for path, dest in contents.items():
+				print("    {} -> {}".format(path, dest))
 		# Print section header and then contents indented.
 		else:
 			print(Fore.RED + Style.BRIGHT + "\n{}: ".format(section.capitalize()) + Style.RESET_ALL)

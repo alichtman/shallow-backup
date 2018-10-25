@@ -1,6 +1,40 @@
 import inquirer
 from colorama import Fore, Style
-from shallow_backup.constants import ProjInfo
+from .constants import ProjInfo
+
+# TODO: ADD PRINT PATH STYLING. PATH SHOULD NOT BE BOLDED, BUT REST OF TEXT SHOULD.
+
+
+def print_blue(text):
+	print(Fore.BLUE + text + Style.RESET_ALL)
+
+
+def print_red(text):
+	print(Fore.RED + text + Style.RESET_ALL)
+
+
+def print_yellow(text):
+	print(Fore.YELLOW + text + Style.RESET_ALL)
+
+
+def print_green(text):
+	print(Fore.GREEN + text + Style.RESET_ALL)
+
+
+def print_bright_blue(text):
+	print(Fore.BLUE + Style.BRIGHT + text + Style.RESET_ALL)
+
+
+def print_bright_red(text):
+	print(Fore.RED + Style.BRIGHT + text + Style.RESET_ALL)
+
+
+def print_bright_yellow(text):
+	print(Fore.YELLOW + Style.BRIGHT + text + Style.RESET_ALL)
+
+
+def print_bright_green(text):
+	print(Fore.GREEN + Style.BRIGHT + text + Style.RESET_ALL)
 
 
 def print_version_info(cli=True):
@@ -24,23 +58,25 @@ def splash_screen():
 	print_version_info(False)
 
 
-def print_section_header(title, COLOR):
+def print_section_header(title, color):
 	"""
 	Prints variable sized section header
 	"""
 	block = "#" * (len(title) + 2)
-	print("\n" + COLOR + Style.BRIGHT + block)
+	print("\n" + color + Style.BRIGHT + block)
 	print("#", title)
 	print(block + "\n" + Style.RESET_ALL)
 
 
 def print_pkg_mgr_backup(mgr):
-	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
+	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE,
+	                                                          Style.NORMAL, Style.RESET_ALL))
 
 
 # TODO: Integrate this in the reinstallation section
 def print_pkg_mgr_reinstall(mgr):
-	print("{}Reinstalling {}{}{}{}{} packages...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
+	print("{}Reinstalling {}{}{}{}{} packages...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE,
+	                                                       Style.NORMAL, Style.RESET_ALL))
 
 
 def prompt_yes_no(message, color):

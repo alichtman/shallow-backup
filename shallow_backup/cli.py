@@ -1,14 +1,13 @@
 import os
 import sys
 import click
-from colorama import Fore, Style
-from shallow_backup.utils import mkdir_warn_overwrite, destroy_backup_dir
-from shallow_backup.printing import print_version_info, prompt_yes_no, splash_screen
-from shallow_backup.reinstall import reinstall_packages_from_lists, reinstall_config_files
-from shallow_backup.prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
-from shallow_backup.backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
-from shallow_backup.git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
-from shallow_backup.config import get_config, show_config, add_path_to_config, rm_path_from_config, write_config, create_config_file_if_needed, get_config_path
+from .printing import *
+from .utils import mkdir_warn_overwrite, destroy_backup_dir
+from .reinstall import reinstall_packages_from_lists, reinstall_config_files
+from .prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
+from .backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
+from .git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
+from .config import get_config, show_config, add_path_to_config, rm_path_from_config, write_config, create_config_file_if_needed, get_config_path
 
 
 # custom help options
@@ -46,7 +45,7 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			print_version_info()
 		elif delete_config:
 			os.remove(backup_config_path)
-			print(Fore.RED + Style.BRIGHT + "Removed config file..." + Style.RESET_ALL)
+			print_bright_red("Removed config file...")
 		elif destroy_backup:
 			backup_home_path = get_config()["backup_path"]
 			destroy_backup_dir(backup_home_path)
@@ -145,13 +144,12 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
 				destroy_backup_dir(backup_home_path)
 			else:
-				print("{} Exiting to prevent accidental deletion of backup directory... {}".format(
-					Fore.RED, Style.RESET_ALL))
+				print_bright_red("Exiting to prevent accidental deletion of backup directory.")
 
 	sys.exit()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 	"""
 	I'm just here so I don't get fined.
 	"""

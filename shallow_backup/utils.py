@@ -1,9 +1,8 @@
 import os
 import sys
 import subprocess as sp
-from colorama import Fore, Style
 from shutil import rmtree, copytree
-from shallow_backup.printing import prompt_yes_no
+from .printing import *
 
 
 def run_cmd(command):
@@ -38,17 +37,16 @@ def mkdir_warn_overwrite(path):
 	"""
 	subdirs = ["dotfiles", "packages", "fonts", "configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
-		print(Fore.RED + Style.BRIGHT +
-		      "Directory {} already exists".format(path) + "\n" + Style.RESET_ALL)
+		print_bright_red("Directory {} already exists\n".format(path))
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			rmtree(path)
 			os.makedirs(path)
 		else:
-			print(Fore.RED + "Exiting to prevent accidental deletion of user data." + Style.RESET_ALL)
+			print_bright_red("Exiting to prevent accidental deletion of data.")
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
-		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
+		print(Fore.BLUE + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
 
 
 def destroy_backup_dir(backup_path):
@@ -56,7 +54,8 @@ def destroy_backup_dir(backup_path):
 	Deletes the backup directory and its content
 	"""
 	try:
-		print("{} Deleting backup directory {} {}...".format(Fore.RED, backup_path, Style.BRIGHT))
+		# TODO: PRINT PATH STYLING. PATH SHOULD NOT BE BOLDED.
+		print_bright_red("Deleting backup directory: {}".format(backup_path))
 		rmtree(backup_path)
 	except OSError as e:
 		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
