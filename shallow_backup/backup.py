@@ -4,7 +4,7 @@ from colorama import Fore, Style
 from shutil import copytree, copyfile
 from shallow_backup.config import get_config
 from shallow_backup.printing import print_section_header, print_pkg_mgr_backup
-from shallow_backup.utils import _home_prefix, make_dir_warn_overwrite, run_shell_cmd_write_stdout, _copy_dir, _mkdir_or_pass, get_subfiles
+from shallow_backup.utils import home_prefix, mkdir_warn_overwrite, run_cmd_write_stdout, copy_dir, mkdir_or_pass, get_subfiles
 
 
 def backup_dotfiles(backup_path):
@@ -12,7 +12,7 @@ def backup_dotfiles(backup_path):
 	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
 	"""
 	print_section_header("DOTFILES", Fore.BLUE)
-	make_dir_warn_overwrite(backup_path)
+	mkdir_warn_overwrite(backup_path)
 
 	# assumes dotfiles are stored in home directory
 	home_path = os.path.expanduser('~')
@@ -43,7 +43,7 @@ def backup_dotfiles(backup_path):
 		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
 		for x in dotfolders_mp_in:
 			x = list(x)
-			mp.Process(target=_copy_dir, args=(x[0], x[1],)).start()
+			mp.Process(target=copy_dir, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
 		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfiles..." + Style.RESET_ALL)
@@ -58,7 +58,7 @@ def backup_configs(backup_path):
 	Configs are application settings, generally. .plist files count.
 	"""
 	print_section_header("CONFIGS", Fore.BLUE)
-	make_dir_warn_overwrite(backup_path)
+	mkdir_warn_overwrite(backup_path)
 	config = get_config()
 	configs_dir_mapping = config["config_path_to_dest_map"]
 	plist_files = config["plist_path_to_dest_map"]
@@ -67,7 +67,7 @@ def backup_configs(backup_path):
 
 	# backup config dirs in backup_path/<target>/
 	for config, target in configs_dir_mapping.items():
-		src_dir = _home_prefix(config)
+		src_dir = home_prefix(config)
 		configs_backup_path = os.path.join(backup_path, target)
 		if os.path.isdir(src_dir):
 			# TODO: Exclude Sublime/Atom/VS Code Packages here to speed things up
@@ -76,9 +76,9 @@ def backup_configs(backup_path):
 	# backup plist files in backup_path/configs/plist/
 	print(Fore.BLUE + Style.BRIGHT + "Backing up plist files..." + Style.RESET_ALL)
 	plist_backup_path = os.path.join(backup_path, "plist")
-	_mkdir_or_pass(plist_backup_path)
+	mkdir_or_pass(plist_backup_path)
 	for plist, dest in plist_files.items():
-		plist_path = _home_prefix(plist)
+		plist_path = home_prefix(plist)
 		if os.path.exists(plist_path):
 			copyfile(plist_path, os.path.join(backup_path, dest))
 
@@ -88,7 +88,7 @@ def backup_packages(backup_path):
 	Creates `packages` directory and places install list text files there.
 	"""
 	print_section_header("PACKAGES", Fore.BLUE)
-	make_dir_warn_overwrite(backup_path)
+	mkdir_warn_overwrite(backup_path)
 
 	std_package_managers = [
 		"brew",
@@ -101,25 +101,25 @@ def backup_packages(backup_path):
 		print_pkg_mgr_backup(mgr)
 		command = "{} list".format(mgr)
 		dest = "{}/{}_list.txt".format(backup_path, mgr.replace(" ", "-"))
-		run_shell_cmd_write_stdout(command, dest)
+		run_cmd_write_stdout(command, dest)
 
 	# cargo
 	print_pkg_mgr_backup("cargo")
-	command = "ls {}".format(_home_prefix(".cargo/bin/"))
+	command = "ls {}".format(home_prefix(".cargo/bin/"))
 	dest = "{}/cargo_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest)
 
 	# pip
 	print_pkg_mgr_backup("pip")
 	command = "pip list --format=freeze".format(backup_path)
 	dest = "{}/pip_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest)
 
 	# npm
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout(command, temp_file_path)
+	run_cmd_write_stdout(command, temp_file_path)
 	npm_dest_file = "{0}/npm_list.txt".format(backup_path)
 	# Parse npm output
 	with open(temp_file_path, mode="r+") as temp_file:
@@ -135,23 +135,23 @@ def backup_packages(backup_path):
 	print_pkg_mgr_backup("Atom")
 	command = "apm list --installed --bare"
 	dest = "{}/apm_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest)
 
 	# sublime text 2 packages
-	sublime_2_path = _home_prefix("Library/Application Support/Sublime Text 2/Packages/")
+	sublime_2_path = home_prefix("Library/Application Support/Sublime Text 2/Packages/")
 	if os.path.isdir(sublime_2_path):
 		print_pkg_mgr_backup("Sublime Text 2")
 		command = ["ls", sublime_2_path]
 		dest = "{}/sublime2_list.txt".format(backup_path)
-		run_shell_cmd_write_stdout(command, dest)
+		run_cmd_write_stdout(command, dest)
 
 	# sublime text 3 packages
-	sublime_3_path = _home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
+	sublime_3_path = home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
 	if os.path.isdir(sublime_3_path):
 		print_pkg_mgr_backup("Sublime Text 3")
 		command = ["ls", sublime_3_path]
 		dest = "{}/sublime3_list.txt".format(backup_path)
-		run_shell_cmd_write_stdout(command, dest)
+		run_cmd_write_stdout(command, dest)
 	else:
 		print(sublime_3_path, "IS NOT DIR")
 
@@ -159,13 +159,13 @@ def backup_packages(backup_path):
 	print_pkg_mgr_backup("macports")
 	command = "port installed requested"
 	dest = "{}/macports_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest)
 
 	# system installs
 	print_pkg_mgr_backup("macOS Applications")
 	command = "ls /Applications/"
 	dest = "{}/system_apps_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest)
 
 	# Clean up empty package list files
 	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
@@ -179,9 +179,9 @@ def backup_fonts(path):
 	Creates list of all .ttf and .otf files in ~/Library/Fonts/
 	"""
 	print_section_header("FONTS", Fore.BLUE)
-	make_dir_warn_overwrite(path)
+	mkdir_warn_overwrite(path)
 	print(Fore.BLUE + "Copying '.otf' and '.ttf' fonts..." + Style.RESET_ALL)
-	fonts_path = _home_prefix("Library/Fonts/")
+	fonts_path = home_prefix("Library/Fonts/")
 	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if
 	         font.endswith(".otf") or font.endswith(".ttf")]
 

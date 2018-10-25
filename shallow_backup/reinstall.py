@@ -2,8 +2,8 @@ import os
 from shutil import copytree, copyfile
 from colorama import Fore, Style
 from shallow_backup.config import get_config
-from shallow_backup.utils import _home_prefix
-from shallow_backup.utils import run_shell_cmd
+from shallow_backup.utils import home_prefix
+from shallow_backup.utils import run_cmd
 from shallow_backup.printing import print_section_header
 
 
@@ -22,11 +22,11 @@ def reinstall_config_files(configs_path):
 
 	for target, backup in configs_dir_mapping.items():
 		if os.path.isdir(backup_prefix(backup)):
-			copytree(backup_prefix(backup), _home_prefix(target))
+			copytree(backup_prefix(backup), home_prefix(target))
 
 	for target, backup in plist_files.items():
 		if os.path.exists(backup_prefix(backup)):
-			copyfile(backup_prefix(backup), _home_prefix(target))
+			copyfile(backup_prefix(backup), home_prefix(target))
 
 	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", Fore.BLUE)
 
@@ -60,19 +60,19 @@ def reinstall_packages_from_lists(packages_path):
 			pm_formatted = pm.replace("-", " ")
 			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm_formatted) + Style.RESET_ALL)
 			cmd = "xargs {0} install < {1}/{2}_list.txt".format(pm.replace("-", " "), packages_path, pm_formatted)
-			run_shell_cmd(cmd)
+			run_cmd(cmd)
 		elif pm == "npm":
 			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
 			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(packages_path)
-			run_shell_cmd(cmd)
+			run_cmd(cmd)
 		elif pm == "pip":
 			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
 			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
-			run_shell_cmd(cmd)
+			run_cmd(cmd)
 		elif pm == "apm":
 			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
 			cmd = "apm install --packages-file {0}/apm_list.txt".format(packages_path)
-			run_shell_cmd(cmd)
+			run_cmd(cmd)
 		elif pm == "macports":
 			print(Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
 		elif pm == "gem":

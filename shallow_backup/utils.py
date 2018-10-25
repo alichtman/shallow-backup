@@ -6,9 +6,9 @@ from shutil import rmtree, copytree
 from shallow_backup.printing import prompt_yes_no
 
 
-def run_shell_cmd(command):
+def run_cmd(command):
 	"""
-	Wrapper on subprocess.run that handles both lists and strings as commands.
+	Wrapper on subprocess.run that handles both lists and strings as shell commands.
 	"""
 	try:
 		if not isinstance(command, list):
@@ -21,18 +21,18 @@ def run_shell_cmd(command):
 		return None
 
 
-def run_shell_cmd_write_stdout(command, filepath):
+def run_cmd_write_stdout(command, filepath):
 	"""
 	Runs a command and then writes its stdout to a file
 	:param: command String representing command to run and write output of to file
 	"""
-	process = run_shell_cmd(command)
+	process = run_cmd(command)
 	if process:
 		with open(filepath, "w+") as f:
 			f.write(process.stdout.decode('utf-8'))
 
 
-def make_dir_warn_overwrite(path):
+def mkdir_warn_overwrite(path):
 	"""
 	Make destination dir if path doesn't exist, confirm before overwriting if it does.
 	"""
@@ -51,6 +51,17 @@ def make_dir_warn_overwrite(path):
 		print(Fore.RED + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
 
 
+def destroy_backup_dir(backup_path):
+	"""
+	Deletes the backup directory and its content
+	"""
+	try:
+		print("{} Deleting backup directory {} {}...".format(Fore.RED, backup_path, Style.BRIGHT))
+		rmtree(backup_path)
+	except OSError as e:
+		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
+
+
 def get_subfiles(directory):
 	"""
 	Returns list of absolute paths of immediate subfiles of a directory
@@ -62,7 +73,7 @@ def get_subfiles(directory):
 	return file_paths
 
 
-def _copy_dir(source_dir, backup_path):
+def copy_dir(source_dir, backup_path):
 	"""
 	Copy dotfolder from $HOME.
 	"""
@@ -78,22 +89,16 @@ def _copy_dir(source_dir, backup_path):
 		copytree(source_dir, backup_path, symlinks=True)
 
 
-def _mkdir_or_pass(directory):
+def mkdir_or_pass(directory):
 	if not os.path.isdir(directory):
 		os.makedirs(directory)
 	pass
 
 
-def _home_prefix(path):
+def home_prefix(path):
+	"""
+	Appends the path to the user's home path.
+	:param path: Path to be appended.
+	:return: (str) ~/path
+	"""
 	return os.path.join(os.path.expanduser('~'), path)
-
-
-def destroy_backup_dir(backup_path):
-	"""
-	Deletes the backup directory and its content
-	"""
-	try:
-		print("{} Deleting backup directory {} {}...".format(Fore.RED, backup_path, Style.BRIGHT))
-		rmtree(backup_path)
-	except OSError as e:
-		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))

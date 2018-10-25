@@ -2,7 +2,7 @@ import os
 import inquirer
 from colorama import Fore, Style
 from shallow_backup.config import write_config
-from shallow_backup.utils import make_dir_warn_overwrite
+from shallow_backup.utils import mkdir_warn_overwrite
 from shallow_backup.printing import prompt_yes_no
 from shallow_backup.git_wrapper import git_set_remote, move_git_dir_to_path
 
@@ -21,7 +21,7 @@ def prompt_for_path_update(config):
 		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(abs_path) + Style.RESET_ALL)
 		config["backup_path"] = abs_path
 		write_config(config)
-		make_dir_warn_overwrite(abs_path)
+		mkdir_warn_overwrite(abs_path)
 		move_git_dir_to_path(current_path, abs_path)
 
 

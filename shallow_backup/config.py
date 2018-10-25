@@ -2,12 +2,12 @@ import os
 import sys
 import json
 from colorama import Fore, Style
-from shallow_backup.utils import _home_prefix
+from shallow_backup.utils import home_prefix
 from shallow_backup.printing import print_section_header
 
 
 def get_config_path():
-	return _home_prefix(".shallow-backup")
+	return home_prefix(".shallow-backup")
 
 
 def get_config():
@@ -86,7 +86,7 @@ def add_path_to_config(section, path):
 	FIRST ARG: [dot, config, other]
 	SECOND ARG: path, relative to home directory for dotfiles, absolute for configs
 	"""
-	full_path = _home_prefix(path)
+	full_path = home_prefix(path)
 	if not os.path.exists(full_path):
 		print(Fore.RED + Style.BRIGHT + "ERR: {} doesn't exist.".format(full_path) + Style.RESET_ALL)
 		sys.exit(1)

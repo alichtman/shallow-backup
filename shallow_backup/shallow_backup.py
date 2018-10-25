@@ -2,13 +2,13 @@ import os
 import sys
 import click
 from colorama import Fore, Style
-from reinstall import reinstall_packages_from_lists, reinstall_config_files
-from config import get_config, show_config, add_path_to_config, rm_path_from_config, write_config, create_config_file_if_needed, get_config_path
-from utils import make_dir_warn_overwrite, destroy_backup_dir
-from printing import print_version_info, prompt_yes_no, splash_screen
-from backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
-from git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
-from prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
+from shallow_backup.utils import mkdir_warn_overwrite, destroy_backup_dir
+from shallow_backup.printing import print_version_info, prompt_yes_no, splash_screen
+from shallow_backup.reinstall import reinstall_packages_from_lists, reinstall_config_files
+from shallow_backup.prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
+from shallow_backup.backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
+from shallow_backup.git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
+from shallow_backup.config import get_config, show_config, add_path_to_config, rm_path_from_config, write_config, create_config_file_if_needed, get_config_path
 
 
 # custom help options
@@ -33,7 +33,10 @@ from prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_upd
 def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages,
         reinstall_configs, delete_config, destroy_backup, v):
 	"""
-	Easily back up installed packages, dotfiles, and more. You can edit which dotfiles are backed up in ~/.shallow-backup.
+	Easily back up installed packages, dotfiles, and more.
+	You can edit which dotfiles are backed up in ~/.shallow-backup.
+
+	Written by Aaron Lichtman (@alichtman).
 	"""
 	backup_config_path = get_config_path()
 
@@ -74,7 +77,7 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 
 	# Create backup directory and do git setup
 	backup_home_path = get_config()["backup_path"]
-	make_dir_warn_overwrite(backup_home_path)
+	mkdir_warn_overwrite(backup_home_path)
 	repo, new_git_repo_created = safe_git_init(backup_home_path)
 
 	# Create default gitignore if we just ran git init
