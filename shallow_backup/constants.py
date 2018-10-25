@@ -5,6 +5,7 @@ class Constants:
 	AUTHOR_FULL_NAME = 'Aaron Lichtman'
 	DESCRIPTION = "Easily create lightweight backups of installed packages, dotfiles, and more."
 	URL = 'https://github.com/alichtman/shallow-backup'
+	AUTHOR_EMAIL = 'aaronlichtman@gmail.com'
 	CONFIG_PATH = '.shallow-backup'
 	INVALID_DIRS = [".Trash", ".npm", ".cache", ".rvm"]
 	PACKAGE_MANAGERS = ["gem", "brew-cask", "cargo", "npm", "pip", "brew", "apm"]

@@ -1,7 +1,7 @@
 from setuptools import setup
 from codecs import open
 from os import path
-from constants import Constants
+from shallow_backup.constants import Constants
 
 here = path.abspath(path.dirname(__file__))
 
@@ -9,23 +9,17 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-# Arguments marked as "Required" below must be included for upload to PyPI.
-# Fields marked as "Optional" may be commented out.
-
 setup(
-    name=Constants.PROJECT_NAME,  # Required
-    version=Constants.VERSION,  # Required
-    description=Constants.DESCRIPTION,  # Required
+    name=Constants.PROJECT_NAME,
+    version=Constants.VERSION,
+    description=Constants.DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
     url=Constants.URL,
     author=Constants.AUTHOR_GITHUB,
-    # author_email=Constants.AUTHOR_EMAIL,
     author_email="aaronlichtman@gmail.com",
 
     # Classifiers help users find your project by categorizing it.
-    #
-    # For a list of valid classifiers, see
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[  # Optional
         'Development Status :: 4 - Beta',
@@ -89,7 +83,7 @@ setup(
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
     entry_points={
-        'console_scripts':'shallow-backup=shallow_backup:cli'
+        'console_scripts': 'shallow-backup=shallow_backup/shallow_backup:cli'
     },
 
     # List additional URLs that are relevant to your project as a dict.
