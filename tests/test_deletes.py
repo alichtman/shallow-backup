@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from shallow_backup import destroy_backup_dir
+from shallow_backup.utils import destroy_backup_dir
 
 BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
 TEST_BACKUP_TEXT_FILE = os.path.join(BACKUP_DIR, 'test-file.txt')
@@ -13,7 +13,8 @@ class TestDeleteMethods:
     Test the functionality of deleting
     """
 
-    def setup_method(self):
+    @staticmethod
+    def setup_method():
         for directory in DIRS:
             try:
                 os.mkdir(directory)
@@ -23,7 +24,8 @@ class TestDeleteMethods:
         f = open(TEST_BACKUP_TEXT_FILE, "w+")
         f.close()
 
-    def teardown_method(self):
+    @staticmethod
+    def teardown_method():
         for directory in DIRS:
             try:
                 shutil.rmtree(directory)

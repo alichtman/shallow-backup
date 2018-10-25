@@ -1,6 +1,7 @@
 import os
 import shutil
-from shallow_backup import move_git_folder_to_path, git_init_if_needed, create_config_file_if_needed, create_gitignore_if_needed
+from shallow_backup.git_wrapper import move_git_dir_to_path, safe_git_init, safe_create_gitignore
+from shallow_backup.config import create_config_file_if_needed
 
 OLD_BACKUP_DIR = 'shallow-backup-test-git-old-backup-dir'
 NEW_BACKUP_DIR = 'shallow-backup-test-git-new-backup-backup-dir'
@@ -12,7 +13,8 @@ class TestGitFolderCopying:
     Test the functionality of .git copying
     """
 
-    def setup_method(self):
+    @staticmethod
+    def setup_method():
         create_config_file_if_needed()
         for directory in DIRS:
             try:
@@ -21,7 +23,8 @@ class TestGitFolderCopying:
                 shutil.rmtree(directory)
                 os.mkdir(directory)
 
-    def teardown_method(self):
+    @staticmethod
+    def teardown_method():
         for directory in DIRS:
             shutil.rmtree(directory)
 
@@ -29,9 +32,9 @@ class TestGitFolderCopying:
         """
         Test copying the .git folder and .gitignore from an old directory to a new one
         """
-        git_init_if_needed(OLD_BACKUP_DIR)
-        create_gitignore_if_needed(OLD_BACKUP_DIR)
-        move_git_folder_to_path(OLD_BACKUP_DIR, NEW_BACKUP_DIR)
+        safe_git_init(OLD_BACKUP_DIR)
+        safe_create_gitignore(OLD_BACKUP_DIR)
+        move_git_dir_to_path(OLD_BACKUP_DIR, NEW_BACKUP_DIR)
         assert os.path.isdir(os.path.join(NEW_BACKUP_DIR, '.git/'))
         assert os.path.isfile(os.path.join(NEW_BACKUP_DIR, '.gitignore'))
         assert not os.path.isdir(os.path.join(OLD_BACKUP_DIR, '.git/'))

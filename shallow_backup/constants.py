@@ -1,14 +1,12 @@
-class Constants:
-	PROJECT_NAME='shallow-backup'
-	VERSION='1.3'
-	AUTHOR_GITHUB='alichtman'
-	AUTHOR_FULL_NAME='Aaron Lichtman'
-	DESCRIPTION="Easily create lightweight documentation of installed packages, dotfiles, and more."
-	URL='https://github.com/alichtman/shallow-backup'
-	AUTHOR_EMAIL='aaronlichtman@gmail.com'
-	CONFIG_PATH='.shallow-backup'
-	INVALID_DIRS = [".Trash", ".npm", ".cache", ".rvm"]
-	PACKAGE_MANAGERS = ["gem", "brew-cask", "cargo", "npm", "pip", "brew", "apm"]
+class ProjInfo:
+	PROJECT_NAME = 'shallow-backup'
+	VERSION = '1.3'
+	AUTHOR_GITHUB = 'alichtman'
+	AUTHOR_FULL_NAME = 'Aaron Lichtman'
+	DESCRIPTION = "Easily create lightweight backups of installed packages, dotfiles, and more."
+	URL = 'https://github.com/alichtman/shallow-backup'
+	BUG_REPORT_URL = 'https://github.com/alichtman/shallow-backup/issues'
+	AUTHOR_EMAIL = 'aaronlichtman@gmail.com'
 	LOGO = """
               dP                dP dP                        dP                         dP
               88                88 88                        88                         88
@@ -19,3 +17,5 @@ class Constants:
                                                                                                           88
                                                                                                           dP	"""
 
+
+ProjInfo = ProjInfo()
