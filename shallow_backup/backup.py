@@ -5,7 +5,7 @@ from colorama import Fore, Style
 from shutil import copytree, copyfile
 from printing import print_section_header, print_pkg_mgr_backup
 from backup_paths_temp import get_configs_path_mapping, get_plist_mapping
-from utils import _home_prefix, make_dir_warn_overwrite, run_shell_cmd_write_stdout_to_file, _copy_dir, _mkdir_or_pass, get_subfiles
+from utils import _home_prefix, make_dir_warn_overwrite, run_shell_cmd_write_stdout, _copy_dir, _mkdir_or_pass, get_subfiles
 
 
 def backup_dotfiles(backup_path):
@@ -102,25 +102,25 @@ def backup_packages(backup_path):
 		print_pkg_mgr_backup(mgr)
 		command = "{} list".format(mgr)
 		dest = "{}/{}_list.txt".format(backup_path, mgr.replace(" ", "-"))
-		run_shell_cmd_write_stdout_to_file(command, dest)
+		run_shell_cmd_write_stdout(command, dest)
 
 	# cargo
 	print_pkg_mgr_backup("cargo")
 	command = "ls {}".format(_home_prefix(".cargo/bin/"))
 	dest = "{}/cargo_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout_to_file(command, dest)
+	run_shell_cmd_write_stdout(command, dest)
 
 	# pip
 	print_pkg_mgr_backup("pip")
 	command = "pip list --format=freeze".format(backup_path)
 	dest = "{}/pip_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout_to_file(command, dest)
+	run_shell_cmd_write_stdout(command, dest)
 
 	# npm
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout_to_file(command, temp_file_path)
+	run_shell_cmd_write_stdout(command, temp_file_path)
 	npm_dest_file = "{0}/npm_list.txt".format(backup_path)
 	# Parse npm output
 	with open(temp_file_path, mode="r+") as temp_file:
@@ -136,7 +136,7 @@ def backup_packages(backup_path):
 	print_pkg_mgr_backup("Atom")
 	command = "apm list --installed --bare"
 	dest = "{}/apm_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout_to_file(command, dest)
+	run_shell_cmd_write_stdout(command, dest)
 
 	# sublime text 2 packages
 	sublime_2_path = _home_prefix("Library/Application Support/Sublime Text 2/Packages/")
@@ -144,7 +144,7 @@ def backup_packages(backup_path):
 		print_pkg_mgr_backup("Sublime Text 2")
 		command = ["ls", sublime_2_path]
 		dest = "{}/sublime2_list.txt".format(backup_path)
-		run_shell_cmd_write_stdout_to_file(command, dest)
+		run_shell_cmd_write_stdout(command, dest)
 
 	# sublime text 3 packages
 	sublime_3_path = _home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
@@ -152,7 +152,7 @@ def backup_packages(backup_path):
 		print_pkg_mgr_backup("Sublime Text 3")
 		command = ["ls", sublime_3_path]
 		dest = "{}/sublime3_list.txt".format(backup_path)
-		run_shell_cmd_write_stdout_to_file(command, dest)
+		run_shell_cmd_write_stdout(command, dest)
 	else:
 		print(sublime_3_path, "IS NOT DIR")
 
@@ -160,13 +160,13 @@ def backup_packages(backup_path):
 	print_pkg_mgr_backup("macports")
 	command = "port installed requested"
 	dest = "{}/macports_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout_to_file(command, dest)
+	run_shell_cmd_write_stdout(command, dest)
 
 	# system installs
 	print_pkg_mgr_backup("macOS Applications")
 	command = "ls /Applications/"
 	dest = "{}/system_apps_list.txt".format(backup_path)
-	run_shell_cmd_write_stdout_to_file(command, dest)
+	run_shell_cmd_write_stdout(command, dest)
 
 	# Clean up empty package list files
 	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)

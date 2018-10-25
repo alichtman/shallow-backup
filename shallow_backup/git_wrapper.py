@@ -1,8 +1,8 @@
 import git
 import os
-from colorama import Fore, Style
-from config import get_config
 from shutil import move
+from config import get_config
+from colorama import Fore, Style
 
 #########
 # GLOBALS
@@ -38,7 +38,7 @@ def git_set_remote(repo, remote_url):
 		origin.fetch()
 
 
-def create_gitignore_if_needed(dir_path):
+def safe_create_gitignore(dir_path):
 	"""
 	Creates a .gitignore file that ignores all files listed in config.
 	"""
@@ -54,7 +54,7 @@ def create_gitignore_if_needed(dir_path):
 				f.write("{}\n".format(ignore))
 
 
-def git_init_if_needed(dir_path):
+def safe_git_init(dir_path):
 	"""
 	If there is no git repo inside the dir_path, intialize one.
 	Returns tuple of (git.Repo, bool new_git_repo_created)
@@ -88,7 +88,7 @@ def git_add_all_commit_push(repo, message):
 		print(Fore.YELLOW + Style.BRIGHT + "No changes to commit..." + Style.RESET_ALL)
 
 
-def move_git_folder_to_path(source_path, new_path):
+def move_git_dir_to_path(source_path, new_path):
 	"""
 	Moves git folder and .gitignore to the new backup directory.
 	"""

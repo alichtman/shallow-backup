@@ -1,5 +1,4 @@
 import os
-import sys
 from utils import run_shell_cmd
 from shutil import copytree, copyfile
 from colorama import Fore, Style
@@ -29,7 +28,6 @@ def reinstall_config_files(configs_path):
 			copyfile(backup_prefix(backup), _home_prefix(target))
 
 	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", Fore.BLUE)
-	sys.exit()
 
 
 def reinstall_packages_from_lists(packages_path):
@@ -83,4 +81,3 @@ def reinstall_packages_from_lists(packages_path):
 			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
 
 	print_section_header("SUCCESSFUL PACKAGE REINSTALLATION", Fore.BLUE)
-	sys.exit()

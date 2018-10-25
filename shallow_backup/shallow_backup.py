@@ -7,7 +7,7 @@ from config import get_config, show_config, add_path_to_config, rm_path_from_con
 from utils import make_dir_warn_overwrite, destroy_backup_dir
 from printing import print_version_info, prompt_yes_no, splash_screen
 from backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
-from git_wrapper import git_init_if_needed, git_set_remote, git_add_all_commit_push, create_gitignore_if_needed
+from git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
 from prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
 
 
@@ -75,11 +75,11 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 	# Create backup directory and do git setup
 	backup_home_path = get_config()["backup_path"]
 	make_dir_warn_overwrite(backup_home_path)
-	repo, new_git_repo_created = git_init_if_needed(backup_home_path)
+	repo, new_git_repo_created = safe_git_init(backup_home_path)
 
 	# Create default gitignore if we just ran git init
 	if new_git_repo_created:
-		create_gitignore_if_needed(backup_home_path)
+		safe_create_gitignore(backup_home_path)
 		# Prompt user for remote URL
 		if not remote:
 			prompt_for_git_url(repo)

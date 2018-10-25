@@ -21,7 +21,7 @@ def run_shell_cmd(command):
 		return None
 
 
-def run_shell_cmd_write_stdout_to_file(command, filepath):
+def run_shell_cmd_write_stdout(command, filepath):
 	"""
 	Runs a command and then writes its stdout to a file
 	:param: command String representing command to run and write output of to file
@@ -78,9 +78,9 @@ def _copy_dir(source_dir, backup_path):
 		copytree(source_dir, backup_path, symlinks=True)
 
 
-def _mkdir_or_pass(dir):
-	if not os.path.isdir(dir):
-		os.makedirs(dir)
+def _mkdir_or_pass(directory):
+	if not os.path.isdir(directory):
+		os.makedirs(directory)
 	pass
 
 
