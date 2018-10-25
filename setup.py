@@ -77,6 +77,7 @@ setup(
     # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
         'inquirer>=2.2.0',
+        'colorama>=0.3.9',
         'Click'
     ],
 
