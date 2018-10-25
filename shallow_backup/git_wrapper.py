@@ -48,7 +48,7 @@ def safe_create_gitignore(dir_path):
 		pass
 	else:
 		print(Fore.YELLOW + Style.BRIGHT + "Creating default .gitignore..." + Style.RESET_ALL)
-		files_to_ignore = get_config()["gitignore"]
+		files_to_ignore = get_config()["default-gitignore"]
 		with open(gitignore_path, "w+") as f:
 			for ignore in files_to_ignore:
 				f.write("{}\n".format(ignore))

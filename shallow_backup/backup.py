@@ -4,7 +4,6 @@ from config import get_config
 from colorama import Fore, Style
 from shutil import copytree, copyfile
 from printing import print_section_header, print_pkg_mgr_backup
-from backup_paths_temp import get_configs_path_mapping, get_plist_mapping
 from utils import _home_prefix, make_dir_warn_overwrite, run_shell_cmd_write_stdout, _copy_dir, _mkdir_or_pass, get_subfiles
 
 
@@ -60,9 +59,9 @@ def backup_configs(backup_path):
 	"""
 	print_section_header("CONFIGS", Fore.BLUE)
 	make_dir_warn_overwrite(backup_path)
-
-	configs_dir_mapping = get_configs_path_mapping()
-	plist_files = get_plist_mapping()
+	config = get_config()
+	configs_dir_mapping = config["config_path_to_dest_map"]
+	plist_files = config["plist_path_to_dest_map"]
 
 	print(Fore.BLUE + Style.BRIGHT + "Backing up configs..." + Style.RESET_ALL)
 

@@ -3,8 +3,8 @@ from utils import run_shell_cmd
 from shutil import copytree, copyfile
 from colorama import Fore, Style
 from printing import print_section_header
-from backup_paths_temp import get_configs_path_mapping, get_plist_mapping
 from utils import _home_prefix
+from config import get_config
 
 
 def reinstall_config_files(configs_path):
@@ -16,8 +16,9 @@ def reinstall_config_files(configs_path):
 	def backup_prefix(path):
 		return os.path.join(configs_path, path)
 
-	configs_dir_mapping = get_configs_path_mapping()
-	plist_files = get_plist_mapping()
+	config = get_config()
+	configs_dir_mapping = config["config_path_to_dest_map"]
+	plist_files = config["plist_path_to_dest_map"]
 
 	for target, backup in configs_dir_mapping.items():
 		if os.path.isdir(backup_prefix(backup)):

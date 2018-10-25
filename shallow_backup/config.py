@@ -48,11 +48,23 @@ def get_default_config():
 			".ssh",
 			".vim"
 		],
-		"gitignore"  : [
+		"default-gitignore"  : [
 			"dotfiles/.ssh",
 			"packages/",
 			"dotfiles/.pypirc",
-		]
+		],
+		"config_path_to_dest_map": {
+			"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
+			"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
+			"Library/Preferences/IntelliJIdea2018.2/"                  : "intellijidea_2018.2",
+			"Library/Preferences/PyCharm2018.2/"                       : "pycharm_2018.2",
+			"Library/Preferences/CLion2018.2/"                         : "clion_2018.2",
+			"Library/Preferences/PhpStorm2018.2"                       : "phpstorm_2018.2",
+			".atom/"                                                   : "atom",
+		},
+		"plist_path_to_dest_map" : {
+			"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist",
+		},
 	}
 
 
@@ -67,6 +79,7 @@ def create_config_file_if_needed():
 		write_config(backup_config)
 
 
+# TODO: Rethink these methods.
 def add_path_to_config(section, path):
 	"""
 	Adds the path under the correct section in the config file.
@@ -137,7 +150,7 @@ def show_config():
 	config = get_config()
 	for section, contents in config.items():
 		# Hide gitignore config
-		if section == "gitignore":
+		if section == "default-gitignore":
 			continue
 		# Print backup path on same line
 		if section == "backup_path":
