@@ -1,11 +1,10 @@
 import os
 import sys
-from util import run_shell_cmd
+from utils import run_shell_cmd
 from shutil import copytree, copyfile
 from colorama import Fore, Style
 from printing import print_section_header
-from constants import Constants
-from shallow_backup import get_configs_path_mapping, get_plist_mapping
+from backup_paths_temp import get_configs_path_mapping, get_plist_mapping
 from utils import _home_prefix
 
 
@@ -44,7 +43,8 @@ def reinstall_packages_from_lists(packages_path):
 	for file in os.listdir(packages_path):
 		# print(file)
 		manager = file.split("_")[0].replace("-", " ")
-		if manager in Constants.PACKAGE_MANAGERS:
+		# TODO: Add macports
+		if manager in ["gem", "brew-cask", "cargo", "npm", "pip", "brew", "apm"]:
 			package_mgrs.add(file.split("_")[0])
 
 	# TODO: USE print_pkg_mgr_reinstall()

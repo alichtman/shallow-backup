@@ -10,44 +10,6 @@ from backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, ba
 from git_wrapper import git_init_if_needed, git_set_remote, git_add_all_commit_push, create_gitignore_if_needed
 from prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
 
-########
-# Globals
-########
-
-# TODO: Refactor this to the git file
-COMMIT_MSG = {
-	"fonts": "Back up fonts.",
-	"packages": "Back up packages.",
-	"configs": "Back up configs.",
-	"complete": "Back up everything.",
-	"dotfiles": "Back up dotfiles.,"
-}
-
-
-# TODO: Convert these two functions to store info in the actual config and just read from it.
-def get_configs_path_mapping():
-	"""
-	Gets a dictionary mapping directories to back up to their destination path.
-	"""
-	return {
-		"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-		"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
-		"Library/Preferences/IntelliJIdea2018.2/": "intellijidea_2018.2",
-		"Library/Preferences/PyCharm2018.2/": "pycharm_2018.2",
-		"Library/Preferences/CLion2018.2/": "clion_2018.2",
-		"Library/Preferences/PhpStorm2018.2": "phpstorm_2018.2",
-		".atom/": "atom",
-	}
-
-
-def get_plist_mapping():
-	"""
-	Gets a dictionary mapping plist files to back up to their destination path.
-	"""
-	return {
-		"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist",
-	}
-
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
@@ -139,37 +101,37 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			reinstall_config_files(configs_path)
 		elif complete:
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["everything"])
+			git_add_all_commit_push(repo, "everything")
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["dotfiles"])
+			git_add_all_commit_push(repo, "dotfiles")
 		elif configs:
 			backup_configs(configs_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["configs"])
+			git_add_all_commit_push(repo, "configs")
 		elif packages:
 			backup_packages(packages_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["packages"])
+			git_add_all_commit_push(repo, "packages")
 		elif fonts:
 			backup_fonts(fonts_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["fonts"])
+			git_add_all_commit_push(repo, "fonts")
 	# No CL options, prompt for selection
 	else:
 		selection = actions_menu_prompt().lower().strip()
 		if selection == "back up everything":
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["everything"])
+			git_add_all_commit_push(repo, "everything")
 		elif selection == "back up dotfiles":
 			backup_dotfiles(dotfiles_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["dotfiles"])
+			git_add_all_commit_push(repo, "dotfiles")
 		elif selection == "back up configs":
 			backup_configs(configs_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["configs"])
+			git_add_all_commit_push(repo, "configs")
 		elif selection == "back up packages":
 			backup_packages(packages_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["packages"])
+			git_add_all_commit_push(repo, "packages")
 		elif selection == "back up fonts":
 			backup_fonts(fonts_path)
-			git_add_all_commit_push(repo, COMMIT_MSG["fonts"])
+			git_add_all_commit_push(repo, "fonts")
 		elif selection == "reinstall packages":
 			reinstall_packages_from_lists(packages_path)
 		elif selection == "reinstall configs":

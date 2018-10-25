@@ -4,7 +4,7 @@ from config import get_config
 from colorama import Fore, Style
 from shutil import copytree, copyfile
 from printing import print_section_header, print_pkg_mgr_backup
-from shallow_backup import get_configs_path_mapping, get_plist_mapping
+from backup_paths_temp import get_configs_path_mapping, get_plist_mapping
 from utils import _home_prefix, make_dir_warn_overwrite, run_shell_cmd_write_stdout_to_file, _copy_dir, _mkdir_or_pass, get_subfiles
 
 

@@ -2,13 +2,12 @@ import os
 import sys
 import json
 from colorama import Fore, Style
-import constants as Constants
 from printing import print_section_header
 from utils import _home_prefix
 
 
 def get_config_path():
-	return _home_prefix(Constants.CONFIG_PATH)
+	return _home_prefix(".shallow-backup")
 
 
 def get_config():
@@ -35,7 +34,7 @@ def get_default_config():
 	"""
 	return {
 		"backup_path": "~/shallow-backup",
-		"dotfiles": [
+		"dotfiles"   : [
 			".bashrc",
 			".bash_profile",
 			".gitconfig",
@@ -45,11 +44,11 @@ def get_default_config():
 			".vimrc",
 			".zshrc"
 		],
-		"dotfolders": [
+		"dotfolders" : [
 			".ssh",
 			".vim"
 		],
-		"gitignore": [
+		"gitignore"  : [
 			"dotfiles/.ssh",
 			"packages/",
 			"dotfiles/.pypirc",

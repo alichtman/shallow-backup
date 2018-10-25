@@ -4,6 +4,22 @@ from colorama import Fore, Style
 from config import get_config
 from shutil import move
 
+#########
+# GLOBALS
+#########
+
+COMMIT_MSG = {
+	"fonts": "Back up fonts.",
+	"packages": "Back up packages.",
+	"configs": "Back up configs.",
+	"everything": "Back up everything.",
+	"dotfiles": "Back up dotfiles.,"
+}
+
+###########
+# FUNCTIONS
+###########
+
 
 def git_set_remote(repo, remote_url):
 	"""
@@ -61,7 +77,7 @@ def git_add_all_commit_push(repo, message):
 	if repo.index.diff(None) or repo.untracked_files:
 		print(Fore.YELLOW + Style.BRIGHT + "Making new commit..." + Style.RESET_ALL)
 		repo.git.add(A=True)
-		repo.git.commit(m=message)
+		repo.git.commit(m=COMMIT_MSG[message])
 
 		if "origin" in [remote.name for remote in repo.remotes]:
 			print(Fore.YELLOW + Style.BRIGHT + "Pushing to master: " + Style.NORMAL + "{}...".format(

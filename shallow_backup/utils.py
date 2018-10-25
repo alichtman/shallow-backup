@@ -4,7 +4,6 @@ import subprocess as sp
 from colorama import Fore, Style
 from printing import prompt_yes_no
 from shutil import rmtree, copytree
-from constants import Constants
 
 
 def run_shell_cmd(command):
@@ -67,7 +66,7 @@ def _copy_dir(source_dir, backup_path):
 	"""
 	Copy dotfolder from $HOME.
 	"""
-	invalid = set(Constants.INVALID_DIRS)
+	invalid = {".Trash", ".npm", ".cache", ".rvm"}
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
 
