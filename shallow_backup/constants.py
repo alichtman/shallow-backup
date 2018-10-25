@@ -5,6 +5,7 @@ class ProjInfo:
 	AUTHOR_FULL_NAME = 'Aaron Lichtman'
 	DESCRIPTION = "Easily create lightweight backups of installed packages, dotfiles, and more."
 	URL = 'https://github.com/alichtman/shallow-backup'
+	BUG_REPORT_URL = 'https://github.com/alichtman/shallow-backup/issues'
 	AUTHOR_EMAIL = 'aaronlichtman@gmail.com'
 	LOGO = """
               dP                dP dP                        dP                         dP

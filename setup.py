@@ -1,7 +1,7 @@
 from setuptools import setup
 from codecs import open
 from os import path
-from shallow_backup.constants import Constants
+from shallow_backup.constants import ProjInfo
 
 here = path.abspath(path.dirname(__file__))
 
@@ -10,13 +10,13 @@ with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(
-    name=Constants.PROJECT_NAME,
-    version=Constants.VERSION,
-    description=Constants.DESCRIPTION,
+    name=ProjInfo.PROJECT_NAME,
+    version=ProjInfo.VERSION,
+    description=ProjInfo.DESCRIPTION,
     long_description_content_type="text/markdown",
     long_description=long_description,
-    url=Constants.URL,
-    author=Constants.AUTHOR_GITHUB,
+    url=ProjInfo.URL,
+    author=ProjInfo.AUTHOR_GITHUB,
     author_email="aaronlichtman@gmail.com",
 
     # Classifiers help users find your project by categorizing it.
@@ -96,7 +96,7 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={
-        'Bug Reports': 'https://github.com/alichtman/shallow-backup/issues',
+        'Bug Reports': ProjInfo.BUG_REPORT_URL,
         'Donations': 'https://www.patreon.com/alichtman',
     },
 )

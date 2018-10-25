@@ -1,8 +1,7 @@
 import os
 import pytest
 import shutil
-from shallow_backup import _copy_dir
-from constants import Constants
+from shallow_backup.utils import _copy_dir
 
 DIR_TO_BACKUP = 'shallow-backup-test-copy-dir'
 BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
@@ -42,7 +41,7 @@ class TestCopyMethods:
         assert os.path.isdir(test_path)
         assert os.path.isdir(os.path.join(BACKUP_DIR, test_dir))
 
-    @pytest.mark.parametrize('invalid', Constants.INVALID_DIRS)
+    @pytest.mark.parametrize('invalid', {".Trash", ".npm", ".cache", ".rvm"})
     def test_copy_dir_invalid(self, invalid):
         """
         Test that attempting to copy an invalid directory fails
