@@ -1,6 +1,6 @@
-from setuptools import setup
-from codecs import open
 from os import path
+from codecs import open
+from setuptools import setup
 from shallow_backup.constants import ProjInfo
 
 here = path.abspath(path.dirname(__file__))
@@ -53,22 +53,7 @@ setup(
     #
     # Note that this is a string of words separated by whitespace, not a list.
     keywords='backup documentation system dotfiles install list configuration',  # Optional
-
-    # Just want to distribute a single Python file, so using `py_modules`
-    # argument as follows, which will expect a file called
-    # `stronghold.py` to exist:
-    #
-    py_modules=[
-        "shallow_backup",
-        "constants"
-    ],
-
-    # This field lists other packages that your project depends on to run.
-    # Any package you put here will be installed by pip when your project is
-    # installed, so they must be valid existing projects.
-    #
-    # For an analysis of "install_requires" vs pip's requirements files see:
-    # https://packaging.python.org/en/latest/requirements.html
+    packages=["shallow_backup"],
     install_requires=[
         'inquirer>=2.2.0',
         'colorama>=0.3.9',
@@ -83,7 +68,7 @@ setup(
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
     entry_points={
-        'console_scripts': 'shallow-backup=shallow_backup/shallow_backup:cli'
+        'console_scripts': 'shallow-backup=shallow_backup.shallow_backup:cli'
     },
 
     # List additional URLs that are relevant to your project as a dict.
