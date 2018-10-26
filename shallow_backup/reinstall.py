@@ -7,6 +7,26 @@ from utils import run_cmd
 from printing import print_section_header
 
 
+def reinstall_dots(dots_path):
+	"""
+	Reinstall all dotfiles and folders by copying them to the home dir.
+	"""
+	print_section_header("REINSTALLING DOTFILES", Fore.BLUE)
+	# TODO: Finish
+	print_section_header("COMPLETED DOTFILE REINSTALLATION", Fore.BLUE)
+	pass
+
+
+def reinstall_fonts(fonts_path):
+	"""
+	Reinstall all fonts.
+	"""
+	print_section_header("REINSTALLING FONTS", Fore.BLUE)
+	# TODO: Finish
+	print_section_header("COMPLETED FONT REINSTALLATION", Fore.BLUE)
+	pass
+
+
 def reinstall_config_files(configs_path):
 	"""
 	Reinstall all configs from the backup.
@@ -28,7 +48,7 @@ def reinstall_config_files(configs_path):
 		if os.path.exists(backup_prefix(backup)):
 			copyfile(backup_prefix(backup), home_prefix(target))
 
-	print_section_header("SUCCESSFUL CONFIG REINSTALLATION", Fore.BLUE)
+	print_section_header("COMPLETED CONFIG REINSTALLATION", Fore.BLUE)
 
 
 def reinstall_packages_from_lists(packages_path):
@@ -81,4 +101,14 @@ def reinstall_packages_from_lists(packages_path):
 			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment."
 			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
 
-	print_section_header("SUCCESSFUL PACKAGE REINSTALLATION", Fore.BLUE)
+	print_section_header("COMPLETED PACKAGE REINSTALLATION", Fore.BLUE)
+
+
+def reinstall_all(dotfiles_path, packages_path, fonts_path, configs_path):
+	"""
+	Call all reinstallation methods.
+	"""
+	reinstall_dots(dotfiles_path)
+	reinstall_packages_from_lists(packages_path)
+	reinstall_fonts(fonts_path)
+	reinstall_config_files(configs_path)
