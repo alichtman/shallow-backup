@@ -1,7 +1,7 @@
-from os import path
-from codecs import open
 from setuptools import setup
-from shallow_backup.constants import ProjInfo
+from codecs import open
+from os import path
+from constants import Constants
 
 here = path.abspath(path.dirname(__file__))
 
@@ -9,17 +9,23 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
+# Arguments marked as "Required" below must be included for upload to PyPI.
+# Fields marked as "Optional" may be commented out.
+
 setup(
-    name=ProjInfo.PROJECT_NAME,
-    version=ProjInfo.VERSION,
-    description=ProjInfo.DESCRIPTION,
+    name=Constants.PROJECT_NAME,  # Required
+    version=Constants.VERSION,  # Required
+    description=Constants.DESCRIPTION,  # Required
     long_description_content_type="text/markdown",
     long_description=long_description,
-    url=ProjInfo.URL,
-    author=ProjInfo.AUTHOR_GITHUB,
+    url=Constants.URL,
+    author=Constants.AUTHOR_GITHUB,
+    # author_email=Constants.AUTHOR_EMAIL,
     author_email="aaronlichtman@gmail.com",
 
     # Classifiers help users find your project by categorizing it.
+    #
+    # For a list of valid classifiers, see
     # https://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[  # Optional
         'Development Status :: 4 - Beta',
@@ -53,7 +59,22 @@ setup(
     #
     # Note that this is a string of words separated by whitespace, not a list.
     keywords='backup documentation system dotfiles install list configuration',  # Optional
-    packages=["shallow_backup"],
+
+    # Just want to distribute a single Python file, so using `py_modules`
+    # argument as follows, which will expect a file called
+    # `stronghold.py` to exist:
+    #
+    py_modules=[
+        "shallow_backup",
+        "constants"
+    ],
+
+    # This field lists other packages that your project depends on to run.
+    # Any package you put here will be installed by pip when your project is
+    # installed, so they must be valid existing projects.
+    #
+    # For an analysis of "install_requires" vs pip's requirements files see:
+    # https://packaging.python.org/en/latest/requirements.html
     install_requires=[
         'inquirer>=2.2.0',
         'colorama>=0.3.9',
@@ -68,7 +89,7 @@ setup(
     # For example, the following would provide a command called `sample` which
     # executes the function `main` from this package when invoked:
     entry_points={
-        'console_scripts': 'shallow-backup=shallow_backup.cli:cli'
+        'console_scripts':'shallow-backup=shallow_backup:cli'
     },
 
     # List additional URLs that are relevant to your project as a dict.
@@ -81,7 +102,7 @@ setup(
     # maintainers, and where to support the project financially. The key is
     # what's used to render the link text on PyPI.
     project_urls={
-        'Bug Reports': ProjInfo.BUG_REPORT_URL,
+        'Bug Reports': 'https://github.com/alichtman/shallow-backup/issues',
         'Donations': 'https://www.patreon.com/alichtman',
     },
 )
