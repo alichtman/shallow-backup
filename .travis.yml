@@ -7,6 +7,7 @@ install:
   - pipenv install --dev
 # command to run tests
 script:
+  - cd tests
   - pipenv run python3 -m pytest
 
 git:
