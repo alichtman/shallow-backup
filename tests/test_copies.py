@@ -1,6 +1,8 @@
 import os
+import sys
 import pytest
 import shutil
+sys.path.insert(0, "../shallow_backup")
 from shallow_backup.utils import copy_dir
 
 DIR_TO_BACKUP = 'shallow-backup-test-copy-dir'

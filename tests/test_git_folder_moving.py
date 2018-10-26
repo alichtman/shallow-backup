@@ -1,5 +1,7 @@
 import os
+import sys
 import shutil
+sys.path.insert(0, "../shallow_backup")
 from shallow_backup.git_wrapper import move_git_repo, safe_git_init, safe_create_gitignore
 from shallow_backup.config import create_config_file_if_needed
 

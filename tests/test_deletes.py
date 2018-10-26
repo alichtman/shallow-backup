@@ -1,6 +1,7 @@
 import os
+import sys
 import shutil
-
+sys.path.insert(0, "../shallow_backup")
 from shallow_backup.utils import destroy_backup_dir
 
 BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
