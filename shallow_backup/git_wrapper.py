@@ -77,6 +77,7 @@ def git_add_all_commit_push(repo, message):
 		print_bright_yellow("Making new commit...")
 		repo.git.add(A=True)
 		repo.git.commit(m=COMMIT_MSG[message])
+		print_bright_yellow("Successful commit.")
 
 		if "origin" in [remote.name for remote in repo.remotes]:
 			print(Fore.YELLOW + Style.BRIGHT + "Pushing to master: " + Style.NORMAL + "{}...".format(
