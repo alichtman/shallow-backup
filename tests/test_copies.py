@@ -16,7 +16,8 @@ class TestCopyMethods:
     Test the functionality of copying
     """
 
-    def setup_method(self):
+    @staticmethod
+    def setup_method():
         for directory in DIRS:
             try:
                 os.mkdir(directory)
@@ -26,7 +27,8 @@ class TestCopyMethods:
         f = open(TEST_TEXT_FILE, "w+")
         f.close()
 
-    def teardown_method(self):
+    @staticmethod
+    def teardown_method():
         for directory in DIRS:
             shutil.rmtree(directory)
         os.remove(TEST_TEXT_FILE)
@@ -36,7 +38,7 @@ class TestCopyMethods:
         Test that copying a directory works as expected
         """
         # TODO: Test that all subfiles and folders are copied.
-        test_dir = 'test/'
+        test_dir = 'test'
         test_path = os.path.join(DIR_TO_BACKUP, test_dir)
         os.mkdir(test_path)
         copy_dir_if_valid(test_path, BACKUP_DIR)
