@@ -4,7 +4,9 @@ from colorama import Fore, Style
 from shutil import copytree, copyfile
 from config import get_config
 from printing import print_section_header, print_pkg_mgr_backup
-from utils import home_prefix, mkdir_warn_overwrite, run_cmd_write_stdout, copy_dir, mkdir_or_pass, get_subfiles
+from utils import home_prefix, mkdir_warn_overwrite, run_cmd_write_stdout, copy_dir_if_valid, safe_mkdir, get_abs_path_subfiles
+
+# TODO: Update to naming scheme like in reinstall.py
 
 
 def backup_dotfiles(backup_path):
@@ -43,7 +45,7 @@ def backup_dotfiles(backup_path):
 		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfolders..." + Style.RESET_ALL)
 		for x in dotfolders_mp_in:
 			x = list(x)
-			mp.Process(target=copy_dir, args=(x[0], x[1],)).start()
+			mp.Process(target=copy_dir_if_valid, args=(x[0], x[1],)).start()
 
 	with mp.Pool(mp.cpu_count()):
 		print(Fore.BLUE + Style.BRIGHT + "Backing up dotfiles..." + Style.RESET_ALL)
@@ -76,7 +78,7 @@ def backup_configs(backup_path):
 	# backup plist files in backup_path/configs/plist/
 	print(Fore.BLUE + Style.BRIGHT + "Backing up plist files..." + Style.RESET_ALL)
 	plist_backup_path = os.path.join(backup_path, "plist")
-	mkdir_or_pass(plist_backup_path)
+	safe_mkdir(plist_backup_path)
 	for plist, dest in plist_files.items():
 		plist_path = home_prefix(plist)
 		if os.path.exists(plist_path):
@@ -86,6 +88,7 @@ def backup_configs(backup_path):
 def backup_packages(backup_path):
 	"""
 	Creates `packages` directory and places install list text files there.
+	TODO: Linux and Windows Compatibility
 	"""
 	print_section_header("PACKAGES", Fore.BLUE)
 	mkdir_warn_overwrite(backup_path)
@@ -169,7 +172,7 @@ def backup_packages(backup_path):
 
 	# Clean up empty package list files
 	print(Fore.BLUE + "Cleaning up empty package lists..." + Style.RESET_ALL)
-	for file in get_subfiles(backup_path):
+	for file in get_abs_path_subfiles(backup_path):
 		if os.path.getsize(file) == 0:
 			os.remove(file)
 
@@ -177,6 +180,7 @@ def backup_packages(backup_path):
 def backup_fonts(path):
 	"""
 	Creates list of all .ttf and .otf files in ~/Library/Fonts/
+	TODO: Windows and Linux Compatibility
 	"""
 	print_section_header("FONTS", Fore.BLUE)
 	mkdir_warn_overwrite(path)

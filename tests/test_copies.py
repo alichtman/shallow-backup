@@ -3,7 +3,7 @@ import sys
 import pytest
 import shutil
 sys.path.insert(0, "../shallow_backup")
-from shallow_backup.utils import copy_dir
+from shallow_backup.utils import copy_dir_if_valid
 
 DIR_TO_BACKUP = 'shallow-backup-test-copy-dir'
 BACKUP_DIR = 'shallow-backup-test-copy-backup-dir'
@@ -39,7 +39,7 @@ class TestCopyMethods:
         test_dir = 'test/'
         test_path = os.path.join(DIR_TO_BACKUP, test_dir)
         os.mkdir(test_path)
-        copy_dir(test_path, BACKUP_DIR)
+        copy_dir_if_valid(test_path, BACKUP_DIR)
         assert os.path.isdir(test_path)
         assert os.path.isdir(os.path.join(BACKUP_DIR, test_dir))
 
@@ -48,5 +48,5 @@ class TestCopyMethods:
         """
         Test that attempting to copy an invalid directory fails
         """
-        copy_dir(invalid, DIR_TO_BACKUP)
+        copy_dir_if_valid(invalid, DIR_TO_BACKUP)
         assert not os.path.isdir(os.path.join(BACKUP_DIR, invalid))
