@@ -40,14 +40,22 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 
 	Written by Aaron Lichtman (@alichtman).
 	"""
-	backup_config_path = get_config_path()
 
-	# No interface going to be displayed
-	if any([v, delete_config, destroy_backup, show, rm]) or None not in add:
+	# Process CLI args
+	admin_action = any([v, delete_config, destroy_backup, show, rm]) or None not in add
+	has_cli_arg = any([old_path, all, dotfiles, packages, fonts, configs,
+	                   reinstall_dots, reinstall_fonts, reinstall_all,
+	                   reinstall_configs, reinstall_packages])
+	skip_prompt = any([all, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
+	                   reinstall_fonts])
+
+	# Perform administrative action and exit.
+	if admin_action:
 		if v:
 			print_version_info()
 		elif delete_config:
-			os.remove(backup_config_path)
+			# TODO: Error checking.
+			os.remove(get_config_path())
 			print_bright_red("Removed config file...")
 		elif destroy_backup:
 			backup_home_path = get_config()["backup_path"]
@@ -74,7 +82,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 		write_config(backup_config)
 
 	# User didn't enter any CLI args so prompt for path update before showing menu
-	elif not (old_path or all or dotfiles or packages or fonts or reinstall_dots):
+	elif not has_cli_arg:
 		prompt_for_path_update(backup_config)
 
 	# Create backup directory and do git setup
@@ -99,8 +107,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 	fonts_path = os.path.join(backup_home_path, "fonts")
 
 	# Command line options
-	if any([all, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
-	        reinstall_fonts]):
+	if skip_prompt:
 		if reinstall_packages:
 			reinstall_packages_sb(packages_path)
 		elif reinstall_configs:
@@ -126,7 +133,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 		elif fonts:
 			backup_fonts(fonts_path)
 			git_add_all_commit_push(repo, "fonts")
-	# No CL options, prompt for selection
+	# No CL options, show action menu and process selected option.
 	else:
 		selection = actions_menu_prompt().lower().strip()
 		selection_words = selection.split()
