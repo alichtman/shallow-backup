@@ -16,8 +16,7 @@ from config import get_config, show_config, add_to_config, rm_from_config, write
               help="Add path (relative to home dir) to be backed up. Arg format: [dots, configs, other] <PATH>")
 @click.option('--rm', default=None, type=str, help="Remove path from config.")
 @click.option('-show', is_flag=True, default=False, help="Show config file.")
-# TODO: Update this to "-all"
-@click.option('-complete', is_flag=True, default=False, help="Full back up.")
+@click.option('-all', is_flag=True, default=False, help="Full back up.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
@@ -33,7 +32,7 @@ from config import get_config, show_config, add_to_config, rm_from_config, write
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
+def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
         reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, v):
 	"""
 	Easily back up installed packages, dotfiles, and more.
@@ -75,7 +74,7 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 		write_config(backup_config)
 
 	# User didn't enter any CLI args so prompt for path update before showing menu
-	elif not (old_path or complete or dotfiles or packages or fonts):
+	elif not (old_path or all or dotfiles or packages or fonts or reinstall_dots):
 		prompt_for_path_update(backup_config)
 
 	# Create backup directory and do git setup
@@ -100,7 +99,7 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 	fonts_path = os.path.join(backup_home_path, "fonts")
 
 	# Command line options
-	if any([complete, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
+	if any([all, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
 	        reinstall_fonts]):
 		if reinstall_packages:
 			reinstall_packages_sb(packages_path)
@@ -112,9 +111,9 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			reinstall_dots_sb(dotfiles_path)
 		elif reinstall_all:
 			reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
-		elif complete:
+		elif all:
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
-			git_add_all_commit_push(repo, "everything")
+			git_add_all_commit_push(repo, "all")
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path)
 			git_add_all_commit_push(repo, "dotfiles")
@@ -132,7 +131,7 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 		selection = actions_menu_prompt().lower().strip()
 		selection_words = selection.split()
 		if selection.startswith("back up"):
-			if selection_words[-1] == "everything":
+			if selection_words[-1] == "all":
 				backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 				git_add_all_commit_push(repo, selection_words[-1])
 			elif selection_words[-1] == "dotfiles":

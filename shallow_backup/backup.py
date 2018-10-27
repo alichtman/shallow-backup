@@ -6,8 +6,6 @@ from config import get_config
 from printing import print_section_header, print_pkg_mgr_backup
 from utils import home_prefix, mkdir_warn_overwrite, run_cmd_write_stdout, copy_dir_if_valid, safe_mkdir, get_abs_path_subfiles
 
-# TODO: Update to naming scheme like in reinstall.py
-
 
 def backup_dotfiles(backup_path):
 	"""
