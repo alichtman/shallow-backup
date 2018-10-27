@@ -12,6 +12,7 @@ Contents
 
  * [Installation](#installation)
  * [Usage](#usage)
+ * [A Word of Caution](#a-word-of-caution)
  * [What can I back up?](#what-can-i-back-up)
  * [Customization](#customization)
  * [Use Cases](#use-cases)
@@ -36,31 +37,42 @@ To start the interactive program, simply run `$ shallow-backup`.
 `shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line args.
 
 ```shell
-Usage: shallow_backup.py [OPTIONS]
+Usage: cli.py [OPTIONS]
 
   Easily back up installed packages, dotfiles, and more. 
   You can edit which dotfiles are backed up in ~/.shallow-backup.
 
+  Written by Aaron Lichtman (@alichtman).
+
 Options:
-  --add <CHOICE TEXT>...  Add path (relative to home dir) to be backed up. Arg
-                          format: [dots, configs, other] <PATH>
-  --rm TEXT               Remove path from config.
-  -show                   Show config file.
-  -complete               Back up everything.
-  -dotfiles               Back up dotfiles.
+  --add <CHOICE TEXT>...  Add path to be backed up.
+  -all                    Full back up.
   -configs                Back up app config files.
-  -fonts                  Back up installed fonts.
-  -packages               Back up package libraries.
-  -old_path               Skip setting new back up directory path.
-  --new_path TEXT         Input a new back up directory path.
-  --remote TEXT           Input a URL for a git repository.
-  -reinstall_packages     Reinstall packages from package lists.
-  -reinstall_configs      Reinstall configs from configs backup.
   -delete_config          Remove config file.
   -destroy_backup         Removes the backup directory and its content.
+  -dotfiles               Back up dotfiles.
+  -fonts                  Back up installed fonts.
+  --new_path TEXT         Input a new back up directory path.
+  -old_path               Skip setting new back up directory path prompt.
+  -packages               Back up package libraries.
+  -reinstall_configs      Reinstall configs.
+  -reinstall_dots         Reinstall dotfiles and dotfolders.
+  -reinstall_fonts        Reinstall fonts.
+  -reinstall_packages     Reinstall packages.
+  -reinstall_all          Full reinstallation.
+  --remote TEXT           Set remote URL for the git repo.
+  --rm TEXT               Remove path from config.
+  -show                   Show config file.
   -v                      Display version and author information and exit.
-  -help, -h, --help       Show this message and exit.
+  -h, -help, --help       Show this message and exit.
 ```
+
+### A Word of Caution
+---
+
+This backup tool is git-integrated, meaning that you can easily store your backups remotely (on GitHub, for example.) Dotfiles and configuration files may contain sensitive information like API keys and ssh keys, and you don't want to make those public. Public knowledge of specific packages on your system may put you at risk of attack. To make sure no sensitive files are uploaded accidentally, `shallow-backup` creates a `.gitignore` file if it can't find one in the directory. It excludes `.ssh/` and `.pypirc`, as well as your package install lists by default. It's safe to remove these restrictions if you're pushing to a remote private repository, or you're only backing up locally. To do this, you should clear the `.gitignore` file without deleting it.  
+
+**Tl;dr: If you choose to back up to a public repository, look at every file you're backing up to make sure you want it to be public.**
 
 ### What can I back up?
 ---
@@ -105,7 +117,6 @@ If you'd like to modify which files are backed up, you have to edit the `~/.shal
 2. You can use the `--add SECTION PATH` or `--rm PATH` args to modify the config file.
 
 NOTE: Dotfile paths should be added relative to the home directory.
-
 
 #### Use Cases
 ---

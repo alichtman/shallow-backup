@@ -207,11 +207,11 @@ def backup_fonts(backup_path, skip=False):
 			copyfile(font, os.path.join(backup_path, font.split("/")[-1]))
 
 
-def backup_all(dotfiles_path, packages_path, fonts_path, configs_path):
+def backup_all(dotfiles_path, packages_path, fonts_path, configs_path, skip=False):
 	"""
 	Complete backup procedure.
 	"""
-	backup_dotfiles(dotfiles_path)
-	backup_packages(packages_path)
-	backup_fonts(fonts_path)
-	backup_configs(configs_path)
+	backup_dotfiles(dotfiles_path, skip)
+	backup_packages(packages_path, skip)
+	backup_fonts(fonts_path, skip)
+	backup_configs(configs_path, skip)
