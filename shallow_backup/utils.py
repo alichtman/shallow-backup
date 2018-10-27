@@ -32,6 +32,15 @@ def run_cmd_write_stdout(command, filepath):
 			f.write(process.stdout.decode('utf-8'))
 
 
+def mkdir_overwrite(path):
+	"""
+	Makes a new directory, destroying the one at the path if it exits.
+	"""
+	if os.path.isdir(path):
+		rmtree(path)
+	os.makedirs(path)
+
+
 def mkdir_warn_overwrite(path):
 	"""
 	Make destination dir if path doesn't exist, confirm before overwriting if it does.
@@ -40,8 +49,7 @@ def mkdir_warn_overwrite(path):
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
 		print_bright_red("Directory {} already exists\n".format(path))
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
-			rmtree(path)
-			os.makedirs(path)
+			mkdir_overwrite(path)
 		else:
 			print_bright_red("Exiting to prevent accidental deletion of data.")
 			sys.exit()

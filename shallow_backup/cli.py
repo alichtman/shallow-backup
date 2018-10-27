@@ -13,24 +13,24 @@ from config import get_config, show_config, add_to_config, rm_from_config, write
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str),
-              help="Add path (relative to home dir) to be backed up. Arg format: [dots, configs, other] <PATH>")
-@click.option('--rm', default=None, type=str, help="Remove path from config.")
-@click.option('-show', is_flag=True, default=False, help="Show config file.")
+              help="Add path to be backed up.")
 @click.option('-all', is_flag=True, default=False, help="Full back up.")
-@click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
+@click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
+@click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
+@click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
-@click.option('-packages', is_flag=True, default=False, help="Back up package libraries.")
-@click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
 @click.option('--new_path', default=None, help="Input a new back up directory path.")
-@click.option('--remote', default=None, help="Input a URL for a git repository.")
+@click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path prompt.")
+@click.option('-packages', is_flag=True, default=False, help="Back up package libraries.")
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs.")
 @click.option('-reinstall_dots', is_flag=True, default=False, help="Reinstall dotfiles and dotfolders.")
 @click.option('-reinstall_fonts', is_flag=True, default=False, help="Reinstall fonts.")
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
 @click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
-@click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
-@click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
+@click.option('--remote', default=None, help="Set remote URL for the git repo.")
+@click.option('--rm', default=None, type=str, help="Remove path from config.")
+@click.option('-show', is_flag=True, default=False, help="Show config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
         reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, v):
@@ -119,19 +119,19 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 		elif reinstall_all:
 			reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif all:
-			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
+			backup_all(dotfiles_path, packages_path, fonts_path, configs_path, skip=True)
 			git_add_all_commit_push(repo, "all")
 		elif dotfiles:
-			backup_dotfiles(dotfiles_path)
+			backup_dotfiles(dotfiles_path, skip=True)
 			git_add_all_commit_push(repo, "dotfiles")
 		elif configs:
-			backup_configs(configs_path)
+			backup_configs(configs_path, skip=True)
 			git_add_all_commit_push(repo, "configs")
 		elif packages:
-			backup_packages(packages_path)
+			backup_packages(packages_path, skip=True)
 			git_add_all_commit_push(repo, "packages")
 		elif fonts:
-			backup_fonts(fonts_path)
+			backup_fonts(fonts_path, skip=True)
 			git_add_all_commit_push(repo, "fonts")
 	# No CL options, show action menu and process selected option.
 	else:
