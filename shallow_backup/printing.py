@@ -21,19 +21,19 @@ def print_green(text):
 	print(Fore.GREEN + text + Style.RESET_ALL)
 
 
-def print_bright_blue(text):
+def print_blue_bold(text):
 	print(Fore.BLUE + Style.BRIGHT + text + Style.RESET_ALL)
 
 
-def print_bright_red(text):
+def print_red_bold(text):
 	print(Fore.RED + Style.BRIGHT + text + Style.RESET_ALL)
 
 
-def print_bright_yellow(text):
+def print_yellow_bold(text):
 	print(Fore.YELLOW + Style.BRIGHT + text + Style.RESET_ALL)
 
 
-def print_bright_green(text):
+def print_green_bold(text):
 	print(Fore.GREEN + Style.BRIGHT + text + Style.RESET_ALL)
 
 
@@ -52,7 +52,7 @@ def print_version_info(cli=True):
 
 def splash_screen():
 	"""
-	Display splash graphic, and then stylized version
+	Display splash graphic, and then stylized version and author info.
 	"""
 	print(Fore.YELLOW + Style.BRIGHT + "\n" + ProjInfo.LOGO + Style.RESET_ALL)
 	print_version_info(False)
@@ -73,9 +73,8 @@ def print_pkg_mgr_backup(mgr):
 	                                                          Style.NORMAL, Style.RESET_ALL))
 
 
-# TODO: Integrate this in the reinstallation section
 def print_pkg_mgr_reinstall(mgr):
-	print("{}Reinstalling {}{}{}{}{} packages...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE,
+	print("{}Reinstalling {}{}{}{}{}...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE,
 	                                                       Style.NORMAL, Style.RESET_ALL))
 
 

@@ -56,7 +56,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 		elif delete_config:
 			# TODO: Error checking.
 			os.remove(get_config_path())
-			print_bright_red("Removed config file...")
+			print_red_bold("Removed config file...")
 		elif destroy_backup:
 			backup_home_path = get_config()["backup_path"]
 			destroy_backup_dir(backup_home_path)
@@ -171,7 +171,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 				if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
 					destroy_backup_dir(backup_home_path)
 				else:
-					print_bright_red("Exiting to prevent accidental deletion of backup directory.")
+					print_red_bold("Exiting to prevent accidental deletion of backup directory.")
 
 	sys.exit()
 
