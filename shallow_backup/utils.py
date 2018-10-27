@@ -81,7 +81,6 @@ def copy_dir_if_valid(source_dir, backup_path):
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
 	dest = os.path.join(backup_path, os.path.split(source_dir)[-1])
-	print("Copying " + source_dir + " to " + dest)
 	copytree(source_dir, dest, symlinks=True)
 
 
