@@ -3,11 +3,11 @@ import sys
 import click
 from printing import *
 from utils import mkdir_warn_overwrite, destroy_backup_dir
-from reinstall import reinstall_packages_from_lists, reinstall_config_files
+from reinstall import reinstall_packages_sb, reinstall_configs_sb, reinstall_all_sb, reinstall_fonts_sb, reinstall_dots_sb
 from prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
 from backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
 from git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
-from config import get_config, show_config, add_path_to_config, rm_path_from_config, write_config, create_config_file_if_needed, get_config_path
+from config import get_config, show_config, add_to_config, rm_from_config, write_config, safe_create_config, get_config_path
 
 
 # custom help options
@@ -16,7 +16,8 @@ from config import get_config, show_config, add_path_to_config, rm_path_from_con
               help="Add path (relative to home dir) to be backed up. Arg format: [dots, configs, other] <PATH>")
 @click.option('--rm', default=None, type=str, help="Remove path from config.")
 @click.option('-show', is_flag=True, default=False, help="Show config file.")
-@click.option('-complete', is_flag=True, default=False, help="Back up everything.")
+# TODO: Update this to "-all"
+@click.option('-complete', is_flag=True, default=False, help="Full back up.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
@@ -24,13 +25,16 @@ from config import get_config, show_config, add_path_to_config, rm_path_from_con
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path.")
 @click.option('--new_path', default=None, help="Input a new back up directory path.")
 @click.option('--remote', default=None, help="Input a URL for a git repository.")
-@click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages from package lists.")
-@click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs from configs backup.")
+@click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs.")
+@click.option('-reinstall_dots', is_flag=True, default=False, help="Reinstall dotfiles and dotfolders.")
+@click.option('-reinstall_fonts', is_flag=True, default=False, help="Reinstall fonts.")
+@click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
+@click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
 @click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_packages,
-        reinstall_configs, delete_config, destroy_backup, v):
+def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
+        reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, v):
 	"""
 	Easily back up installed packages, dotfiles, and more.
 	You can edit which dotfiles are backed up in ~/.shallow-backup.
@@ -50,16 +54,16 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 			backup_home_path = get_config()["backup_path"]
 			destroy_backup_dir(backup_home_path)
 		elif None not in add:
-			add_path_to_config(add[0], add[1])
+			add_to_config(add[0], add[1])
 		elif rm:
-			rm_path_from_config(rm)
+			rm_from_config(rm)
 		elif show:
 			show_config()
 		sys.exit()
 
 	# Start CLI
 	splash_screen()
-	create_config_file_if_needed()
+	safe_create_config()
 	backup_config = get_config()
 
 	# User entered a new path, so update the config
@@ -96,11 +100,18 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 	fonts_path = os.path.join(backup_home_path, "fonts")
 
 	# Command line options
-	if any([complete, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs]):
+	if any([complete, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
+	        reinstall_fonts]):
 		if reinstall_packages:
-			reinstall_packages_from_lists(packages_path)
+			reinstall_packages_sb(packages_path)
 		elif reinstall_configs:
-			reinstall_config_files(configs_path)
+			reinstall_configs_sb(configs_path)
+		elif reinstall_fonts:
+			reinstall_fonts_sb(fonts_path)
+		elif reinstall_dots:
+			reinstall_dots_sb(dotfiles_path)
+		elif reinstall_all:
+			reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif complete:
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 			git_add_all_commit_push(repo, "everything")
@@ -119,32 +130,42 @@ def cli(add, rm, show, complete, dotfiles, configs, packages, fonts, old_path, n
 	# No CL options, prompt for selection
 	else:
 		selection = actions_menu_prompt().lower().strip()
-		if selection == "back up everything":
-			backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
-			git_add_all_commit_push(repo, "everything")
-		elif selection == "back up dotfiles":
-			backup_dotfiles(dotfiles_path)
-			git_add_all_commit_push(repo, "dotfiles")
-		elif selection == "back up configs":
-			backup_configs(configs_path)
-			git_add_all_commit_push(repo, "configs")
-		elif selection == "back up packages":
-			backup_packages(packages_path)
-			git_add_all_commit_push(repo, "packages")
-		elif selection == "back up fonts":
-			backup_fonts(fonts_path)
-			git_add_all_commit_push(repo, "fonts")
-		elif selection == "reinstall packages":
-			reinstall_packages_from_lists(packages_path)
-		elif selection == "reinstall configs":
-			reinstall_config_files(configs_path)
-		elif selection == "show config":
-			show_config()
-		elif selection == "destroy backup":
-			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
-				destroy_backup_dir(backup_home_path)
-			else:
-				print_bright_red("Exiting to prevent accidental deletion of backup directory.")
+		selection_words = selection.split()
+		if selection.startswith("back up"):
+			if selection_words[-1] == "everything":
+				backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
+				git_add_all_commit_push(repo, selection_words[-1])
+			elif selection_words[-1] == "dotfiles":
+				backup_dotfiles(dotfiles_path)
+				git_add_all_commit_push(repo, selection_words[-1])
+			elif selection_words[-1] == "configs":
+				backup_configs(configs_path)
+				git_add_all_commit_push(repo, selection_words[-1])
+			elif selection_words[-1] == "packages":
+				backup_packages(packages_path)
+				git_add_all_commit_push(repo, selection_words[-1])
+			elif selection_words[-1] == "fonts":
+				backup_fonts(fonts_path)
+				git_add_all_commit_push(repo, selection_words[-1])
+		elif selection.startswith("reinstall"):
+			if selection_words[-1] == "packages":
+				reinstall_packages_sb(packages_path)
+			elif selection_words[-1] == "configs":
+				reinstall_configs_sb(configs_path)
+			elif selection_words[-1] == "fonts":
+				reinstall_fonts_sb(fonts_path)
+			elif selection_words[-1] == "dotfiles":
+				reinstall_dots_sb(dotfiles_path)
+			elif selection_words[-1] == "all":
+				reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
+		else:
+			if selection == "show config":
+				show_config()
+			elif selection == "destroy backup":
+				if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
+					destroy_backup_dir(backup_home_path)
+				else:
+					print_bright_red("Exiting to prevent accidental deletion of backup directory.")
 
 	sys.exit()
 

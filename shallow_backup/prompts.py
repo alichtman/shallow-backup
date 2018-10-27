@@ -43,12 +43,15 @@ def actions_menu_prompt():
 	# TODO: Implement `add` and `rm` path here.
 	questions = [inquirer.List('choice',
 	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
-	                           choices=[' Back up dotfiles',
+	                           choices=[' Back up everything',
 	                                    ' Back up configs',
-	                                    ' Back up packages',
+	                                    ' Back up dotfiles',
 	                                    ' Back up fonts',
-	                                    ' Back up everything',
+	                                    ' Back up packages',
+	                                    ' Reinstall all',
 	                                    ' Reinstall configs',
+	                                    ' Reinstall dotfiles',
+	                                    ' Reinstall fonts',
 	                                    ' Reinstall packages',
 	                                    ' Show config',
 	                                    ' Destroy backup'
