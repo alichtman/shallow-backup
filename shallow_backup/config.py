@@ -73,7 +73,7 @@ def safe_create_config():
 	"""
 	backup_config_path = get_config_path()
 	if not os.path.exists(backup_config_path):
-		print_bright_blue("Creating config file at {}".format(backup_config_path))
+		print_blue_bold("Creating config file at {}".format(backup_config_path))
 		backup_config = get_default_config()
 		write_config(backup_config)
 
@@ -87,13 +87,13 @@ def add_to_config(section, path):
 	"""
 	full_path = home_prefix(path)
 	if not os.path.exists(full_path):
-		print_bright_red("ERR: {} doesn't exist.".format(full_path))
+		print_red_bold("ERR: {} doesn't exist.".format(full_path))
 		sys.exit(1)
 
 	if section == "dot":
 		# Make sure dotfile starts with a period
 		if path[0] != ".":
-			print_bright_red("ERR: Not a dotfile.")
+			print_red_bold("ERR: Not a dotfile.")
 			sys.exit(1)
 
 		if not os.path.isdir(full_path):

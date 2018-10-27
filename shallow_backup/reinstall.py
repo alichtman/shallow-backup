@@ -4,7 +4,7 @@ from colorama import Fore, Style
 from config import get_config
 from utils import home_prefix
 from utils import run_cmd, get_abs_path_subfiles
-from printing import print_section_header
+from printing import print_section_header, print_pkg_mgr_reinstall, print_red_bold, print_yellow, print_blue_bold
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
 #       conflict with the function names.
@@ -21,7 +21,7 @@ def reinstall_dots_sb(dots_path):
 			copytree(file, home_path, symlinks=True)
 		else:
 			copyfile(file, home_path)
-	print_section_header("COMPLETED DOTFILE REINSTALLATION", Fore.BLUE)
+	print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
 	pass
 
 
@@ -35,7 +35,7 @@ def reinstall_fonts_sb(fonts_path):
 	for font in get_abs_path_subfiles(fonts_path):
 		# TODO: This doesn't work for some reason. (#145)
 		copyfile(font, os.path.join("~/Library/Fonts", font.split("/")[-1]))
-	print_section_header("COMPLETED FONT REINSTALLATION", Fore.BLUE)
+	print_section_header("FONT REINSTALLATION COMPLETED", Fore.BLUE)
 
 
 def reinstall_configs_sb(configs_path):
@@ -59,7 +59,7 @@ def reinstall_configs_sb(configs_path):
 		if os.path.exists(backup_prefix(backup)):
 			copyfile(backup_prefix(backup), home_prefix(target))
 
-	print_section_header("COMPLETED CONFIG REINSTALLATION", Fore.BLUE)
+	print_section_header("CONFIG REINSTALLATION COMPLETED", Fore.BLUE)
 
 
 def reinstall_packages_sb(packages_path):
@@ -71,48 +71,44 @@ def reinstall_packages_sb(packages_path):
 	# Figure out which install lists they have saved
 	package_mgrs = set()
 	for file in os.listdir(packages_path):
-		# print(file)
 		manager = file.split("_")[0].replace("-", " ")
-		# TODO: Add macports
-		if manager in ["gem", "brew-cask", "cargo", "npm", "pip", "brew", "apm"]:
+		if manager in ["gem", "brew-cask", "cargo", "npm", "pip", "brew", "apm", "macports"]:
 			package_mgrs.add(file.split("_")[0])
 
-	# TODO: USE print_pkg_mgr_reinstall()
-	# TODO: Restylize this printing
-	print(Fore.BLUE + Style.BRIGHT + "Package Managers detected:" + Style.RESET_ALL)
+	print_blue_bold("Package Manager Backups Found:")
 	for mgr in package_mgrs:
-		print(Fore.BLUE + Style.BRIGHT + "\t" + mgr)
-	print(Style.RESET_ALL)
+		print_yellow("\t{}".format(mgr))
+	print()
 
 	# TODO: Multithreading for reinstallation.
 	# construct commands
 	for pm in package_mgrs:
 		if pm in ["brew", "brew-cask"]:
 			pm_formatted = pm.replace("-", " ")
-			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm_formatted) + Style.RESET_ALL)
+			print_pkg_mgr_reinstall(pm_formatted)
 			cmd = "xargs {0} install < {1}/{2}_list.txt".format(pm.replace("-", " "), packages_path, pm_formatted)
 			run_cmd(cmd)
 		elif pm == "npm":
-			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			print_pkg_mgr_reinstall(pm)
 			cmd = "cat {0}/npm_list.txt | xargs npm install -g".format(packages_path)
 			run_cmd(cmd)
 		elif pm == "pip":
-			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			print_pkg_mgr_reinstall(pm)
 			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
 			run_cmd(cmd)
 		elif pm == "apm":
-			print(Fore.BLUE + Style.BRIGHT + "Reinstalling {} packages...".format(pm) + Style.RESET_ALL)
+			print_pkg_mgr_reinstall(pm)
 			cmd = "apm install --packages-file {0}/apm_list.txt".format(packages_path)
 			run_cmd(cmd)
 		elif pm == "macports":
-			print(Fore.RED + "WARNING: Macports reinstallation is not supported." + Style.RESET_ALL)
+			print_red_bold("WARNING: Macports reinstallation is not supported.")
 		elif pm == "gem":
-			print(Fore.RED + "WARNING: Gem reinstallation is not supported." + Style.RESET_ALL)
+			print_red_bold("WARNING: Gem reinstallation is not supported.")
 		elif pm == "cargo":
-			print(Fore.RED + "WARNING: Cargo reinstallation is not possible at the moment."
-			                 "\n -> https://github.com/rust-lang/cargo/issues/5593" + Style.RESET_ALL)
+			print_red_bold("WARNING: Cargo reinstallation is not possible at the moment."
+			                 "\n -> https://github.com/rust-lang/cargo/issues/5593")
 
-	print_section_header("COMPLETED PACKAGE REINSTALLATION", Fore.BLUE)
+	print_section_header("PACKAGE REINSTALLATION COMPLETED", Fore.BLUE)
 
 
 def reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path):

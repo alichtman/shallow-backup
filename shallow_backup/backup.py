@@ -126,7 +126,7 @@ def backup_packages(backup_path, skip=False):
 
 	# pip
 	print_pkg_mgr_backup("pip")
-	command = "pip list --format=freeze".format(backup_path)
+	command = "pip list --format=freeze"
 	dest = "{}/pip_list.txt".format(backup_path)
 	run_cmd_write_stdout(command, dest)
 

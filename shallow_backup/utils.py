@@ -47,11 +47,11 @@ def mkdir_warn_overwrite(path):
 	"""
 	subdirs = ["dotfiles", "packages", "fonts", "configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
-		print_bright_red("Directory {} already exists\n".format(path))
+		print_red_bold("Directory {} already exists\n".format(path))
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			mkdir_overwrite(path)
 		else:
-			print_bright_red("Exiting to prevent accidental deletion of data.")
+			print_red_bold("Exiting to prevent accidental deletion of data.")
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
@@ -64,7 +64,7 @@ def destroy_backup_dir(backup_path):
 	"""
 	try:
 		# TODO: PRINT PATH STYLING. PATH SHOULD NOT BE BOLDED.
-		print_bright_red("Deleting backup directory: {}".format(backup_path))
+		print_red_bold("Deleting backup directory: {}".format(backup_path))
 		rmtree(backup_path)
 	except OSError as e:
 		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
