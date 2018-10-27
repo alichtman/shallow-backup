@@ -67,7 +67,7 @@ def get_default_config():
 	}
 
 
-def create_config_file_if_needed():
+def safe_create_config():
 	"""
 	Creates config file if it doesn't exist already.
 	"""
@@ -79,7 +79,7 @@ def create_config_file_if_needed():
 
 
 # TODO: Rethink these methods.
-def add_path_to_config(section, path):
+def add_to_config(section, path):
 	"""
 	Adds the path under the correct section in the config file.
 	FIRST ARG: [dot, config, other]
@@ -121,7 +121,7 @@ def add_path_to_config(section, path):
 	write_config(config)
 
 
-def rm_path_from_config(path):
+def rm_from_config(path):
 	"""
 	Removes the path from a section in the config file. Exits if the path doesn't exist.
 	Path, relative to home directory for dotfiles, absolute for configs

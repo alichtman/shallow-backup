@@ -7,7 +7,8 @@ from printing import *
 
 def run_cmd(command):
 	"""
-	Wrapper on subprocess.run that handles both lists and strings as shell commands.
+	Wrapper on subprocess.run to handle shell commands as either a list of args
+	or a single string.
 	"""
 	try:
 		if not isinstance(command, list):
@@ -23,12 +24,21 @@ def run_cmd(command):
 def run_cmd_write_stdout(command, filepath):
 	"""
 	Runs a command and then writes its stdout to a file
-	:param: command String representing command to run and write output of to file
+	:param: command str representing command to run
 	"""
 	process = run_cmd(command)
 	if process:
 		with open(filepath, "w+") as f:
 			f.write(process.stdout.decode('utf-8'))
+
+
+def mkdir_overwrite(path):
+	"""
+	Makes a new directory, destroying the one at the path if it exits.
+	"""
+	if os.path.isdir(path):
+		rmtree(path)
+	os.makedirs(path)
 
 
 def mkdir_warn_overwrite(path):
@@ -39,8 +49,7 @@ def mkdir_warn_overwrite(path):
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
 		print_bright_red("Directory {} already exists\n".format(path))
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
-			rmtree(path)
-			os.makedirs(path)
+			mkdir_overwrite(path)
 		else:
 			print_bright_red("Exiting to prevent accidental deletion of data.")
 			sys.exit()
@@ -61,9 +70,9 @@ def destroy_backup_dir(backup_path):
 		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
 
 
-def get_subfiles(directory):
+def get_abs_path_subfiles(directory):
 	"""
-	Returns list of absolute paths of immediate subfiles of a directory
+	Returns list of absolute paths of immediate files and folders in a directory.
 	"""
 	file_paths = []
 	for path, subdirs, files in os.walk(directory):
@@ -72,26 +81,25 @@ def get_subfiles(directory):
 	return file_paths
 
 
-def copy_dir(source_dir, backup_path):
+def copy_dir_if_valid(source_dir, backup_path):
 	"""
-	Copy dotfolder from $HOME.
+	Copy dotfolder from $HOME, excluding invalid directories.
 	"""
 	invalid = {".Trash", ".npm", ".cache", ".rvm"}
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
-
-	if "Application Support" not in source_dir:
-		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-2]), symlinks=True)
-	elif "Sublime" in source_dir:
-		copytree(source_dir, os.path.join(backup_path, source_dir.split("/")[-3]), symlinks=True)
-	else:
-		copytree(source_dir, backup_path, symlinks=True)
+	dest = os.path.join(backup_path, os.path.split(source_dir)[-1])
+	copytree(source_dir, dest, symlinks=True)
 
 
-def mkdir_or_pass(directory):
+def safe_mkdir(directory):
+	"""
+	Makes directory if it doesn't already exist.
+	:param directory:
+	:return:
+	"""
 	if not os.path.isdir(directory):
 		os.makedirs(directory)
-	pass
 
 
 def home_prefix(path):
@@ -100,4 +108,5 @@ def home_prefix(path):
 	:param path: Path to be appended.
 	:return: (str) ~/path
 	"""
-	return os.path.join(os.path.expanduser('~'), path)
+	home_path = os.path.expanduser('~')
+	return os.path.join(home_path, path)

@@ -3,7 +3,7 @@ import sys
 import shutil
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.git_wrapper import move_git_repo, safe_git_init, safe_create_gitignore
-from shallow_backup.config import create_config_file_if_needed
+from shallow_backup.config import safe_create_config
 
 OLD_BACKUP_DIR = 'shallow-backup-test-git-old-backup-dir'
 NEW_BACKUP_DIR = 'shallow-backup-test-git-new-backup-backup-dir'
@@ -17,7 +17,7 @@ class TestGitFolderCopying:
 
     @staticmethod
     def setup_method():
-        create_config_file_if_needed()
+        safe_create_config()
         for directory in DIRS:
             try:
                 os.mkdir(directory)
