@@ -12,12 +12,12 @@ from config import get_config, show_config, add_to_config, rm_from_config, write
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
-@click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config', 'other']), str),
-              help="Add path to be backed up.")
+@click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config']), str),
+              help="\b Add path to back up. Format: [dot, config] PATH")
 @click.option('-all', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
-@click.option('-delete_config', is_flag=True, default=False, help="Remove config file.")
-@click.option('-destroy_backup', is_flag=True, default=False, help='Removes the backup directory and its content.')
+@click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
+@click.option('-destroy_backup', is_flag=True, default=False, help='Delete backup directory.')
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
 @click.option('--new_path', default=None, help="Input a new back up directory path.")
@@ -29,14 +29,15 @@ from config import get_config, show_config, add_to_config, rm_from_config, write
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
 @click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
-@click.option('--rm', default=None, type=str, help="Remove path from config.")
-@click.option('-show', is_flag=True, default=False, help="Show config file.")
+@click.option('--rm', default=None, type=str, help="Remove path from backup.")
+@click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
         reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, v):
 	"""
+	\b
 	Easily back up installed packages, dotfiles, and more.
-	You can edit which dotfiles are backed up in ~/.shallow-backup.
+	You can edit which files are backed up in ~/.shallow-backup.
 
 	Written by Aaron Lichtman (@alichtman).
 	"""
