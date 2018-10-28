@@ -82,8 +82,10 @@ def safe_create_config():
 def add_to_config(section, path, dest=None):
 	"""
 	Adds the path under the correct section in the config file.
-	FIRST ARG: [dot, config]
-	SECOND ARG: path, relative to home directory for dotfiles, absolute for configs
+
+	section: only [dot, config] are valid
+	path: relative to HOME for dots and / for configs.
+	dest: Only for configs. Names the dir inside config/
 	"""
 	if section == "dot":
 		# Check if the file is in the home directory.
@@ -109,11 +111,7 @@ def add_to_config(section, path, dest=None):
 
 	elif section == "config":
 		# TODO: Finish proofing this for which abs/non-abs paths get printed and stored.
-		full_path = path
-		# Remove home dir path expansion
-		home = os.path.expanduser('~')
-		if path.startswith(home):
-			path = path[len(home) + 1:]
+		full_path = "/" + path
 		# Check that the path exists.
 		if not os.path.exists(full_path):
 			print_red_bold("ERR: {} doesn't exist.".format(full_path))

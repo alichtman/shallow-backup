@@ -13,7 +13,7 @@ from utils import mkdir_warn_overwrite, destroy_backup_dir
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('--add', nargs=3, default=[None, None, None], type=(click.Choice(['dot', 'config']), str, str),
-              help="\b Add path to back up. Format: (dot, config) PATH [DEST]. DEST should be used for naming dest dir for non-plist config files.")
+              help="\b Add path to back up. Format: (dot, config) PATH [DEST]. PATH should be relative to HOME for dots, and relative to / for configs. DEST should be used for assigning a dest dir to non-plist config files.")
 @click.option('-all', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
