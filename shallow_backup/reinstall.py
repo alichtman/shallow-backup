@@ -1,6 +1,6 @@
 import os
+from colorama import Fore
 from shutil import copytree, copyfile
-from colorama import Fore, Style
 from config import get_config
 from utils import home_prefix
 from utils import run_cmd, get_abs_path_subfiles
@@ -33,8 +33,10 @@ def reinstall_fonts_sb(fonts_path):
 	print_section_header("REINSTALLING FONTS", Fore.BLUE)
 	# Copy every file in fonts_path to ~/Library/Fonts
 	for font in get_abs_path_subfiles(fonts_path):
-		# TODO: This doesn't work for some reason. (#145)
-		copyfile(font, os.path.join("~/Library/Fonts", font.split("/")[-1]))
+		home_path = os.path.expanduser('~')
+		font_lib_path = os.path.join(home_path, "Library/Fonts")
+		dest_path = os.path.join(font_lib_path, font.split("/")[-1])
+		copyfile(font, dest_path)
 	print_section_header("FONT REINSTALLATION COMPLETED", Fore.BLUE)
 
 
