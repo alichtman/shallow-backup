@@ -15,7 +15,6 @@ Contents
  * [A Word of Caution](#a-word-of-caution)
  * [What can I back up?](#what-can-i-back-up)
  * [Customization](#customization)
- * [Use Cases](#use-cases)
  * [Output Structure](#output-structure)
  * [Inspiration](#inspiration)
  * [Want to contribute?](#want-to-contribute)
@@ -117,14 +116,6 @@ If you'd like to modify which files are backed up, you have to edit the `~/.shal
 2. You can use the `--add SECTION PATH` or `--rm PATH` args to modify the config file.
 
 NOTE: Dotfile paths should be added relative to the home directory.
-
-#### Use Cases
----
-
-1. Reduce your backup size by compressing all package manager libraries to simple `.txt` files.
-2. Easily back up your dotfiles.
-3. Back up all user installed `.ttf` and `.otf` fonts from `Fontbook`.
-4. Back up application preferences of Terminal and Sublime.
 
 #### Output Structure
 ---
