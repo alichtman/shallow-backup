@@ -60,6 +60,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 			print_red_bold("Removed config file...")
 		elif destroy_backup:
 			backup_home_path = get_config()["backup_path"]
+			backup_home_path = os.path.abspath(os.path.expanduser(backup_home_path))
 			destroy_backup_dir(backup_home_path)
 		elif None not in add:
 			add_to_config(add[0], add[1])
@@ -88,6 +89,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 
 	# Create backup directory and do git setup
 	backup_home_path = get_config()["backup_path"]
+	backup_home_path = os.path.abspath(os.path.expanduser(backup_home_path))
 	mkdir_warn_overwrite(backup_home_path)
 	repo, new_git_repo_created = safe_git_init(backup_home_path)
 
