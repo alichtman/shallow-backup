@@ -38,32 +38,35 @@ To start the interactive program, simply run `$ shallow-backup`.
 ```shell
 Usage: cli.py [OPTIONS]
 
-  Easily back up installed packages, dotfiles, and more. 
-  You can edit which dotfiles are backed up in ~/.shallow-backup.
+  Easily back up installed packages, dotfiles, and more.
+  You can edit which files are backed up in ~/.shallow-backup.
 
   Written by Aaron Lichtman (@alichtman).
 
 Options:
-  --add <CHOICE TEXT>...  Add path to be backed up.
-  -all                    Full back up.
-  -configs                Back up app config files.
-  -delete_config          Remove config file.
-  -destroy_backup         Removes the backup directory and its content.
-  -dotfiles               Back up dotfiles.
-  -fonts                  Back up installed fonts.
-  --new_path TEXT         Input a new back up directory path.
-  -old_path               Skip setting new back up directory path prompt.
-  -packages               Back up package libraries.
-  -reinstall_configs      Reinstall configs.
-  -reinstall_dots         Reinstall dotfiles and dotfolders.
-  -reinstall_fonts        Reinstall fonts.
-  -reinstall_packages     Reinstall packages.
-  -reinstall_all          Full reinstallation.
-  --remote TEXT           Set remote URL for the git repo.
-  --rm TEXT               Remove path from config.
-  -show                   Show config file.
-  -v                      Display version and author information and exit.
-  -h, -help, --help       Show this message and exit.
+  --add <CHOICE TEXT TEXT>...  Add path to back up. Format: (dot, config)
+                               PATH [DEST]. DEST should be used for naming
+                               dest dir for non-plist config files.
+  -all                         Full back up.
+  -configs                     Back up app config files.
+  -delete_config               Delete config file.
+  -destroy_backup              Delete backup directory.
+  -dotfiles                    Back up dotfiles.
+  -fonts                       Back up installed fonts.
+  --new_path TEXT              Input a new back up directory path.
+  -old_path                    Skip setting new back up directory path prompt.
+  -packages                    Back up package libraries.
+  -reinstall_configs           Reinstall configs.
+  -reinstall_dots              Reinstall dotfiles and dotfolders.
+  -reinstall_fonts             Reinstall fonts.
+  -reinstall_packages          Reinstall packages.
+  -reinstall_all               Full reinstallation.
+  --remote TEXT                Set remote URL for the git repo.
+  --rm TEXT                    Remove path from backup.
+  -show                        Display config file.
+  -v                           Display version and author information and
+                               exit.
+  -help, -h, --help            Show this message and exit.
 ```
 
 ### A Word of Caution
