@@ -29,7 +29,7 @@ from utils import mkdir_warn_overwrite, destroy_backup_dir
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
 @click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
-@click.option('--rm', default=None, type=str, help="Remove path from backup.")
+@click.option('--rm', default=None, type=str, help="Remove path from backup. Use the source path, just as it's displayed in the config file.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
