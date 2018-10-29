@@ -2,7 +2,7 @@ import os
 import inquirer
 from colorama import Fore, Style
 from config import write_config
-from utils import mkdir_warn_overwrite
+from utils import mkdir_warn_overwrite, expand_path_to_absolute
 from printing import prompt_yes_no
 from git_wrapper import git_set_remote, move_git_repo
 
@@ -17,7 +17,7 @@ def prompt_for_path_update(config):
 
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
 		print(Fore.GREEN + Style.BRIGHT + "Enter relative path:" + Style.RESET_ALL)
-		abs_path = os.path.abspath(os.path.expanduser(input()))
+		abs_path = expand_path_to_absolute(input())
 		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(abs_path) + Style.RESET_ALL)
 		config["backup_path"] = abs_path
 		write_config(config)

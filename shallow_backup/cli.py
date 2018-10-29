@@ -2,7 +2,7 @@ import os
 import sys
 import click
 from printing import *
-from utils import mkdir_warn_overwrite, destroy_backup_dir
+from utils import mkdir_warn_overwrite, destroy_backup_dir, expand_path_to_absolute
 from reinstall import reinstall_packages_sb, reinstall_configs_sb, reinstall_all_sb, reinstall_fonts_sb, reinstall_dots_sb
 from prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
 from backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
@@ -59,8 +59,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 			os.remove(get_config_path())
 			print_red_bold("Removed config file...")
 		elif destroy_backup:
-			backup_home_path = get_config()["backup_path"]
-			backup_home_path = os.path.abspath(os.path.expanduser(backup_home_path))
+			backup_home_path = expand_path_to_absolute(get_config()["backup_path"])
 			destroy_backup_dir(backup_home_path)
 		elif None not in add:
 			add_to_config(add[0], add[1])
@@ -88,8 +87,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 		prompt_for_path_update(backup_config)
 
 	# Create backup directory and do git setup
-	backup_home_path = get_config()["backup_path"]
-	backup_home_path = os.path.abspath(os.path.expanduser(backup_home_path))
+	backup_home_path = expand_path_to_absolute(get_config()["backup_path"])
 	mkdir_warn_overwrite(backup_home_path)
 	repo, new_git_repo_created = safe_git_init(backup_home_path)
 
