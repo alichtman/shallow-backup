@@ -111,7 +111,7 @@ def home_prefix(path):
 	home_path = os.path.expanduser('~')
 	return os.path.join(home_path, path)
 
-def expand_path_to_absolute(path):
+def expand_to_abs_path(path):
 	"""
 	Expands relative and user's home paths to the respective absolute path.
 	:param path: Path to be expanded.
