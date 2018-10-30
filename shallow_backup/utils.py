@@ -113,9 +113,11 @@ def home_prefix(path):
 
 def expand_to_abs_path(path):
 	"""
-	Expands relative and user's home paths to the respective absolute path.
+	Expands relative and user's home paths to the respective absolute path. Environment
+	variables found on the input path will also be expanded.
 	:param path: Path to be expanded.
 	:return: (str) The absolute path.
 	"""
 	expanded_path = os.path.expanduser(path)
+	expanded_path = os.path.expandvars(expanded_path)
 	return os.path.abspath(expanded_path)
