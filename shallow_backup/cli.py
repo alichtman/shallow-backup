@@ -1,19 +1,17 @@
 import os
 import sys
 import click
+from config import *
+from backup import *
+from prompts import *
 from printing import *
+from reinstall import *
+from git_wrapper import *
 from utils import mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path
-from reinstall import reinstall_packages_sb, reinstall_configs_sb, reinstall_all_sb, reinstall_fonts_sb, reinstall_dots_sb
-from prompts import actions_menu_prompt, prompt_for_git_url, prompt_for_path_update
-from backup import backup_all, backup_configs, backup_dotfiles, backup_fonts, backup_packages
-from git_wrapper import safe_git_init, git_set_remote, git_add_all_commit_push, safe_create_gitignore
-from config import get_config, show_config, add_to_config, rm_from_config, write_config, safe_create_config, get_config_path
 
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
-@click.option('--add', nargs=2, default=[None, None], type=(click.Choice(['dot', 'config']), str),
-              help="\b Add path to back up. Format: [dot, config] PATH")
 @click.option('-all', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
@@ -29,10 +27,9 @@ from config import get_config, show_config, add_to_config, rm_from_config, write
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
 @click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
-@click.option('--rm', default=None, type=str, help="Remove path from backup.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
+def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
         reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, v):
 	"""
 	\b
@@ -43,7 +40,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 	"""
 
 	# Process CLI args
-	admin_action = any([v, delete_config, destroy_backup, show, rm]) or None not in add
+	admin_action = any([v, delete_config, destroy_backup, show])
 	has_cli_arg = any([old_path, all, dotfiles, packages, fonts, configs,
 	                   reinstall_dots, reinstall_fonts, reinstall_all,
 	                   reinstall_configs, reinstall_packages])
@@ -61,10 +58,6 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 		elif destroy_backup:
 			backup_home_path = expand_to_abs_path(get_config()["backup_path"])
 			destroy_backup_dir(backup_home_path)
-		elif None not in add:
-			add_to_config(add[0], add[1])
-		elif rm:
-			rm_from_config(rm)
 		elif show:
 			show_config()
 		sys.exit()
@@ -77,8 +70,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 	# User entered a new path, so update the config
 	if new_path:
 		abs_path = os.path.abspath(new_path)
-		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(
-			abs_path) + Style.RESET_ALL)
+		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(abs_path) + Style.RESET_ALL)
 		backup_config["backup_path"] = abs_path
 		write_config(backup_config)
 
@@ -165,14 +157,18 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 				reinstall_dots_sb(dotfiles_path)
 			elif selection_words[-1] == "all":
 				reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
-		else:
+		elif selection.endswith("config"):
 			if selection == "show config":
 				show_config()
-			elif selection == "destroy backup":
-				if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
-					destroy_backup_dir(backup_home_path)
-				else:
-					print_red_bold("Exiting to prevent accidental deletion of backup directory.")
+			elif selection == "add path to config":
+				add_to_config()
+			elif selection == "remove path from config":
+				remove_from_config()
+		elif selection == "destroy backup":
+			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
+				destroy_backup_dir(backup_home_path)
+			else:
+				print_red_bold("Exiting to prevent accidental deletion of backup directory.")
 
 	sys.exit()
 

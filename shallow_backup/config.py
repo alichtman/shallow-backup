@@ -30,6 +30,7 @@ def write_config(config):
 def get_default_config():
 	"""
 	Returns a default configuration.
+	# TODO: Cross-platform compatibility
 	"""
 	return {
 		"backup_path": "~/shallow-backup",
@@ -78,69 +79,6 @@ def safe_create_config():
 		write_config(backup_config)
 
 
-# TODO: Rethink these methods.
-def add_to_config(section, path):
-	"""
-	Adds the path under the correct section in the config file.
-	FIRST ARG: [dot, config, other]
-	SECOND ARG: path, relative to home directory for dotfiles, absolute for configs
-	"""
-	full_path = home_prefix(path)
-	if not os.path.exists(full_path):
-		print_red_bold("ERR: {} doesn't exist.".format(full_path))
-		sys.exit(1)
-
-	if section == "dot":
-		# Make sure dotfile starts with a period
-		if path[0] != ".":
-			print_red_bold("ERR: Not a dotfile.")
-			sys.exit(1)
-
-		if not os.path.isdir(full_path):
-			section = "dotfiles"
-			print(Fore.BLUE + Style.BRIGHT + "Adding {} to dotfile backup.".format(full_path) + Style.RESET_ALL)
-		else:
-			section = "dotfolders"
-			if path[-1] != "/":
-				full_path += "/"
-				path += "/"
-			print(Fore.BLUE + Style.BRIGHT + "Adding {} to dotfolder backup.".format(full_path) + Style.RESET_ALL)
-
-	# TODO: Add config section once configs backup prefs are moved to the config file
-	elif section == "config":
-		print(Fore.RED + Style.BRIGHT + "ERR: Option not currently supported." + Style.RESET_ALL)
-		sys.exit(1)
-	elif section == "other":
-		print(Fore.RED + Style.BRIGHT + "ERR: Option not currently supported." + Style.RESET_ALL)
-		sys.exit(1)
-
-	config = get_config()
-	file_set = set(config[section])
-	file_set.update([path])
-	config[section] = list(file_set)
-	write_config(config)
-
-
-def rm_from_config(path):
-	"""
-	Removes the path from a section in the config file. Exits if the path doesn't exist.
-	Path, relative to home directory for dotfiles, absolute for configs
-	"""
-	flag = False
-	config = get_config()
-	for section, items in config.items():
-		if path in items:
-			print(Fore.BLUE + Style.BRIGHT + "Removing {} from backup...".format(path) + Style.RESET_ALL)
-			items.remove(path)
-			config[section] = items
-			flag = True
-
-	if not flag:
-		print(Fore.RED + Style.BRIGHT + "ERR: Not currently backing that path up..." + Style.RESET_ALL)
-	else:
-		write_config(config)
-
-
 def show_config():
 	"""
 	Print the config. Colorize section titles and indent contents.
@@ -155,16 +93,16 @@ def show_config():
 		elif section == "backup_path":
 			print(Fore.RED + Style.BRIGHT + "Backup Path: " + Style.RESET_ALL + contents)
 		elif section == "config_path_to_dest_map":
-			print(Fore.RED + Style.BRIGHT + "Configs to Backup Path Mapping: " + Style.RESET_ALL)
+			print_red_bold("Configs to Backup Path Mapping: ")
 			for path, dest in contents.items():
 				print("    {} -> {}".format(path, dest))
 		elif section == "plist_path_to_dest_map":
-			print(Fore.RED + Style.BRIGHT + "Plist to Backup Path Mapping: " + Style.RESET_ALL)
+			print_red_bold("Plist to Backup Path Mapping: ")
 			for path, dest in contents.items():
 				print("    {} -> {}".format(path, dest))
 		# Print section header and then contents indented.
 		else:
-			print(Fore.RED + Style.BRIGHT + "\n{}: ".format(section.capitalize()) + Style.RESET_ALL)
+			print_red_bold("\n{}: ".format(section.capitalize()))
 			for item in contents:
 				print("    {}".format(item))
 
