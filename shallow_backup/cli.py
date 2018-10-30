@@ -7,7 +7,7 @@ from prompts import *
 from printing import *
 from reinstall import *
 from git_wrapper import *
-from utils import mkdir_warn_overwrite, destroy_backup_dir
+from utils import mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path
 
 
 # custom help options
@@ -56,7 +56,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 			os.remove(get_config_path())
 			print_red_bold("Removed config file...")
 		elif destroy_backup:
-			backup_home_path = get_config()["backup_path"]
+			backup_home_path = expand_to_abs_path(get_config()["backup_path"])
 			destroy_backup_dir(backup_home_path)
 		elif show:
 			show_config()
@@ -79,7 +79,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 		prompt_for_path_update(backup_config)
 
 	# Create backup directory and do git setup
-	backup_home_path = get_config()["backup_path"]
+	backup_home_path = expand_to_abs_path(get_config()["backup_path"])
 	mkdir_warn_overwrite(backup_home_path)
 	repo, new_git_repo_created = safe_git_init(backup_home_path)
 
