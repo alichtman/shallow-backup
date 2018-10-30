@@ -62,7 +62,7 @@ Options:
   --remote TEXT           Set remote URL for the git repo.
   --rm TEXT               Remove path from config.
   -show                   Show config file.
-  -v                      Display version and author information and exit.
+  -v, --version           Display version and author information and exit.
   -h, -help, --help       Show this message and exit.
 ```
 
