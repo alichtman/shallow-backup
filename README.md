@@ -44,11 +44,6 @@ Usage: cli.py [OPTIONS]
   Written by Aaron Lichtman (@alichtman).
 
 Options:
-  --add <CHOICE TEXT TEXT>...  Add path to back up. Format: (dot, config)
-                               PATH [DEST]. PATH should be relative to HOME
-                               for dots, and relative to / for configs. DEST
-                               should be used for assigning a dest dir to non-
-                               plist config files.
   -all                         Full back up.
   -configs                     Back up app config files.
   -delete_config               Delete config file.
@@ -64,8 +59,6 @@ Options:
   -reinstall_packages          Reinstall packages.
   -reinstall_all               Full reinstallation.
   --remote TEXT                Set remote URL for the git repo.
-  --rm TEXT                    Remove path from backup. Use the source path,
-                               just as it's displayed in the config file.
   -show                        Display config file.
   -v                           Display version and author information and
                                exit.
