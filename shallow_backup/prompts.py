@@ -16,7 +16,7 @@ def prompt_for_path_update(config):
 	print("{}{}Current shallow-backup path: {}{}{}".format(Fore.BLUE, Style.BRIGHT, Style.NORMAL, current_path, Style.RESET_ALL))
 
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
-		print(Fore.GREEN + Style.BRIGHT + "Enter relative path:" + Style.RESET_ALL)
+		print(Fore.GREEN + Style.BRIGHT + "Enter relative or absolute path:" + Style.RESET_ALL)
 		abs_path = expand_to_abs_path(input())
 		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(abs_path) + Style.RESET_ALL)
 		config["backup_path"] = abs_path
