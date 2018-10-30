@@ -78,28 +78,6 @@ def safe_create_config():
 		backup_config = get_default_config()
 		write_config(backup_config)
 
-# TODO: REMOVE THIS CODE
-
-
-def rm_from_config(path):
-	"""
-	Removes the path from a section in the config file. Exits if the path doesn't exist.
-	Path, relative to home directory for dotfiles, absolute for configs
-	"""
-	found = False
-	config = get_config()
-	for section, items in config.items():
-		if path in items:
-			print_blue_bold("Removing {} from backup...".format(path))
-			items.remove(path)
-			config[section] = items
-			found = True
-
-	if not found:
-		print_red_bold("ERR: Path not found in config file...")
-	else:
-		write_config(config)
-
 
 def show_config():
 	"""

@@ -36,7 +36,7 @@ def prompt_for_git_url(repo):
 		git_set_remote(repo, remote_url)
 
 
-def add_to_config_prompt():
+def add_to_config():
 	"""
 	Prompt sequence for a user to add a path to the config file under
 	either the dot or config sections.
@@ -106,6 +106,37 @@ def add_to_config_prompt():
 			config[config_key] = config_path_dict
 			write_config(config)
 			break
+
+
+def remove_from_config():
+	"""
+	Sequence of prompts for a user to remove a path from the config.
+	2-layer selection screen. First screen is for choosing dot or
+	config, and then next selection is for the specific path.
+	"""
+	# Get section to display.
+	rm_prompt = [inquirer.List('choice',
+	                           message=Fore.GREEN + Style.BRIGHT + "Which section would you like to remove a path from?" + Fore.BLUE,
+	                           choices=[' Dotfiles',
+	                                    ' Dotfolders',
+	                                    ' Configs'
+	                                    ])
+	]
+
+	section = inquirer.prompt(rm_prompt).get('choice').strip().lower()
+	config = get_config()
+	contents = config[section]
+	# Get only backup paths, not dest paths if it's a dictionary.
+	if type(contents) is dict:
+		contents = contents.keys()
+
+	path_to_remove = [inquirer.List('choice',
+	                                message=Fore.GREEN + Style.BRIGHT + "Select a path to remove." + Fore.BLUE,
+	                                choices=contents)
+	]
+	print_blue_bold("Removing {} from backup...".format(path_to_remove))
+	config[section].remove(path_to_remove)
+	write_config(config)
 
 
 def actions_menu_prompt():
