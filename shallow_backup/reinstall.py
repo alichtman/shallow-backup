@@ -1,10 +1,10 @@
 import os
+from printing import *
 from colorama import Fore
 from shutil import copytree, copyfile
 from config import get_config
 from utils import home_prefix
 from utils import run_cmd, get_abs_path_subfiles
-from printing import print_section_header, print_pkg_mgr_reinstall, print_red_bold, print_yellow, print_blue_bold
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
 #       conflict with the function names.

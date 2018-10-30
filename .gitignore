@@ -8,3 +8,4 @@
 shallow_backup.egg-info/*
 build/bdist.macosx-10.6-intel
 build/lib
+.vscode
