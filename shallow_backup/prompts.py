@@ -3,7 +3,7 @@ import inquirer
 from colorama import Fore, Style
 from config import write_config
 from utils import mkdir_warn_overwrite
-from printing import prompt_yes_no
+from printing import *
 from git_wrapper import git_set_remote, move_git_repo
 
 
@@ -31,16 +31,37 @@ def prompt_for_git_url(repo):
 	If yes, do it.
 	"""
 	if prompt_yes_no("Would you like to set a remote URL for this git repo?", Fore.GREEN):
-		print(Fore.GREEN + Style.BRIGHT + "Enter URL:" + Style.RESET_ALL)
+		print_green_bold("Enter URL:")
 		remote_url = input()
 		git_set_remote(repo, remote_url)
+
+
+def add_to_config_prompt():
+	"""
+	Show selector for dot or config. Then prompt for path, do error
+	checking and add it to the config.
+	"""
+	section = [inquirer.List('choice',
+	                         message=Fore.GREEN + Style.BRIGHT + "Which section would you like to add this to?" + Fore.BLUE,
+	                         choices=[' Dots',
+	                                  ' Configs',
+	                                  ])
+	]
+
+	section = inquirer.prompt(section).get('choice').strip().lower()
+	valid_path = False
+
+	while not valid_path:
+		print_green_bold("Enter a path to add to {}:".format(section))
+		path = input()
+
+	pass
 
 
 def actions_menu_prompt():
 	"""
 	Prompt user for an action.
 	"""
-	# TODO: Implement `add` and `rm` path here.
 	questions = [inquirer.List('choice',
 	                           message=Fore.GREEN + Style.BRIGHT + "What would you like to do?" + Fore.BLUE,
 	                           choices=[' Back up all',
@@ -53,6 +74,8 @@ def actions_menu_prompt():
 	                                    ' Reinstall dotfiles',
 	                                    ' Reinstall fonts',
 	                                    ' Reinstall packages',
+	                                    ' Add path to config',
+	                                    ' Remove path from config',
 	                                    ' Show config',
 	                                    ' Destroy backup'
 	                                    ],

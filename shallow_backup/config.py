@@ -78,8 +78,10 @@ def safe_create_config():
 		backup_config = get_default_config()
 		write_config(backup_config)
 
+# TODO: REMOVE THIS CODE
 
-def add_to_config(section, path, dest=None):
+
+def add_to_config():
 	"""
 	Adds the path under the correct section in the config file.
 
@@ -142,6 +144,8 @@ def add_to_config(section, path, dest=None):
 		file_set[path[0]] = path[1]
 		config[section] = file_set
 	write_config(config)
+
+# TODO: REMOVE THIS CODE
 
 
 def rm_from_config(path):

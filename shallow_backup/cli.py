@@ -12,8 +12,6 @@ from utils import mkdir_warn_overwrite, destroy_backup_dir
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
-@click.option('--add', nargs=3, default=[None, None, None], type=(click.Choice(['dot', 'config']), str, str),
-              help="\b Add path to back up. Format: (dot, config) PATH [DEST]. PATH should be relative to HOME for dots, and relative to / for configs. DEST should be used for assigning a dest dir to non-plist config files.")
 @click.option('-all', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
@@ -29,10 +27,9 @@ from utils import mkdir_warn_overwrite, destroy_backup_dir
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
 @click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
-@click.option('--rm', default=None, type=str, help="Remove path from backup. Use the source path, just as it's displayed in the config file.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
-def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
+def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
         reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, v):
 	"""
 	\b
@@ -43,7 +40,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 	"""
 
 	# Process CLI args
-	admin_action = any([v, delete_config, destroy_backup, show, rm]) or None not in add
+	admin_action = any([v, delete_config, destroy_backup, show])
 	has_cli_arg = any([old_path, all, dotfiles, packages, fonts, configs,
 	                   reinstall_dots, reinstall_fonts, reinstall_all,
 	                   reinstall_configs, reinstall_packages])
@@ -61,10 +58,6 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 		elif destroy_backup:
 			backup_home_path = get_config()["backup_path"]
 			destroy_backup_dir(backup_home_path)
-		elif None not in add:
-			add_to_config(add[0], add[1], add[2])
-		elif rm:
-			rm_from_config(rm)
 		elif show:
 			show_config()
 		sys.exit()
@@ -164,14 +157,18 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 				reinstall_dots_sb(dotfiles_path)
 			elif selection_words[-1] == "all":
 				reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
-		else:
+		elif selection.endswith("config"):
 			if selection == "show config":
 				show_config()
-			elif selection == "destroy backup":
-				if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
-					destroy_backup_dir(backup_home_path)
-				else:
-					print_red_bold("Exiting to prevent accidental deletion of backup directory.")
+			elif selection == "add path to config":
+				add_to_config()
+			elif selection == "remove path from config":
+				rm_from_config()
+		elif selection == "destroy backup":
+			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
+				destroy_backup_dir(backup_home_path)
+			else:
+				print_red_bold("Exiting to prevent accidental deletion of backup directory.")
 
 	sys.exit()
 
