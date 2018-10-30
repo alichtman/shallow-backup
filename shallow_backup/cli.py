@@ -31,9 +31,9 @@ from config import get_config, show_config, add_to_config, rm_from_config, write
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
 @click.option('--rm', default=None, type=str, help="Remove path from backup.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
-@click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
+@click.option('--version', '-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
-        reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, v):
+        reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, version):
 	"""
 	\b
 	Easily back up installed packages, dotfiles, and more.
@@ -43,7 +43,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 	"""
 
 	# Process CLI args
-	admin_action = any([v, delete_config, destroy_backup, show, rm]) or None not in add
+	admin_action = any([version, delete_config, destroy_backup, show, rm]) or None not in add
 	has_cli_arg = any([old_path, all, dotfiles, packages, fonts, configs,
 	                   reinstall_dots, reinstall_fonts, reinstall_all,
 	                   reinstall_configs, reinstall_packages])
@@ -52,7 +52,7 @@ def cli(add, rm, show, all, dotfiles, configs, packages, fonts, old_path, new_pa
 
 	# Perform administrative action and exit.
 	if admin_action:
-		if v:
+		if version:
 			print_version_info()
 		elif delete_config:
 			# TODO: Error checking.
