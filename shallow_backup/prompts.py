@@ -2,8 +2,8 @@ import os
 import inquirer
 from utils import *
 from printing import *
+from config import *
 from colorama import Fore, Style
-from config import write_config
 from git_wrapper import git_set_remote, move_git_repo
 
 
@@ -54,12 +54,13 @@ def add_to_config():
 	# Prompt until we get a valid path.
 	while True:
 		print_green_bold("Enter a path to add to {}:".format(section))
-		input_path = expand_to_abs_path(input())
-		split_path = entered_path.split("/")
+		path = input()
+		expanded_path = expand_to_abs_path(path)
+		split_path = input_path.split("/")
 
 		# Check if path exists.
-		if not os.path.exists(entered_path):
-			print_red_bold("ERR: {} doesn't exist.".format(input_path))
+		if not os.path.exists(expanded_path):
+			print_red_bold("ERR: {} doesn't exist.".format(expanded_path))
 			continue
 
 		config_key = None
@@ -70,17 +71,16 @@ def add_to_config():
 				continue
 
 			# Determine if adding to dotfiles or dotfolders
-			if not os.path.isdir(input_path):
+			if not os.path.isdir(expanded_path):
 				config_key = "dotfiles"
-				print_blue_bold("Adding {} to dotfile backup.".format(input_path))
+				print_blue_bold("Adding {} to dotfile backup.".format(expanded_path))
 			else:
 				config_key = "dotfolders"
-				print_blue_bold("Adding {} to dotfolder backup.".format(input_path))
+				print_blue_bold("Adding {} to dotfolder backup.".format(expanded_path))
 
 			# Add path to config ensuring no duplicates.
-			file_set = set(config[config_key])
-			file_set.update([path])
-			config[config_key] = list(file_set)
+			updated_config_key = set(config[config_key] + [path])
+			config[config_key] = list(updated_config_key)
 			write_config(config)
 			break
 
@@ -90,15 +90,15 @@ def add_to_config():
 			dir_name = input()
 
 			# Handle plist and regular config.
-			if input_path.endswith(".plist"):
+			if expanded_path.endswith(".plist"):
 				config_key = "plist_path_to_dest_map"
 				# Make dest path $SB/config/plist/FILENAME
-				to_add_to_cfg = (input_path, os.path.join("plist", dir_name))
-				print_blue_bold("Adding {} to plist backup.".format(input_path))
+				to_add_to_cfg = (expanded_path, os.path.join("plist", dir_name))
+				print_blue_bold("Adding {} to plist backup.".format(expanded_path))
 			else:
 				config_key = "config_path_to_dest_map"
-				to_add_to_cfg = (input_path, dir_name)
-				print_blue_bold("Adding {} to config backup.".format(input_path))
+				to_add_to_cfg = (expanded_path, dir_name)
+				print_blue_bold("Adding {} to config backup.".format(expanded_path))
 
 			# Get dictionary of {path_to_backup: dest, ...}
 			config_path_dict = config[config_key]
@@ -115,27 +115,32 @@ def remove_from_config():
 	config, and then next selection is for the specific path.
 	"""
 	# Get section to display.
-	rm_prompt = [inquirer.List('choice',
-	                           message=Fore.GREEN + Style.BRIGHT + "Which section would you like to remove a path from?" + Fore.BLUE,
-	                           choices=[' Dotfiles',
-	                                    ' Dotfolders',
-	                                    ' Configs'
+	section_prompt = [inquirer.List('choice',
+	                                message=Fore.GREEN + Style.BRIGHT + "Which section would you like to remove a path from?" + Fore.BLUE,
+	                                choices=[' Dotfiles',
+	                                         ' Dotfolders',
+	                                         ' Configs'
 	                                    ])
 	]
 
-	section = inquirer.prompt(rm_prompt).get('choice').strip().lower()
+	section = inquirer.prompt(section_prompt).get('choice').strip().lower()
 	config = get_config()
-	contents = config[section]
+	paths = config[section]
 	# Get only backup paths, not dest paths if it's a dictionary.
-	if type(contents) is dict:
-		contents = contents.keys()
+	if type(paths) is dict:
+		paths = list(paths.keys())
 
-	path_to_remove = [inquirer.List('choice',
-	                                message=Fore.GREEN + Style.BRIGHT + "Select a path to remove." + Fore.BLUE,
-	                                choices=contents)
+	print(paths)
+	path_prompt = [inquirer.List('choice',
+	                             message=Fore.GREEN + Style.BRIGHT + "Select a path to remove." + Fore.BLUE,
+	                             choices=paths)
 	]
+	path_to_remove = inquirer.prompt(path_prompt).get('choice')
+	print(path_to_remove, type(path_to_remove))
 	print_blue_bold("Removing {} from backup...".format(path_to_remove))
-	config[section].remove(path_to_remove)
+	print(paths, type(paths))
+	paths.remove(path_to_remove)
+	config[section] = paths
 	write_config(config)
 
 
