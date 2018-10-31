@@ -19,10 +19,10 @@ def prompt_for_path_update(config):
 		print_green_bold("Enter relative or absolute path:")
 		abs_path = expand_to_abs_path(input())
 		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(abs_path) + Style.RESET_ALL)
-		config["backup_path"] = abs_path
-		write_config(config)
 		mkdir_warn_overwrite(abs_path)
 		move_git_repo(current_path, abs_path)
+		config["backup_path"] = abs_path
+		write_config(config)
 
 
 def prompt_for_git_url(repo):

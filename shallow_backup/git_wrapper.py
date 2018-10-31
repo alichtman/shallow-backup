@@ -1,4 +1,5 @@
 import os
+import sys
 import git
 from shutil import move
 from printing import *
@@ -92,6 +93,11 @@ def move_git_repo(source_path, new_path):
 	"""
 	Moves git folder and .gitignore to the new backup directory.
 	"""
+	if os.path.exists(os.path.join(new_path, '.git')) or os.path.exists(os.path.join(new_path, '.gitignore')):
+		print_red_bold("Git repository already exists new path ({})".format(new_path))
+		print_red_bold("Please choose a different directory")
+		sys.exit()
+
 	git_dir = os.path.join(source_path, '.git')
 	git_ignore_file = os.path.join(source_path, '.gitignore')
 
