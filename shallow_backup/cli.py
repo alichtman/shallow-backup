@@ -28,9 +28,9 @@ from utils import mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path
 @click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
-@click.option('-v', is_flag=True, default=False, help='Display version and author information and exit.')
+@click.option('--version', '-v', is_flag=True, default=False, help='Display version and author information and exit.')
 def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
-        reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, v):
+        reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, version):
 	"""
 	\b
 	Easily back up installed packages, dotfiles, and more.
@@ -40,7 +40,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 	"""
 
 	# Process CLI args
-	admin_action = any([v, delete_config, destroy_backup, show])
+	admin_action = any([version, delete_config, destroy_backup, show])
 	has_cli_arg = any([old_path, all, dotfiles, packages, fonts, configs,
 	                   reinstall_dots, reinstall_fonts, reinstall_all,
 	                   reinstall_configs, reinstall_packages])
@@ -49,7 +49,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 
 	# Perform administrative action and exit.
 	if admin_action:
-		if v:
+		if version:
 			print_version_info()
 		elif delete_config:
 			# TODO: Error checking.
