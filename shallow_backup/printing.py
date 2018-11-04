@@ -37,19 +37,19 @@ def print_green_bold(text):
 	print(Fore.GREEN + Style.BRIGHT + text + Style.RESET_ALL)
 
 
-def print_blue_bold_path(text, path):
+def print_path_blue(text, path):
 	print(Fore.BLUE + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
 
 
-def print_red_bold_path(text, path):
+def print_path_red(text, path):
 	print(Fore.RED + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
 
 
-def print_yellow_bold_path(text, path):
+def print_path_yellow(text, path):
 	print(Fore.YELLOW + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
 
 
-def print_green_bold_path(text, path):
+def print_path_green(text, path):
 	print(Fore.GREEN + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
 
 
