@@ -81,7 +81,7 @@ def git_add_all_commit_push(repo, message):
 
 		if "origin" in [remote.name for remote in repo.remotes]:
 			print_path_yellow("Pushing to master:", "{}...".format(repo.remotes.origin.url))
-			
+
 			repo.git.fetch()
 			repo.git.push("--set-upstream", "origin", "master")
 	else:
