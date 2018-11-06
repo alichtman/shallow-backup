@@ -74,7 +74,7 @@ def safe_create_config():
 	"""
 	backup_config_path = get_config_path()
 	if not os.path.exists(backup_config_path):
-		print_path_blue("Creating config file at", backup_config_path)
+		print_path_blue("Creating config file at:", backup_config_path)
 		backup_config = get_default_config()
 		write_config(backup_config)
 

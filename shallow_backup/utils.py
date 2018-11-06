@@ -55,7 +55,7 @@ def mkdir_warn_overwrite(path):
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
-		print_path_blue("CREATED DIR:", path)
+		print_path_blue("Created directory:", path)
 
 
 def destroy_backup_dir(backup_path):
