@@ -66,7 +66,7 @@ def destroy_backup_dir(backup_path):
 		print_path_red("Deleting backup directory:", backup_path)
 		rmtree(backup_path)
 	except OSError as e:
-		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
+		print_red_bold("Error: {} - {}".format(e.filename, e.strerror))
 
 
 def get_abs_path_subfiles(directory):
