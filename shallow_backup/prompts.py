@@ -18,7 +18,7 @@ def prompt_for_path_update(config):
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
 		print_green_bold("Enter relative or absolute path:")
 		abs_path = expand_to_abs_path(input())
-		print(Fore.BLUE + "\nUpdating shallow-backup path to {}".format(abs_path) + Style.RESET_ALL)
+		print_path_blue("\nUpdating shallow-backup path to:", abs_path)
 		config["backup_path"] = abs_path
 		write_config(config)
 		mkdir_warn_overwrite(abs_path)

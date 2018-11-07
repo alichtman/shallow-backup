@@ -55,7 +55,7 @@ def mkdir_warn_overwrite(path):
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
-		print(Fore.BLUE + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
+		print_path_blue("Created directory:", path)
 
 
 def destroy_backup_dir(backup_path):
@@ -63,11 +63,10 @@ def destroy_backup_dir(backup_path):
 	Deletes the backup directory and its content
 	"""
 	try:
-		# TODO: PRINT PATH STYLING. PATH SHOULD NOT BE BOLDED.
-		print_red_bold("Deleting backup directory: {}".format(backup_path))
+		print_path_red("Deleting backup directory:", backup_path)
 		rmtree(backup_path)
 	except OSError as e:
-		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
+		print_red_bold("Error: {} - {}".format(e.filename, e.strerror))
 
 
 def get_abs_path_subfiles(directory):
