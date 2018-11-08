@@ -5,6 +5,9 @@ import platform
 def get_os_name():
 	return platform.system().lower()
 
+# TODO: REFACTOR THIS WHOLE FILE INTO SEPARATE FUNCTIONS FOR THE SECTIONS
+# 		OF THE CONFIG.
+
 
 def get_compatible_paths():
 	"""
@@ -23,7 +26,6 @@ def get_compatible_paths():
 		"atom": ".atom",
 		"applications": "/Applications",
 		"fonts": os.path.join(HOME_DIR, "Library/Fonts")
-
 	}
 
 	linux_paths = {
