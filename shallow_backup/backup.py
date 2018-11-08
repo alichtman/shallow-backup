@@ -162,8 +162,6 @@ def backup_packages(backup_path, skip=False):
 		command = ["ls", sublime_3_path]
 		dest = "{}/sublime3_list.txt".format(backup_path)
 		run_cmd_write_stdout(command, dest)
-	else:
-		print(sublime_3_path, "IS NOT DIR")
 
 	# macports
 	print_pkg_mgr_backup("macports")

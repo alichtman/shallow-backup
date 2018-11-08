@@ -47,7 +47,7 @@ def mkdir_warn_overwrite(path):
 	"""
 	subdirs = ["dotfiles", "packages", "fonts", "configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
-		print_red_bold("Directory {} already exists\n".format(path))
+		print_path_red("Directory already exists:", path)
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			mkdir_overwrite(path)
 		else:
