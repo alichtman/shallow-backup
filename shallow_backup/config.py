@@ -1,7 +1,8 @@
 import os
 import json
-from utils import home_prefix
 from printing import *
+from compatibility import *
+from utils import home_prefix
 
 
 def get_config_path():
@@ -26,12 +27,33 @@ def write_config(config):
 		json.dump(config, f, indent=4)
 
 
+def prepare_config_path_dict():
+
+	config_path_tuples = get_config_paths()
+	path_mappings = {}
+
+	# TODO: FINISH THIS
+	for path, dest in config_path_tuples:
+		path_mappings[dest] =
+
+
+	 # {
+		# 	"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
+		# 	"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
+		# 	"Library/Preferences/IntelliJIdea2018.2/"                  : "intellijidea_2018.2",
+		# 	"Library/Preferences/PyCharm2018.2/"                       : "pycharm_2018.2",
+		# 	"Library/Preferences/CLion2018.2/"                         : "clion_2018.2",
+		# 	"Library/Preferences/PhpStorm2018.2"                       : "phpstorm_2018.2",
+		# 	".atom/"                                                   : "atom",
+		# 	"Library/Preferences/com.apple.Terminal.plist"			   : "plist/com.apple.Terminal.plist",
+		# },
+
+
 def get_default_config():
 	"""
-	Returns a default configuration.
-	# TODO: Cross-platform compatibility
+	Returns a default, platform specific config.
 	"""
-	return {
+	config = {
 		"backup_path": "~/shallow-backup",
 		"dotfiles"   : [
 			".bashrc",
@@ -52,17 +74,9 @@ def get_default_config():
 			"packages/",
 			"dotfiles/.pypirc",
 		],
-		"config_path_to_dest_map": {
-			"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-			"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
-			"Library/Preferences/IntelliJIdea2018.2/"                  : "intellijidea_2018.2",
-			"Library/Preferences/PyCharm2018.2/"                       : "pycharm_2018.2",
-			"Library/Preferences/CLion2018.2/"                         : "clion_2018.2",
-			"Library/Preferences/PhpStorm2018.2"                       : "phpstorm_2018.2",
-			".atom/"                                                   : "atom",
-			"Library/Preferences/com.apple.Terminal.plist"			   : "plist/com.apple.Terminal.plist",
-		},
+		"config_path_to_dest_map": prepare_config_path_dict()
 	}
+	return config
 
 
 def safe_create_config():

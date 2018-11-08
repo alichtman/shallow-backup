@@ -5,42 +5,50 @@ import platform
 def get_os_name():
 	return platform.system().lower()
 
-# TODO: REFACTOR THIS WHOLE FILE INTO SEPARATE FUNCTIONS FOR THE SECTIONS
-# 		OF THE CONFIG.
+
+def get_home():
+	return os.path.expanduser('~')
 
 
-def get_compatible_paths():
+def get_config_paths():
 	"""
-	Returns a dict of the paths where things should be located on the
-	correct OS.
+	Returns a dict of config paths for the correct OS.
 	"""
-	HOME_DIR = os.path.expanduser('~')
-
-	mac_paths = {
-		"sublime2": "/Library/Application Support/Sublime\ Text\ 2",
-		"sublime3": "/Library/Application Support/Sublime\ Text\ 3",
-		"intelliJIdea2018.2": "Library/Preferences/IntelliJIdea2018.2",
-		"pycharm2018.2": "Library/Preferences/PyCharm2018.2",
-		"clion2018.2": "Library/Preferences/CLion2018.2",
-		"phpStorm2018.2": "Library/Preferences/PhpStorm2018.2",
-		"atom": ".atom",
-		"applications": "/Applications",
-		"fonts": os.path.join(HOME_DIR, "Library/Fonts")
-	}
-
-	linux_paths = {
-		"sublime2": "/.config/sublime-text-2",
-		"sublime3": "/.config/sublime-text-3",
-		"intelliJIdea2018.2": os.path.join(HOME_DIR, ".IntelliJIdea2018.2"),
-		"pyCharm2018.2": os.path.join(HOME_DIR, ".PyCharm2018.2"),
-		"clion2018.2": os.path.join(HOME_DIR, ".CLion2018.2"),
-		"phpStorm2018.2": os.path.join(HOME_DIR, ".PhpStorm2018.2"),
-		"atom": os.path.join(HOME_DIR, ".atom"),
-		"applications": "/usr/share/applications",
-		"fonts": os.path.join(HOME_DIR, ".fonts")
-	}
-
 	if "darwin" == get_os_name():
-		return mac_paths
+		return {
+			"sublime2": os.path.join(get_home(), "/Library/Application Support/Sublime\ Text\ 2"),
+			"sublime3": os.path.join(get_home(), "/Library/Application Support/Sublime\ Text\ 3"),
+			"intelliJIdea2018.2": os.path.join(get_home(), "Library/Preferences/IntelliJIdea2018.2"),
+			"pycharm2018.2": os.path.join(get_home(), "Library/Preferences/PyCharm2018.2"),
+			"clion2018.2": os.path.join(get_home(), "Library/Preferences/CLion2018.2"),
+			"phpStorm2018.2": os.path.join(get_home(), "Library/Preferences/PhpStorm2018.2"),
+			"atom": os.path.join(get_home(), ".atom"),
+			"terminal_plist": os.path.join(get_home(), "Library/Preferences/com.apple.Terminal.plist")
+		}
 	else:
-		return linux_paths
+		return {
+			# TODO: Double check these paths. Not sure these are right.
+			"sublime2": "/.config/sublime-text-2",
+			"sublime3": "/.config/sublime-text-3",
+			"intelliJIdea2018.2": os.path.join(get_home(), ".IntelliJIdea2018.2"),
+			"pyCharm2018.2": os.path.join(get_home(), ".PyCharm2018.2"),
+			"clion2018.2": os.path.join(get_home(), ".CLion2018.2"),
+			"phpStorm2018.2": os.path.join(get_home(), ".PhpStorm2018.2"),
+			"atom": os.path.join(get_home(), ".atom"),
+		}
+
+
+def get_fonts_dir():
+	os_name = get_os_name()
+	if os_name == "darwin":
+		return os.path.join(get_home(), "Library/Fonts")
+	elif os_name == "linux":
+		return os.path.join(get_home(), ".fonts")
+
+
+def get_applications_dir():
+	os_name = get_os_name()
+	if os_name == "darwin":
+		return "/Applications"
+	elif os_name == "linux":
+		return "/usr/share/applications"
