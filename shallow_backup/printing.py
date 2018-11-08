@@ -2,8 +2,6 @@ import inquirer
 from colorama import Fore, Style
 from constants import ProjInfo
 
-# TODO: ADD PRINT PATH STYLING. PATH SHOULD NOT BE BOLDED, BUT REST OF TEXT SHOULD.
-
 
 def print_blue(text):
 	print(Fore.BLUE + text + Style.RESET_ALL)
@@ -90,8 +88,7 @@ def print_pkg_mgr_backup(mgr):
 
 
 def print_pkg_mgr_reinstall(mgr):
-	print("{}Reinstalling {}{}{}{}{}...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE,
-	                                                       Style.NORMAL, Style.RESET_ALL))
+	print("{}Reinstalling {}{}{}{}{}...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
 def prompt_yes_no(message, color):
