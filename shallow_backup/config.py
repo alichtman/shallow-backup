@@ -1,5 +1,4 @@
 import os
-import sys
 import json
 from utils import home_prefix
 from printing import *
@@ -61,9 +60,7 @@ def get_default_config():
 			"Library/Preferences/CLion2018.2/"                         : "clion_2018.2",
 			"Library/Preferences/PhpStorm2018.2"                       : "phpstorm_2018.2",
 			".atom/"                                                   : "atom",
-		},
-		"plist_path_to_dest_map" : {
-			"Library/Preferences/com.apple.Terminal.plist": "plist/com.apple.Terminal.plist",
+			"Library/Preferences/com.apple.Terminal.plist"			   : "plist/com.apple.Terminal.plist",
 		},
 	}
 
@@ -94,10 +91,6 @@ def show_config():
 			print(Fore.RED + Style.BRIGHT + "Backup Path: " + Style.RESET_ALL + contents)
 		elif section == "config_path_to_dest_map":
 			print_red_bold("Configs to Backup Path Mapping: ")
-			for path, dest in contents.items():
-				print("    {} -> {}".format(path, dest))
-		elif section == "plist_path_to_dest_map":
-			print_red_bold("Plist to Backup Path Mapping: ")
 			for path, dest in contents.items():
 				print("    {} -> {}".format(path, dest))
 		# Print section header and then contents indented.

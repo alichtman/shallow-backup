@@ -69,31 +69,27 @@ def backup_configs(backup_path, skip=False):
 	"""
 	Creates `configs` directory and places config backups there.
 	Configs are application settings, generally. .plist files count.
+	In the config file, the value of the configs dictionary is the dest
+	path relative to the configs/ directory.
 	"""
 	print_section_header("CONFIGS", Fore.BLUE)
 	overwrite_dir_prompt_if_needed(backup_path, skip)
 	config = get_config()
 	configs_dir_mapping = config["config_path_to_dest_map"]
-	plist_files = config["plist_path_to_dest_map"]
 
 	print_blue_bold("Backing up configs...")
 
-	# backup config dirs in backup_path/<target>/
+	# backup config files + dirs in backup_path/configs/<target>/
 	for config, target in configs_dir_mapping.items():
-		src_dir = home_prefix(config)
-		configs_backup_path = os.path.join(backup_path, target)
-		if os.path.isdir(src_dir):
+		path_to_backup = home_prefix(config)
+		dest = os.path.join(backup_path, target)
+		if os.path.isdir(path_to_backup):
 			# TODO: Exclude Sublime/Atom/VS Code Packages here to speed things up
-			copytree(src_dir, configs_backup_path, symlinks=True)
-
-	# backup plist files in backup_path/configs/plist/
-	print_blue_bold("Backing up plist files...")
-	plist_backup_path = os.path.join(backup_path, "plist")
-	safe_mkdir(plist_backup_path)
-	for plist, dest in plist_files.items():
-		plist_path = home_prefix(plist)
-		if os.path.exists(plist_path):
-			copyfile(plist_path, os.path.join(backup_path, dest))
+			copytree(path_to_backup, dest, symlinks=True)
+		elif os.path.isfile(path_to_backup):
+			parent_dir = dest[:dest.rfind("/")]
+			safe_mkdir(parent_dir)
+			copyfile(path_to_backup, dest)
 
 
 def backup_packages(backup_path, skip=False):
