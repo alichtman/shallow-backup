@@ -37,6 +37,22 @@ def print_green_bold(text):
 	print(Fore.GREEN + Style.BRIGHT + text + Style.RESET_ALL)
 
 
+def print_path_blue(text, path):
+	print(Fore.BLUE + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
+
+
+def print_path_red(text, path):
+	print(Fore.RED + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
+
+
+def print_path_yellow(text, path):
+	print(Fore.YELLOW + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
+
+
+def print_path_green(text, path):
+	print(Fore.GREEN + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
+
+
 def print_version_info(cli=True):
 	"""
 	Formats version differently for CLI and splash screen.

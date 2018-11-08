@@ -25,7 +25,7 @@ def git_set_remote(repo, remote_url):
 	"""
 	Sets git repo upstream URL and fast-forwards history.
 	"""
-	print(Fore.YELLOW + Style.BRIGHT + "Setting remote URL to -> " + Style.NORMAL + "{}...".format(remote_url) + Style.RESET_ALL)
+	print_path_yellow("Setting remote URL to:", "{}...".format(remote_url))
 
 	try:
 		origin = repo.create_remote('origin', remote_url)
@@ -80,8 +80,8 @@ def git_add_all_commit_push(repo, message):
 		print_yellow_bold("Successful commit.")
 
 		if "origin" in [remote.name for remote in repo.remotes]:
-			print(Fore.YELLOW + Style.BRIGHT + "Pushing to master: " + Style.NORMAL + "{}...".format(
-				repo.remotes.origin.url) + Style.RESET_ALL)
+			print_path_yellow("Pushing to master:", "{}...".format(repo.remotes.origin.url))
+
 			repo.git.fetch()
 			repo.git.push("--set-upstream", "origin", "master")
 	else:

@@ -70,7 +70,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 	# User entered a new path, so update the config
 	if new_path:
 		abs_path = os.path.abspath(new_path)
-		print(Fore.BLUE + Style.NORMAL + "\nUpdating shallow-backup path to -> " + Style.BRIGHT + "{}".format(abs_path) + Style.RESET_ALL)
+		print_path_blue("\nUpdating shallow-backup path to:", abs_path)
 		backup_config["backup_path"] = abs_path
 		write_config(backup_config)
 
