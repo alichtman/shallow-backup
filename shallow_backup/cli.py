@@ -52,9 +52,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 		if version:
 			print_version_info()
 		elif delete_config:
-			# TODO: Error checking.
-			os.remove(get_config_path())
-			print_red_bold("Removed config file...")
+			delete_config_file()
 		elif destroy_backup:
 			backup_home_path = expand_to_abs_path(get_config()["backup_path"])
 			destroy_backup_dir(backup_home_path)

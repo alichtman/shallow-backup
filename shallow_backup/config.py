@@ -1,7 +1,7 @@
 import os
 import json
-from utils import home_prefix
 from printing import *
+from utils import home_prefix
 
 
 def get_config_path():
@@ -29,7 +29,6 @@ def write_config(config):
 def get_default_config():
 	"""
 	Returns a default configuration.
-	# TODO: Cross-platform compatibility
 	"""
 	return {
 		"backup_path": "~/shallow-backup",
@@ -74,6 +73,18 @@ def safe_create_config():
 		print_path_blue("Creating config file at:", backup_config_path)
 		backup_config = get_default_config()
 		write_config(backup_config)
+
+
+def delete_config_file():
+	"""
+	Deletes config file.
+	"""
+	config_path = get_config_path()
+	if os.path.isfile(config_path):
+		print_red_bold("Deleting config file.")
+		os.remove(config_path)
+	else:
+		print_red_bold("ERROR: No config file found.")
 
 
 def show_config():
