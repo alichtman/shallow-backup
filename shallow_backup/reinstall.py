@@ -1,11 +1,11 @@
 import os
-from printing import *
 from shlex import quote
 from colorama import Fore
-from compatibility import *
-from config import get_config
+from .utils import run_cmd, get_abs_path_subfiles
+from .printing import *
+from .compatibility import *
+from .config import get_config
 from shutil import copytree, copyfile
-from utils import run_cmd, get_abs_path_subfiles
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
 #       conflict with the function names.

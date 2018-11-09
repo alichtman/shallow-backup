@@ -1,10 +1,10 @@
 import os
 import inquirer
-from utils import *
-from printing import *
-from config import *
 from colorama import Fore, Style
-from git_wrapper import git_set_remote, move_git_repo
+from .utils import *
+from .printing import *
+from .config import *
+from .git_wrapper import git_set_remote, move_git_repo
 
 
 def prompt_for_path_update(config):

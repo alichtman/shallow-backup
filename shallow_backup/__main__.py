@@ -1,9 +1,9 @@
 import click
-from backup import *
-from prompts import *
-from reinstall import *
-from git_wrapper import *
-from utils import mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path
+from .backup import *
+from .prompts import *
+from .reinstall import *
+from .git_wrapper import *
+from .utils import mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path
 
 
 # custom help options

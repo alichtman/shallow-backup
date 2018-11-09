@@ -1,6 +1,6 @@
 import inquirer
-from constants import ProjInfo
 from colorama import Fore, Style
+from .constants import ProjInfo
 
 
 def print_blue(text):

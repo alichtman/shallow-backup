@@ -2,7 +2,7 @@ import os
 import sys
 import subprocess as sp
 from shutil import rmtree, copytree
-from printing import *
+from .printing import *
 
 
 def run_cmd(command):

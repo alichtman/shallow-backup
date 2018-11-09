@@ -1,7 +1,7 @@
 import json
-from printing import *
-from compatibility import *
-from utils import home_prefix
+from .printing import *
+from .compatibility import *
+from .utils import home_prefix
 
 
 def get_config_path():

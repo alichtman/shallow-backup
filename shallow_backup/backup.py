@@ -1,12 +1,13 @@
 import os
-from utils import *
-from printing import *
 from shlex import quote
 from colorama import Fore
-from compatibility import *
 import multiprocessing as mp
-from config import get_config
 from shutil import copytree, copyfile
+
+from .utils import *
+from .printing import *
+from .compatibility import *
+from .config import get_config
 
 
 def overwrite_dir_prompt_if_needed(path, needed):
