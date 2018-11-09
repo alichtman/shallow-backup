@@ -1,4 +1,3 @@
-import os
 import json
 from printing import *
 from compatibility import *
@@ -27,35 +26,31 @@ def write_config(config):
 		json.dump(config, f, indent=4)
 
 
-def prepare_config_path_dict():
+def prepare_config_path():
+	"""
+	Get compatible config paths, format them as [(LOC, DEST), ...]
+	"""
+	config_paths = get_config_paths()
+	translations = {
+		"terminal_plist": "plist/com.apple.Terminal.plist"
+	}
 
-	config_path_tuples = get_config_paths()
-	path_mappings = {}
+	# Swap out keys for dest_paths
+	for key, dest_path in translations.items():
+		if key in config_paths:
+			config_paths[dest_path] = config_paths[key]
+			del config_paths[key]
 
-	# TODO: FINISH THIS
-	for path, dest in config_path_tuples:
-		path_mappings[dest] =
-
-
-	 # {
-		# 	"Library/Application Support/Sublime Text 2/Packages/User/": "sublime_2",
-		# 	"Library/Application Support/Sublime Text 3/Packages/User/": "sublime_3",
-		# 	"Library/Preferences/IntelliJIdea2018.2/"                  : "intellijidea_2018.2",
-		# 	"Library/Preferences/PyCharm2018.2/"                       : "pycharm_2018.2",
-		# 	"Library/Preferences/CLion2018.2/"                         : "clion_2018.2",
-		# 	"Library/Preferences/PhpStorm2018.2"                       : "phpstorm_2018.2",
-		# 	".atom/"                                                   : "atom",
-		# 	"Library/Preferences/com.apple.Terminal.plist"			   : "plist/com.apple.Terminal.plist",
-		# },
+	return dict([(v, k) for k, v in config_paths.items()])
 
 
 def get_default_config():
 	"""
 	Returns a default, platform specific config.
 	"""
-	config = {
-		"backup_path": "~/shallow-backup",
-		"dotfiles"   : [
+	return {
+		"backup_path"      : "~/shallow-backup",
+		"dotfiles"         : [
 			".bashrc",
 			".bash_profile",
 			".gitconfig",
@@ -65,18 +60,17 @@ def get_default_config():
 			".vimrc",
 			".zshrc"
 		],
-		"dotfolders" : [
+		"dotfolders"       : [
 			".ssh",
 			".vim"
 		],
-		"default-gitignore"  : [
+		"default-gitignore": [
 			"dotfiles/.ssh",
 			"packages/",
 			"dotfiles/.pypirc",
 		],
-		"config_path_to_dest_map": prepare_config_path_dict()
+		"config_mapping"   : prepare_config_path()
 	}
-	return config
 
 
 def safe_create_config():
@@ -95,19 +89,18 @@ def show_config():
 	Print the config. Colorize section titles and indent contents.
 	"""
 	print_section_header("SHALLOW BACKUP CONFIG", Fore.RED)
-	config = get_config()
-	for section, contents in config.items():
+	for section, contents in get_config().items():
 		# Hide gitignore config
 		if section == "default-gitignore":
 			continue
 		# Print backup path on same line
 		elif section == "backup_path":
-			print(Fore.RED + Style.BRIGHT + "Backup Path: " + Style.RESET_ALL + contents)
-		elif section == "config_path_to_dest_map":
-			print_red_bold("Configs to Backup Path Mapping: ")
+			print_path_red("Backup Path:", contents)
+		elif section == "config_mapping":
+			print_red_bold("Configs Path to Dest Mapping: ")
 			for path, dest in contents.items():
 				print("    {} -> {}".format(path, dest))
-		# Print section header and then contents indented.
+		# Print section header and intent contents. (Dotfiles/folders)
 		else:
 			print_red_bold("\n{}: ".format(section.capitalize()))
 			for item in contents:

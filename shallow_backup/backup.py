@@ -1,6 +1,7 @@
 import os
 from utils import *
 from printing import *
+from shlex import quote
 from colorama import Fore
 from compatibility import *
 import multiprocessing as mp
@@ -45,12 +46,14 @@ def backup_dotfiles(backup_path, skip=False):
 	# dotfiles/folders multiprocessing format: [(full_dotfile_path, full_dest_path), ...]
 	dotfolders_mp_in = []
 	for dotfolder in dotfolders:
-		dotfolders_mp_in.append(
-			(os.path.join(home_path, dotfolder), backup_path))
+		dotfolder_path = quote(os.path.join(home_path, dotfolder))
+		dotfolders_mp_in.append((dotfolder_path, backup_path))
 
 	dotfiles_mp_in = []
 	for dotfile in dotfiles:
-		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
+		dotfile_path = quote(os.path.join(home_path, dotfile))
+		dest_path = quote(os.path.join(backup_path, dotfile))
+		dotfiles_mp_in.append((dotfile_path, dest_path))
 
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
@@ -80,22 +83,20 @@ def backup_configs(backup_path, skip=False):
 	print_blue_bold("Backing up configs...")
 
 	# backup config files + dirs in backup_path/configs/<target>/
-	for config, target in config["config_path_to_dest_map"].items():
-		path_to_backup = home_prefix(config)
+	for path_to_backup, target in config["config_mapping"].items():
 		dest = os.path.join(backup_path, target)
 		if os.path.isdir(path_to_backup):
 			# TODO: Exclude Sublime/Atom/VS Code Packages here to speed things up
-			copytree(path_to_backup, dest, symlinks=True)
+			copytree(path_to_backup, quote(dest), symlinks=True)
 		elif os.path.isfile(path_to_backup):
 			parent_dir = dest[:dest.rfind("/")]
 			safe_mkdir(parent_dir)
-			copyfile(path_to_backup, dest)
+			copyfile(path_to_backup, quote(dest))
 
 
 def backup_packages(backup_path, skip=False):
 	"""
 	Creates `packages` directory and places install list text files there.
-	TODO: Windows Compatibility
 	"""
 	print_section_header("PACKAGES", Fore.BLUE)
 	overwrite_dir_prompt_if_needed(backup_path, skip)
@@ -188,13 +189,12 @@ def backup_packages(backup_path, skip=False):
 def backup_fonts(backup_path, skip=False):
 	"""
 	Copies all .ttf and .otf files in ~/Library/Fonts/ to backup/fonts/
-	TODO: Windows Compatibility
 	"""
 	print_section_header("FONTS", Fore.BLUE)
 	overwrite_dir_prompt_if_needed(backup_path, skip)
 	print_blue("Copying '.otf' and '.ttf' fonts...")
 	fonts_path = get_fonts_dir()
-	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if
+	fonts = [quote(os.path.join(fonts_path, font)) for font in os.listdir(fonts_path) if
 	         font.endswith(".otf") or font.endswith(".ttf")]
 
 	for font in fonts:
