@@ -32,6 +32,14 @@ def run_cmd_write_stdout(command, filepath):
 			f.write(process.stdout.decode('utf-8'))
 
 
+def safe_mkdir(directory):
+	"""
+	Makes directory if it doesn't already exist.
+	"""
+	if not os.path.isdir(directory):
+		os.makedirs(directory)
+
+
 def mkdir_overwrite(path):
 	"""
 	Makes a new directory, destroying the one at the path if it exits.
@@ -89,16 +97,6 @@ def copy_dir_if_valid(source_dir, backup_path):
 		return
 	dest = os.path.join(backup_path, os.path.split(source_dir)[-1])
 	copytree(source_dir, dest, symlinks=True)
-
-
-def safe_mkdir(directory):
-	"""
-	Makes directory if it doesn't already exist.
-	:param directory:
-	:return:
-	"""
-	if not os.path.isdir(directory):
-		os.makedirs(directory)
 
 
 def home_prefix(path):

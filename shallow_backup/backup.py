@@ -1,10 +1,12 @@
 import os
 from utils import *
 from printing import *
+from shlex import quote
 from colorama import Fore
+from compatibility import *
 import multiprocessing as mp
-from shutil import copytree, copyfile
 from config import get_config
+from shutil import copytree, copyfile
 
 
 def overwrite_dir_prompt_if_needed(path, needed):
@@ -44,12 +46,14 @@ def backup_dotfiles(backup_path, skip=False):
 	# dotfiles/folders multiprocessing format: [(full_dotfile_path, full_dest_path), ...]
 	dotfolders_mp_in = []
 	for dotfolder in dotfolders:
-		dotfolders_mp_in.append(
-			(os.path.join(home_path, dotfolder), backup_path))
+		dotfolder_path = quote(os.path.join(home_path, dotfolder))
+		dotfolders_mp_in.append((dotfolder_path, backup_path))
 
 	dotfiles_mp_in = []
 	for dotfile in dotfiles:
-		dotfiles_mp_in.append((os.path.join(home_path, dotfile), os.path.join(backup_path, dotfile)))
+		dotfile_path = quote(os.path.join(home_path, dotfile))
+		dest_path = quote(os.path.join(backup_path, dotfile))
+		dotfiles_mp_in.append((dotfile_path, dest_path))
 
 	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
@@ -75,27 +79,24 @@ def backup_configs(backup_path, skip=False):
 	print_section_header("CONFIGS", Fore.BLUE)
 	overwrite_dir_prompt_if_needed(backup_path, skip)
 	config = get_config()
-	configs_dir_mapping = config["config_path_to_dest_map"]
 
 	print_blue_bold("Backing up configs...")
 
 	# backup config files + dirs in backup_path/configs/<target>/
-	for config, target in configs_dir_mapping.items():
-		path_to_backup = home_prefix(config)
+	for path_to_backup, target in config["config_mapping"].items():
 		dest = os.path.join(backup_path, target)
 		if os.path.isdir(path_to_backup):
 			# TODO: Exclude Sublime/Atom/VS Code Packages here to speed things up
-			copytree(path_to_backup, dest, symlinks=True)
+			copytree(path_to_backup, quote(dest), symlinks=True)
 		elif os.path.isfile(path_to_backup):
 			parent_dir = dest[:dest.rfind("/")]
 			safe_mkdir(parent_dir)
-			copyfile(path_to_backup, dest)
+			copyfile(path_to_backup, quote(dest))
 
 
 def backup_packages(backup_path, skip=False):
 	"""
 	Creates `packages` directory and places install list text files there.
-	TODO: Linux and Windows Compatibility
 	"""
 	print_section_header("PACKAGES", Fore.BLUE)
 	overwrite_dir_prompt_if_needed(backup_path, skip)
@@ -147,8 +148,10 @@ def backup_packages(backup_path, skip=False):
 	dest = "{}/apm_list.txt".format(backup_path)
 	run_cmd_write_stdout(command, dest)
 
+	config_paths = get_config_paths()
+
 	# sublime text 2 packages
-	sublime_2_path = home_prefix("Library/Application Support/Sublime Text 2/Packages/")
+	sublime_2_path = os.path.join(config_paths["sublime2"], "Packages")
 	if os.path.isdir(sublime_2_path):
 		print_pkg_mgr_backup("Sublime Text 2")
 		command = ["ls", sublime_2_path]
@@ -156,7 +159,7 @@ def backup_packages(backup_path, skip=False):
 		run_cmd_write_stdout(command, dest)
 
 	# sublime text 3 packages
-	sublime_3_path = home_prefix("Library/Application Support/Sublime Text 3/Installed Packages/")
+	sublime_2_path = os.path.join(config_paths["sublime3"], "Installed Packages")
 	if os.path.isdir(sublime_3_path):
 		print_pkg_mgr_backup("Sublime Text 3")
 		command = ["ls", sublime_3_path]
@@ -170,8 +173,9 @@ def backup_packages(backup_path, skip=False):
 	run_cmd_write_stdout(command, dest)
 
 	# system installs
-	print_pkg_mgr_backup("macOS Applications")
-	command = "ls /Applications/"
+	print_pkg_mgr_backup("System Applications")
+	applications_path = get_applications_dir()
+	command = "ls {}".format(applications_path)
 	dest = "{}/system_apps_list.txt".format(backup_path)
 	run_cmd_write_stdout(command, dest)
 
@@ -185,16 +189,14 @@ def backup_packages(backup_path, skip=False):
 def backup_fonts(backup_path, skip=False):
 	"""
 	Copies all .ttf and .otf files in ~/Library/Fonts/ to backup/fonts/
-	TODO: Windows and Linux Compatibility
 	"""
 	print_section_header("FONTS", Fore.BLUE)
 	overwrite_dir_prompt_if_needed(backup_path, skip)
 	print_blue("Copying '.otf' and '.ttf' fonts...")
-	fonts_path = home_prefix("Library/Fonts/")
-	fonts = [os.path.join(fonts_path, font) for font in os.listdir(fonts_path) if
+	fonts_path = get_fonts_dir()
+	fonts = [quote(os.path.join(fonts_path, font)) for font in os.listdir(fonts_path) if
 	         font.endswith(".otf") or font.endswith(".ttf")]
 
-	# TODO: Collapse into list comprehension
 	for font in fonts:
 		if os.path.exists(font):
 			copyfile(font, os.path.join(backup_path, font.split("/")[-1]))
