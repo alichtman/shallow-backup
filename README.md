@@ -60,7 +60,7 @@ Options:
   -reinstall_all               Full reinstallation.
   --remote TEXT                Set remote URL for the git repo.
   -show                        Display config file.
-  -v                           Display version and author information and
+  -v, --version                Display version and author information and
                                exit.
   -h, -help, --help            Show this message and exit.
 ```

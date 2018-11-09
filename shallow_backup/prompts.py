@@ -30,6 +30,7 @@ def prompt_for_git_url(repo):
 	Ask user if they'd like to add a remote URL to their git repo.
 	If yes, do it.
 	"""
+	print_red_bold("WARNING: If you back up to a public remote, make sure no sensitive files are included by modifying the .gitignore.")
 	if prompt_yes_no("Would you like to set a remote URL for this git repo?", Fore.GREEN):
 		print_green_bold("Enter URL:")
 		remote_url = input()

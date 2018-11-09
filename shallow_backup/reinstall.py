@@ -1,9 +1,10 @@
 import os
 from printing import *
+from shlex import quote
 from colorama import Fore
-from shutil import copytree, copyfile
+from compatibility import *
 from config import get_config
-from utils import home_prefix
+from shutil import copytree, copyfile
 from utils import run_cmd, get_abs_path_subfiles
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
@@ -28,15 +29,13 @@ def reinstall_dots_sb(dots_path):
 def reinstall_fonts_sb(fonts_path):
 	"""
 	Reinstall all fonts.
-	TODO: MAKE LINUX/WINDOWS COMPATIBLE.
 	"""
 	print_section_header("REINSTALLING FONTS", Fore.BLUE)
 	# Copy every file in fonts_path to ~/Library/Fonts
 	for font in get_abs_path_subfiles(fonts_path):
-		home_path = os.path.expanduser('~')
-		font_lib_path = os.path.join(home_path, "Library/Fonts")
+		font_lib_path = get_fonts_dir()
 		dest_path = os.path.join(font_lib_path, font.split("/")[-1])
-		copyfile(font, dest_path)
+		copyfile(quote(font), quote(dest_path))
 	print_section_header("FONT REINSTALLATION COMPLETED", Fore.BLUE)
 
 
@@ -50,16 +49,15 @@ def reinstall_configs_sb(configs_path):
 		return os.path.join(configs_path, path)
 
 	config = get_config()
-	configs_dir_mapping = config["config_path_to_dest_map"]
-	plist_files = config["plist_path_to_dest_map"]
-
-	for target, backup in configs_dir_mapping.items():
-		if os.path.isdir(backup_prefix(backup)):
-			copytree(backup_prefix(backup), home_prefix(target))
-
-	for target, backup in plist_files.items():
-		if os.path.exists(backup_prefix(backup)):
-			copyfile(backup_prefix(backup), home_prefix(target))
+	configs_dir_mapping = config["configs_mapping"]
+	for dest_path, backup_loc in configs_dir_mapping.items():
+		dest_path = quote(dest_path)
+		path_to_backup = quote(backup_prefix(backup_loc))
+		# TODO: REFACTOR WITH GENERIC COPY FUNCTION.
+		if os.path.isdir(path_to_backup):
+			copytree(path_to_backup, dest_path)
+		elif os.path.isfile(path_to_backup):
+			copyfile(path_to_backup, dest_path)
 
 	print_section_header("CONFIG REINSTALLATION COMPLETED", Fore.BLUE)
 

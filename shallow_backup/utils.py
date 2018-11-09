@@ -32,6 +32,14 @@ def run_cmd_write_stdout(command, filepath):
 			f.write(process.stdout.decode('utf-8'))
 
 
+def safe_mkdir(directory):
+	"""
+	Makes directory if it doesn't already exist.
+	"""
+	if not os.path.isdir(directory):
+		os.makedirs(directory)
+
+
 def mkdir_overwrite(path):
 	"""
 	Makes a new directory, destroying the one at the path if it exits.
@@ -47,7 +55,7 @@ def mkdir_warn_overwrite(path):
 	"""
 	subdirs = ["dotfiles", "packages", "fonts", "configs"]
 	if os.path.exists(path) and path.split("/")[-1] in subdirs:
-		print_red_bold("Directory {} already exists\n".format(path))
+		print_path_red("Directory already exists:", path)
 		if prompt_yes_no("Erase directory and make new back up?", Fore.RED):
 			mkdir_overwrite(path)
 		else:
@@ -55,7 +63,7 @@ def mkdir_warn_overwrite(path):
 			sys.exit()
 	elif not os.path.exists(path):
 		os.makedirs(path)
-		print(Fore.BLUE + Style.BRIGHT + "CREATED DIR: " + Style.NORMAL + path + Style.RESET_ALL)
+		print_path_blue("Created directory:", path)
 
 
 def destroy_backup_dir(backup_path):
@@ -63,11 +71,10 @@ def destroy_backup_dir(backup_path):
 	Deletes the backup directory and its content
 	"""
 	try:
-		# TODO: PRINT PATH STYLING. PATH SHOULD NOT BE BOLDED.
-		print_red_bold("Deleting backup directory: {}".format(backup_path))
+		print_path_red("Deleting backup directory:", backup_path)
 		rmtree(backup_path)
 	except OSError as e:
-		print("{} Error: {} - {}. {}".format(Fore.RED, e.filename, e.strerror, Style.RESET_ALL))
+		print_red_bold("Error: {} - {}".format(e.filename, e.strerror))
 
 
 def get_abs_path_subfiles(directory):
@@ -92,16 +99,6 @@ def copy_dir_if_valid(source_dir, backup_path):
 	copytree(source_dir, dest, symlinks=True)
 
 
-def safe_mkdir(directory):
-	"""
-	Makes directory if it doesn't already exist.
-	:param directory:
-	:return:
-	"""
-	if not os.path.isdir(directory):
-		os.makedirs(directory)
-
-
 def home_prefix(path):
 	"""
 	Appends the path to the user's home path.
@@ -114,9 +111,11 @@ def home_prefix(path):
 
 def expand_to_abs_path(path):
 	"""
-	Expands relative and user's home paths to the respective absolute path.
+	Expands relative and user's home paths to the respective absolute path. Environment
+	variables found on the input path will also be expanded.
 	:param path: Path to be expanded.
 	:return: (str) The absolute path.
 	"""
 	expanded_path = os.path.expanduser(path)
+	expanded_path = os.path.expandvars(expanded_path)
 	return os.path.abspath(expanded_path)
