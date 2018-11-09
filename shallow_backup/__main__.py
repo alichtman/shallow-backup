@@ -24,7 +24,7 @@ from .utils import mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path
 @click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
-@click.option('--version', '-v', is_flag=True, default=False, help='Display version and author information and exit.')
+@click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
 def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
         reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, version):
 	"""

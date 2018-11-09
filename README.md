@@ -5,7 +5,7 @@
 
 `shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles, and automatically push them to a remote Git repository.
 
-![GIF demo](img/demo_faster.gif)
+![Shallow Backup GIF Demo](img/shallow-backup-demo.gif)
 
 Contents
 ========
@@ -60,8 +60,7 @@ Options:
   -reinstall_all               Full reinstallation.
   --remote TEXT                Set remote URL for the git repo.
   -show                        Display config file.
-  -v, --version                Display version and author information and
-                               exit.
+  -v, --version                Display version and author info.
   -h, -help, --help            Show this message and exit.
 ```
 
@@ -87,15 +86,13 @@ By default, `shallow-backup` backs these up.
     * `.vim/`
     * `.zshrc`
 
-2. Development Related App Preferences
+2. App Config Files
     * Atom
     * Sublime Text 2/3
     * Terminal.app
-    * JetBrains IDEs
-    * VS Code (Coming soon!)
 
 3. Installed Packages
-    * `Atom` Packages (`apm`)
+    * `apm`
     * `brew` and `cask`
     * `cargo`
     * `gem`
@@ -103,7 +100,7 @@ By default, `shallow-backup` backs these up.
     * `npm`
     * `macports`
     * `Sublime Text 2/3` Packages
-    * `~/Applications/` directory (macOS only)
+    * System Applications
 
 4. User installed `fonts`.
 
@@ -111,10 +108,8 @@ By default, `shallow-backup` backs these up.
 
 If you'd like to modify which files are backed up, you have to edit the `~/.shallow-backup` file. There are two recommended ways of doing this.
 
-1. You can open this up in a regular text editor and make your changes.
-2. You can use the `--add SECTION PATH` or `--rm PATH` args to modify the config file.
-
-NOTE: Dotfile paths should be added relative to the home directory.
+1. Select the appropriate option in the CLI and follow the prompts.
+2. Open the file in a text editor and make your changes.
 
 #### Output Structure
 ---

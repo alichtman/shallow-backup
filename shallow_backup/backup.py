@@ -3,7 +3,6 @@ from shlex import quote
 from colorama import Fore
 import multiprocessing as mp
 from shutil import copytree, copyfile
-
 from .utils import *
 from .printing import *
 from .compatibility import *
@@ -160,7 +159,7 @@ def backup_packages(backup_path, skip=False):
 		run_cmd_write_stdout(command, dest)
 
 	# sublime text 3 packages
-	sublime_2_path = os.path.join(config_paths["sublime3"], "Installed Packages")
+	sublime_3_path = os.path.join(config_paths["sublime3"], "Installed Packages")
 	if os.path.isdir(sublime_3_path):
 		print_pkg_mgr_backup("Sublime Text 3")
 		command = ["ls", sublime_3_path]
@@ -181,7 +180,6 @@ def backup_packages(backup_path, skip=False):
 	run_cmd_write_stdout(command, dest)
 
 	# Clean up empty package list files
-	print_blue("Cleaning up empty package lists...")
 	for file in get_abs_path_subfiles(backup_path):
 		if os.path.getsize(file) == 0:
 			os.remove(file)
