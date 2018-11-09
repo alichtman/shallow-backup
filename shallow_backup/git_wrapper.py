@@ -89,23 +89,30 @@ def git_add_all_commit_push(repo, message):
 		print_yellow_bold("No changes to commit...")
 
 
-def move_git_repo(source_path, new_path):
+def move_git_repo(source_path, dest_path):
 	"""
 	Moves git folder and .gitignore to the new backup directory.
+	Exits if there is already a git repo in the directory.
 	"""
-	new_git_dir = os.path.join(new_path, '.git')
-	new_git_ignore = os.path.join(new_path, '.gitignore')
-	if os.path.exists(new_git_dir) or os.path.exists(new_git_ignore):
-		print_red_bold("A git repo already exists here: {}".format(new_path))
-		print_red_bold("Please choose a different backup path.")
+	dest_git_dir = os.path.join(dest_path, '.git')
+	dest_git_ignore = os.path.join(dest_path, '.gitignore')
+	git_exists = os.path.exists(dest_git_dir)
+	gitignore_exists = os.path.exists(dest_git_ignore)
+	if git_exists or gitignore_exists:
+		print_red_bold("Evidence of a git repo has been detected.")
+		if git_exists:
+			print_path_red("A git repo already exists here:", dest_git_dir)
+		if gitignore_exists:
+			print_path_red("A gitignore file already exists here:", dest_git_ignore)
+		print_red_bold("Exiting to prevent accidental deletion of user data.")
 		sys.exit()
 
 	git_dir = os.path.join(source_path, '.git')
 	git_ignore_file = os.path.join(source_path, '.gitignore')
 
 	try:
-		move(git_dir, new_path)
-		move(git_ignore_file, new_path)
+		move(git_dir, dest_path)
+		move(git_ignore_file, dest_path)
 		print_blue_bold("Moving git repo to new location.")
 	except FileNotFoundError:
 		pass
