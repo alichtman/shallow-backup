@@ -70,7 +70,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 
 	# User didn't enter any CLI args so prompt for path update before showing menu
 	elif not has_cli_arg:
-		prompt_for_path_update(backup_config)
+		path_update_prompt(backup_config)
 
 	# Create backup directory and do git setup
 	backup_home_path = expand_to_abs_path(get_config()["backup_path"])
@@ -82,7 +82,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 		safe_create_gitignore(backup_home_path)
 		# Prompt user for remote URL
 		if not remote:
-			prompt_for_git_url(repo)
+			git_url_prompt(repo)
 
 	# Set remote URL from CLI arg
 	if remote:
@@ -122,7 +122,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 			git_add_all_commit_push(repo, "fonts")
 	# No CL options, show action menu and process selected option.
 	else:
-		selection = actions_menu_prompt().lower().strip()
+		selection = main_menu_prompt().lower().strip()
 		selection_words = selection.split()
 		if selection.startswith("back up"):
 			if selection_words[-1] == "all":
@@ -155,9 +155,9 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 			if selection == "show config":
 				show_config()
 			elif selection == "add path to config":
-				add_to_config()
+				add_to_config_prompt()
 			elif selection == "remove path from config":
-				remove_from_config()
+				remove_from_config_prompt()
 		elif selection == "destroy backup":
 			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
 				destroy_backup_dir(backup_home_path)

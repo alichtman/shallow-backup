@@ -7,14 +7,13 @@ from .config import *
 from .git_wrapper import git_set_remote, move_git_repo
 
 
-def prompt_for_path_update(config):
+def path_update_prompt(config):
 	"""
 	Ask user if they'd like to update the backup path or not.
 	If yes, update. If no... don't.
 	"""
 	current_path = config["backup_path"]
-	print("{}{}Current shallow-backup path: {}{}{}".format(Fore.BLUE, Style.BRIGHT, Style.NORMAL, current_path, Style.RESET_ALL))
-
+	print_path_blue("Current shallow-backup path:", current_path)
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
 		print_green_bold("Enter relative or absolute path:")
 		abs_path = expand_to_abs_path(input())
@@ -25,7 +24,7 @@ def prompt_for_path_update(config):
 		write_config(config)
 
 
-def prompt_for_git_url(repo):
+def git_url_prompt(repo):
 	"""
 	Ask user if they'd like to add a remote URL to their git repo.
 	If yes, do it.
@@ -37,7 +36,7 @@ def prompt_for_git_url(repo):
 		git_set_remote(repo, remote_url)
 
 
-def add_to_config():
+def add_to_config_prompt():
 	"""
 	Prompt sequence for a user to add a path to the config file under
 	either the dot or config sections.
@@ -55,9 +54,8 @@ def add_to_config():
 	# Prompt until we get a valid path.
 	while True:
 		print_green_bold("Enter a path to add to {}:".format(section))
-		path = input()
-		expanded_path = expand_to_abs_path(path)
-		split_path = input_path.split("/")
+		expanded_path = expand_to_abs_path(input())
+		split_path = expanded_path.split("/")
 
 		# Check if path exists.
 		if not os.path.exists(expanded_path):
@@ -90,6 +88,7 @@ def add_to_config():
 			print_green_bold("Enter a name for this config:".format(section))
 			dir_name = input()
 
+			# TODO: Remove this plist special case logic (#187)
 			# Handle plist and regular config.
 			if expanded_path.endswith(".plist"):
 				config_key = "plist_path_to_dest_map"
@@ -109,7 +108,7 @@ def add_to_config():
 			break
 
 
-def remove_from_config():
+def remove_from_config_prompt():
 	"""
 	Sequence of prompts for a user to remove a path from the config.
 	2-layer selection screen. First screen is for choosing dot or
@@ -124,28 +123,27 @@ def remove_from_config():
 	                                    ])
 	]
 
-	section = inquirer.prompt(section_prompt).get('choice').strip().lower()
 	config = get_config()
+	section = inquirer.prompt(section_prompt).get('choice').strip().lower()
+	if section == "configs":
+		section = "config_mapping"
 	paths = config[section]
 	# Get only backup paths, not dest paths if it's a dictionary.
 	if type(paths) is dict:
 		paths = list(paths.keys())
 
-	print(paths)
 	path_prompt = [inquirer.List('choice',
 	                             message=Fore.GREEN + Style.BRIGHT + "Select a path to remove." + Fore.BLUE,
 	                             choices=paths)
 	]
 	path_to_remove = inquirer.prompt(path_prompt).get('choice')
-	print(path_to_remove, type(path_to_remove))
 	print_blue_bold("Removing {} from backup...".format(path_to_remove))
-	print(paths, type(paths))
 	paths.remove(path_to_remove)
 	config[section] = paths
 	write_config(config)
 
 
-def actions_menu_prompt():
+def main_menu_prompt():
 	"""
 	Prompt user for an action.
 	"""
