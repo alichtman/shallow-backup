@@ -168,7 +168,4 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 
 
 if __name__ == "__main__":
-	"""
-	I'm just here so I don't get fined.
-	"""
 	cli()

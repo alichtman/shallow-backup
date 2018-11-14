@@ -9,6 +9,7 @@ from .compatibility import *
 from .config import get_config
 
 
+# TODO: Move to UTILS.
 def overwrite_dir_prompt_if_needed(path, needed):
 	"""
 	Prompts the user before deleting the directory if needed.

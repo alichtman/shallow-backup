@@ -85,20 +85,11 @@ def add_to_config_prompt():
 
 		elif section == "config":
 			# Prompt for folder name
-			print_green_bold("Enter a name for this config:".format(section))
+			print_green_bold("Enter a name for this config:")
 			dir_name = input()
-
-			# TODO: Remove this plist special case logic (#187)
-			# Handle plist and regular config.
-			if expanded_path.endswith(".plist"):
-				config_key = "plist_path_to_dest_map"
-				# Make dest path $SB/config/plist/FILENAME
-				to_add_to_cfg = (expanded_path, os.path.join("plist", dir_name))
-				print_blue_bold("Adding {} to plist backup.".format(expanded_path))
-			else:
-				config_key = "config_path_to_dest_map"
-				to_add_to_cfg = (expanded_path, dir_name)
-				print_blue_bold("Adding {} to config backup.".format(expanded_path))
+			config_key = "config_path_to_dest_map"
+			to_add_to_cfg = (expanded_path, dir_name)
+			print_blue_bold("Adding {} to config backup.".format(expanded_path))
 
 			# Get dictionary of {path_to_backup: dest, ...}
 			config_path_dict = config[config_key]

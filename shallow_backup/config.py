@@ -26,6 +26,7 @@ def write_config(config):
         json.dump(config, f, indent=4)
 
 
+# TODO: Refactor to `prepare_config_map()`
 def prepare_config_path():
     """
     Get compatible config paths, format them as [(LOC, DEST), ...]
