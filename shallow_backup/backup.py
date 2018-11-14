@@ -84,8 +84,10 @@ def backup_configs(backup_path, skip=False):
 
 	print_blue_bold("Backing up configs...")
 
-	# backup config files + dirs in backup_path/configs/<target>/
+	# backup config files + dirs in backup_path/<target>/
 	for path_to_backup, target in config["config_mapping"].items():
+		print("BACKUP:", path_to_backup)
+		print("TARGET:", target)
 		dest = os.path.join(backup_path, target)
 		if os.path.isdir(path_to_backup):
 			# TODO: Exclude Sublime/Atom/VS Code Packages here to speed things up

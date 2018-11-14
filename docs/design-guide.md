@@ -1,4 +1,4 @@
-## Design Guidelines
+## Design Guide
 
 **Philosophy**
 

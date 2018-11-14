@@ -27,25 +27,6 @@ def write_config(config):
 		json.dump(config, f, indent=4)
 
 
-# TODO: Refactor to `prepare_config_map()`
-def prepare_config_path():
-	"""
-	Get compatible config paths, format them as [(LOC, DEST), ...]
-	"""
-	config_paths = get_config_paths()
-	translations = {
-		"terminal_plist": "plist/com.apple.Terminal.plist"
-	}
-
-	# Swap out keys for dest_paths
-	for key, dest_path in translations.items():
-		if key in config_paths:
-			config_paths[dest_path] = config_paths[key]
-			del config_paths[key]
-
-	return dict([(v, k) for k, v in config_paths.items()])
-
-
 def get_default_config():
 	"""
 	Returns a default, platform specific config.
@@ -70,7 +51,7 @@ def get_default_config():
 			"dotfiles/.ssh",
 			"dotfiles/.pypirc",
 		],
-		"config_mapping"   : prepare_config_path()
+		"config_mapping"   : get_config_paths()
 	}
 
 
@@ -123,7 +104,7 @@ def show_config():
 		elif section == "backup_path":
 			print_path_red("Backup Path:", contents)
 		elif section == "config_mapping":
-			print_red_bold("Configs Path to Dest Mapping: ")
+			print_red_bold("Configs:")
 			for path, dest in contents.items():
 				print("    {} -> {}".format(path, dest))
 		# Print section header and intent contents. (Dotfiles/folders)
