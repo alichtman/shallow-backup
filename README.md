@@ -171,4 +171,4 @@ Once I'd built that functionality, I wanted to have a single backup utility for 
 ### Want to Contribute?
 ---
 
-Check out `CONTRIBUTING.md`
+Check out `CONTRIBUTING.md` and the `docs` directory.
