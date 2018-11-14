@@ -87,7 +87,7 @@ def add_to_config_prompt():
 			# Prompt for folder name
 			print_green_bold("Enter a name for this config:")
 			dir_name = input()
-			config_key = "config_path_to_dest_map"
+			config_key = "config_mapping"
 			to_add_to_cfg = (expanded_path, dir_name)
 			print_blue_bold("Adding {} to config backup.".format(expanded_path))
 
