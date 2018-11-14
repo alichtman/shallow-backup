@@ -18,4 +18,4 @@ Paths should be colored and not be bolded.
 + RED: Errors and "dangerous" actions, like removal.
 + GREEN: Prompt questions.
 + YELLOW: Git-related.
-+ BLUE: Not sure.
++ BLUE: Not sure tbh. Log messages maybe?
