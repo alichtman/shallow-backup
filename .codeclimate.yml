@@ -1,0 +1,20 @@
+# This is a sample .codeclimate.yml configured for Engine analysis on Code
+# Climate Platform. For an overview of the Code Climate Platform, see here:
+# http://docs.codeclimate.com/article/300-the-codeclimate-platform
+# Under the engines key, you can configure which engines will analyze your repo.
+version: "2"
+exclude_patterns:
+  - build/*
+  - dist/*
+  - shallow_backup.egg-info/*
+
+plugins:
+  radon:
+    enabled: true
+    config:
+      threshold: "C"
+  sonar-python:
+    enabled: true
+    config:
+      tests_patterns:
+        - tests/*
