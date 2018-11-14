@@ -128,6 +128,7 @@ backup_dir/
 │   ├── .bashrc
 │   ├── .gitconfig
 │   ├── .pypirc
+│   ├── ...
 │   ├── .shallow-backup
 │   ├── .ssh/
 │   │   └── known_hosts
