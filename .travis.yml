@@ -10,6 +10,7 @@ install:
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
+  - export CC_TEST_REPORTER_ID=ba897ecaeb793815f8118d14044a97caa9c25ef4188267313d15eba84e8c987a   
   - ./cc-test-reporter before-build
 
 # command to run tests
