@@ -1,19 +1,20 @@
 ## Development Guide
 
-**Running the code** 
+### Running the code
 
 `$ python3 -m shallow_backup`
 
-**Testing the code**
+### Testing
 
 ```shell
 $ cd tests
 $ pipenv run python3 -m pytest
 ```
 
-Make sure all tests pass before opening a PR!
+Make sure all existing tests pass before opening a PR!
+Also, add any necessary tests for new code. I'd like to have a lot more of this code base under CI testing, as opposed to manual testing.
 
-**Code Style**
+### Code Style
 
 You should follow the code style already established in the code base.
 
