@@ -68,7 +68,6 @@ def get_default_config():
 		],
 		"default-gitignore": [
 			"dotfiles/.ssh",
-			"packages/",
 			"dotfiles/.pypirc",
 		],
 		"config_mapping"   : prepare_config_path()

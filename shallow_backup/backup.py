@@ -23,15 +23,16 @@ def overwrite_dir_prompt_if_needed(path, needed):
 		mkdir_overwrite(path)
 
 
-def backup_dotfiles(backup_path, skip=False):
+def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=False):
 	"""
 	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
+	Assumes that dotfiles are stored in the home directory.
+	:param skip: Boolean flag to skip prompting for overwrite. Used for scripting.
+	:param backup_dest_path: Destination path for dotfiles. Like, ~/shallow-backup/dotfiles
+	:param home_path: Path where dotfiles will be found. Used for testing. Assumed to be ~ otherwise.
 	"""
 	print_section_header("DOTFILES", Fore.BLUE)
-	overwrite_dir_prompt_if_needed(backup_path, skip)
-
-	# assumes dotfiles are stored in home directory
-	home_path = os.path.expanduser('~')
+	overwrite_dir_prompt_if_needed(backup_dest_path, skip)
 
 	# get dotfolders and dotfiles
 	config = get_config()
@@ -48,12 +49,12 @@ def backup_dotfiles(backup_path, skip=False):
 	dotfolders_mp_in = []
 	for dotfolder in dotfolders:
 		dotfolder_path = quote(os.path.join(home_path, dotfolder))
-		dotfolders_mp_in.append((dotfolder_path, backup_path))
+		dotfolders_mp_in.append((dotfolder_path, backup_dest_path))
 
 	dotfiles_mp_in = []
 	for dotfile in dotfiles:
 		dotfile_path = quote(os.path.join(home_path, dotfile))
-		dest_path = quote(os.path.join(backup_path, dotfile))
+		dest_path = quote(os.path.join(backup_dest_path, dotfile))
 		dotfiles_mp_in.append((dotfile_path, dest_path))
 
 	# Multiprocessing
@@ -206,7 +207,7 @@ def backup_all(dotfiles_path, packages_path, fonts_path, configs_path, skip=Fals
 	"""
 	Complete backup procedure.
 	"""
-	backup_dotfiles(dotfiles_path, skip)
+	backup_dotfiles(dotfiles_path, skip=skip)
 	backup_packages(packages_path, skip)
 	backup_fonts(fonts_path, skip)
 	backup_configs(configs_path, skip)
