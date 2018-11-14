@@ -27,11 +27,14 @@ def get_config_paths():
 			terminal_path: "terminal_plist"
 		}
 	else:
+		sublime2_path = "/.config/sublime-text-2"
+		sublime3_path = "/.config/sublime-text-3"
+		atom_path = os.path.join(get_home(), ".atom")
 		return {
 			# TODO: Double check these paths. Not sure these are right.
-			"sublime2": "/.config/sublime-text-2",
-			"sublime3": "/.config/sublime-text-3",
-			"atom": os.path.join(get_home(), ".atom"),
+			sublime2_path: "sublime2",
+			sublime3_path: "sublime3",
+			atom_path: "atom"
 		}
 
 
