@@ -12,3 +12,8 @@ install:
 script:
   - pytest
 
+after_success:
+  # Hack to get around https://github.com/pytest-dev/pytest-cov/issues/242
+  - pytest --cov
+  - coveralls
+
