@@ -12,7 +12,7 @@ $ pipenv install
 $ pytest
 ```
 
-If you want to look at code coverage, use `pytest --cov`. **NOTE: This causes some tests to fail, but I'm not sure why.**
+If you want to look at code coverage, use `$ py.test --cov`. **NOTE: This causes some tests to fail, but I'm not sure why.**
 
 Make sure all existing tests pass before opening a PR!
 Also, add any necessary tests for new code. I'd like to have a lot more of this code base under CI testing, as opposed to manual testing.
