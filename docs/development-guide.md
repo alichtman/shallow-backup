@@ -7,9 +7,12 @@
 ### Testing
 
 ```shell
-$ cd tests
-$ pipenv run python3 -m pytest
+$ pipenv shell
+$ pipenv install
+$ pytest
 ```
+
+If you want to look at code coverage, use `pytest --cov`. **NOTE: This causes some tests to fail, but I'm not sure why.**
 
 Make sure all existing tests pass before opening a PR!
 Also, add any necessary tests for new code. I'd like to have a lot more of this code base under CI testing, as opposed to manual testing.
@@ -24,9 +27,8 @@ All files should end with a new line.
 
 PRs with changes in indentation style _will not be merged._ Tabs (width of 4 spaces) should be used.
 
-### Code Analysis
+### Continuous Integration Testing and Static Analysis
 
 + [Travis CI](https://travis-ci.com/alichtman/shallow-backup)
 + [CodeClimate](https://codeclimate.com/github/alichtman/shallow-backup)
-+ [Coveralls](https://coveralls.io/github/alichtman/shallow-backup)
 

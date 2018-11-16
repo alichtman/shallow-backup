@@ -9,6 +9,7 @@ inquirer = "*"
 gitpython = "*"
 colorama = "*"
 pytest = "*"
+pytest-cov = "*"
 
 [dev-packages]
 

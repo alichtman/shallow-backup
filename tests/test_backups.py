@@ -3,7 +3,7 @@ import sys
 import shutil
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.backup import backup_dotfiles
-from shallow_backup.config import safe_create_config, get_config_path
+from shallow_backup.config import safe_create_config
 
 BACKUP_DIR = 'shallow-backup-test-backups-dir'
 FAKE_HOME_DIR = 'shallow-backup-test-backups-src-dir'
@@ -37,7 +37,7 @@ class TestBackupMethods:
 		for directory in DIRS:
 			try:
 				os.mkdir(directory)
-			except FileExistsError as e:
+			except Exception:
 				shutil.rmtree(directory)
 				os.mkdir(directory)
 
@@ -65,6 +65,7 @@ class TestBackupMethods:
 		backup_dotfiles(dotfiles_path, home_path=FAKE_HOME_DIR, skip=True)
 		assert os.path.isdir(dotfiles_path)
 		for path in DOTFILES:
+			print(os.listdir(dotfiles_path))
 			print(path + " was backed up.")
 			backed_up_dot = os.path.join(dotfiles_path, os.path.split(path)[-1])
 			assert os.path.isfile(backed_up_dot)

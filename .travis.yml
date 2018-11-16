@@ -2,15 +2,13 @@ sudo: false
 language: python
 python:
   - "3.6"
+git:
+  depth: false
 
 install:
   - pip install pipenv
   - pipenv install --dev
 
-# command to run tests
 script:
-  - cd tests
-  - pipenv run python3 -m pytest
+  - pytest # --cov
 
-git:
-  depth: false
