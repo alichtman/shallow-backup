@@ -120,7 +120,7 @@ def remove_from_config_prompt():
 		section = "config_mapping"
 	paths = config[section]
 	# Get only backup paths, not dest paths if it's a dictionary.
-	if type(paths) is dict:
+	if isinstance(paths, dict):
 		paths = list(paths.keys())
 
 	path_prompt = [inquirer.List('choice',

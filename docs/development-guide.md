@@ -36,6 +36,7 @@ PRs with changes in indentation style _will not be merged._ Tabs (width of 4 spa
 ### Continuous Integration Testing and Static Analysis
 
 + [Travis CI](https://travis-ci.com/alichtman/shallow-backup)
++ [Codacy](https://app.codacy.com/project/alichtman/shallow-backup/dashboard)
 + [CodeClimate](https://codeclimate.com/github/alichtman/shallow-backup)
 + [Coveralls](https://coveralls.io/github/alichtman/shallow-backup)
 

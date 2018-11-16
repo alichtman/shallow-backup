@@ -23,7 +23,6 @@ def reinstall_dots_sb(dots_path):
 		else:
 			copyfile(file, home_path)
 	print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
-	pass
 
 
 def reinstall_fonts_sb(fonts_path):

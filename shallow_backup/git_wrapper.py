@@ -45,7 +45,6 @@ def safe_create_gitignore(dir_path):
 	gitignore_path = os.path.join(dir_path, ".gitignore")
 	if os.path.exists(gitignore_path):
 		print_yellow_bold("Detected .gitignore file.")
-		pass
 	else:
 		print_yellow_bold("Creating default .gitignore...")
 		files_to_ignore = get_config()["default-gitignore"]
