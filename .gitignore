@@ -10,6 +10,5 @@ build/bdist.macosx-10.6-intel
 build/lib
 .vscode
 .coverage
-.coverage.Aarons-MacBook-Pro.local.39140.608753
-.coverage.Aarons-MacBook-Pro.local.39141.247861
-.coverage.Aarons-MacBook-Pro.local.40133.769870
+.coverage.*
+code_coverage/*
