@@ -10,12 +10,18 @@
 $ pipenv shell
 $ pipenv install
 $ pytest
+
+####
+# Code Coverage
+# NOTE: This makes some tests fail -- not sure why. Just ignore those for now.
+####
+
+$ py.test --cov --cov-report html:code_coverage 
+$ open code_coverage/index.html
 ```
 
-If you want to look at code coverage, use `$ py.test --cov`. **NOTE: This causes some tests to fail, but I'm not sure why.**
-
 Make sure all existing tests pass before opening a PR!
-Also, add any necessary tests for new code. I'd like to have a lot more of this code base under CI testing, as opposed to manual testing.
+Also, add any necessary tests for new code.
 
 ### Code Style
 

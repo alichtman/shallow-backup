@@ -1,0 +1,167 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Coverage report</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+    
+    <script type="text/javascript" src="jquery.min.js"></script>
+    <script type="text/javascript" src="jquery.ba-throttle-debounce.min.js"></script>
+    <script type="text/javascript" src="jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="jquery.hotkeys.js"></script>
+    <script type="text/javascript" src="coverage_html.js"></script>
+    <script type="text/javascript">
+        jQuery(document).ready(coverage.index_ready);
+    </script>
+</head>
+<body class="indexfile">
+
+<div id="header">
+    <div class="content">
+        <h1>Coverage report:
+            <span class="pc_cov">44%</span>
+        </h1>
+
+        <img id="keyboard_icon" src="keybd_closed.png" alt="Show keyboard shortcuts" />
+
+        <form id="filter_container">
+            <input id="filter" type="text" value="" placeholder="filter..." />
+        </form>
+    </div>
+</div>
+
+<div class="help_panel">
+    <img id="panel_icon" src="keybd_open.png" alt="Hide keyboard shortcuts" />
+    <p class="legend">Hot-keys on this page</p>
+    <div>
+    <p class="keyhelp">
+        <span class="key">n</span>
+        <span class="key">s</span>
+        <span class="key">m</span>
+        <span class="key">x</span>
+        
+        <span class="key">c</span> &nbsp; change column sorting
+    </p>
+    </div>
+</div>
+
+<div id="index">
+    <table class="index">
+        <thead>
+            
+            <tr class="tablehead" title="Click to sort">
+                <th class="name left headerSortDown shortkey_n">Module</th>
+                <th class="shortkey_s">statements</th>
+                <th class="shortkey_m">missing</th>
+                <th class="shortkey_x">excluded</th>
+                
+                <th class="right shortkey_c">coverage</th>
+            </tr>
+        </thead>
+        
+        <tfoot>
+            <tr class="total">
+                <td class="name left">Total</td>
+                <td>393</td>
+                <td>220</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="173 393">44%</td>
+            </tr>
+        </tfoot>
+        <tbody>
+            
+            <tr class="file">
+                <td class="name left"><a href="shallow_backup___init___py.html">shallow_backup/__init__.py</a></td>
+                <td>0</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="0 0">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="shallow_backup_backup_py.html">shallow_backup/backup.py</a></td>
+                <td>126</td>
+                <td>83</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="43 126">34%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="shallow_backup_compatibility_py.html">shallow_backup/compatibility.py</a></td>
+                <td>29</td>
+                <td>22</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="7 29">24%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="shallow_backup_config_py.html">shallow_backup/config.py</a></td>
+                <td>50</td>
+                <td>30</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="20 50">40%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="shallow_backup_constants_py.html">shallow_backup/constants.py</a></td>
+                <td>11</td>
+                <td>0</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="11 11">100%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="shallow_backup_git_wrapper_py.html">shallow_backup/git_wrapper.py</a></td>
+                <td>67</td>
+                <td>33</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="34 67">51%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="shallow_backup_printing_py.html">shallow_backup/printing.py</a></td>
+                <td>48</td>
+                <td>19</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="29 48">60%</td>
+            </tr>
+            
+            <tr class="file">
+                <td class="name left"><a href="shallow_backup_utils_py.html">shallow_backup/utils.py</a></td>
+                <td>62</td>
+                <td>33</td>
+                <td>0</td>
+                
+                <td class="right" data-ratio="29 62">47%</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+    <p id="no_rows">
+        No items found using the specified filter.
+    </p>
+</div>
+
+<div id="footer">
+    <div class="content">
+        <p>
+            <a class="nav" href="https://coverage.readthedocs.io">coverage.py v4.5.2</a>,
+            created at 2018-11-16 04:57
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
