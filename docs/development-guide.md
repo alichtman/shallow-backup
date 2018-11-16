@@ -37,4 +37,5 @@ PRs with changes in indentation style _will not be merged._ Tabs (width of 4 spa
 
 + [Travis CI](https://travis-ci.com/alichtman/shallow-backup)
 + [CodeClimate](https://codeclimate.com/github/alichtman/shallow-backup)
++ [Coveralls](https://coveralls.io/github/alichtman/shallow-backup)
 
