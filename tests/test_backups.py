@@ -65,7 +65,8 @@ class TestBackupMethods:
 		backup_dotfiles(dotfiles_path, home_path=FAKE_HOME_DIR, skip=True)
 		assert os.path.isdir(dotfiles_path)
 		for path in DOTFILES:
-			print(os.listdir(dotfiles_path))
-			print(path + " was backed up.")
+			print("DOTFILES DIRECTORY CONTENTS:", os.listdir(dotfiles_path))
+			print(path + " being backed up.")
+			print("CWD:", os.getcwd())
 			backed_up_dot = os.path.join(dotfiles_path, os.path.split(path)[-1])
 			assert os.path.isfile(backed_up_dot)
