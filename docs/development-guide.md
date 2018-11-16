@@ -23,3 +23,10 @@ PEP8 is generally to be followed, but I think that prettier code to look at in a
 All files should end with a new line.
 
 PRs with changes in indentation style _will not be merged._ Tabs (width of 4 spaces) should be used.
+
+### Code Analysis
+
++ [Travis CI](https://travis-ci.com/alichtman/shallow-backup)
++ [CodeClimate](https://codeclimate.com/github/alichtman/shallow-backup)
++ [Coveralls](https://coveralls.io/github/alichtman/shallow-backup)
+
