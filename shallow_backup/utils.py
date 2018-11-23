@@ -119,3 +119,16 @@ def expand_to_abs_path(path):
 	expanded_path = os.path.expanduser(path)
 	expanded_path = os.path.expandvars(expanded_path)
 	return os.path.abspath(expanded_path)
+
+
+def overwrite_dir_prompt_if_needed(path, needed):
+	"""
+	Prompts the user before deleting the directory if needed.
+	This function lets the CLI args silence the prompts.
+	:param path: absolute path
+	:param needed: boolean
+	"""
+	if not needed:
+		mkdir_warn_overwrite(path)
+	else:
+		mkdir_overwrite(path)

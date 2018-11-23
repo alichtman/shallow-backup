@@ -9,20 +9,6 @@ from .compatibility import *
 from .config import get_config
 
 
-# TODO: Move to UTILS.
-def overwrite_dir_prompt_if_needed(path, needed):
-	"""
-	Prompts the user before deleting the directory if needed.
-	This function lets the CLI args silence the prompts.
-	:param path: absolute path
-	:param needed: boolean
-	"""
-	if not needed:
-		mkdir_warn_overwrite(path)
-	else:
-		mkdir_overwrite(path)
-
-
 def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=False):
 	"""
 	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
@@ -57,18 +43,18 @@ def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=Fa
 		dest_path = quote(os.path.join(backup_dest_path, dotfile))
 		dotfiles_mp_in.append((dotfile_path, dest_path))
 
-	# Multiprocessing
 	with mp.Pool(mp.cpu_count()):
 		print_blue_bold("Backing up dotfolders...")
 		for x in dotfolders_mp_in:
-			x = list(x)
-			mp.Process(target=copy_dir_if_valid, args=(x[0], x[1],)).start()
+			p = mp.Process(target=copy_dir_if_valid, args=(x[0], x[1],))
+			p.start()
+			p.join()
 
-	with mp.Pool(mp.cpu_count()):
 		print_blue_bold("Backing up dotfiles...")
 		for x in dotfiles_mp_in:
-			x = list(x)
-			mp.Process(target=copyfile, args=(x[0], x[1],)).start()
+			p = mp.Process(target=copyfile, args=(x[0], x[1],))
+			p.start()
+			p.join()
 
 
 def backup_configs(backup_path, skip=False):
