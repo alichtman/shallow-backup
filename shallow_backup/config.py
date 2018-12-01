@@ -41,6 +41,8 @@ def get_default_config():
 			".pypirc",
 			".shallow-backup",
 			".vimrc",
+			".zlogin",
+			".zprofile",
 			".zshrc"
 		],
 		"dotfolders"       : [
