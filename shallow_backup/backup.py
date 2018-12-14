@@ -76,7 +76,7 @@ def backup_configs(backup_path, skip=False):
 		print("TARGET:", target)
 		dest = os.path.join(backup_path, target)
 		if os.path.isdir(path_to_backup):
-			# TODO: Exclude Sublime/Atom/VS Code Packages here to speed things up
+			# TODO: Symlink to speed things up
 			copytree(path_to_backup, quote(dest), symlinks=True)
 		elif os.path.isfile(path_to_backup):
 			parent_dir = dest[:dest.rfind("/")]
@@ -137,24 +137,6 @@ def backup_packages(backup_path, skip=False):
 	command = "apm list --installed --bare"
 	dest = "{}/apm_list.txt".format(backup_path)
 	run_cmd_write_stdout(command, dest)
-
-	config_paths = get_config_paths()
-
-	# sublime text 2 packages
-	sublime_2_path = os.path.join(config_paths["sublime2"], "Packages")
-	if os.path.isdir(sublime_2_path):
-		print_pkg_mgr_backup("Sublime Text 2")
-		command = ["ls", sublime_2_path]
-		dest = "{}/sublime2_list.txt".format(backup_path)
-		run_cmd_write_stdout(command, dest)
-
-	# sublime text 3 packages
-	sublime_3_path = os.path.join(config_paths["sublime3"], "Installed Packages")
-	if os.path.isdir(sublime_3_path):
-		print_pkg_mgr_backup("Sublime Text 3")
-		command = ["ls", sublime_3_path]
-		dest = "{}/sublime3_list.txt".format(backup_path)
-		run_cmd_write_stdout(command, dest)
 
 	# macports
 	print_pkg_mgr_backup("macports")
