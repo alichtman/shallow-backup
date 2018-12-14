@@ -60,6 +60,7 @@ setup(
     install_requires=[
         'inquirer>=2.2.0',
         'colorama>=0.3.9',
+        'gitpython',
         'Click'
     ],
 
