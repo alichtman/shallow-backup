@@ -48,7 +48,7 @@ def reinstall_configs_sb(configs_path):
 		return os.path.join(configs_path, path)
 
 	config = get_config()
-	for dest_path, backup_loc in config["configs_mapping"].items():
+	for dest_path, backup_loc in config["config_mapping"].items():
 		dest_path = quote(dest_path)
 		path_to_backup = quote(backup_prefix(backup_loc))
 		# TODO: REFACTOR WITH GENERIC COPY FUNCTION.
