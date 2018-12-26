@@ -105,7 +105,6 @@ def prompt_yes_no(message, color):
 	             ]
 
 	answers = inquirer.prompt(questions)
-
 	if answers:
 		return answers.get('choice').strip().lower() == 'yes'
 	else:
