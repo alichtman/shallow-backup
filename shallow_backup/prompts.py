@@ -1,4 +1,5 @@
 import os
+import sys
 import inquirer
 from colorama import Fore, Style
 from .utils import *
@@ -15,13 +16,21 @@ def path_update_prompt(config):
 	current_path = config["backup_path"]
 	print_path_blue("Current shallow-backup path:", current_path)
 	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
-		print_green_bold("Enter relative or absolute path:")
-		abs_path = expand_to_abs_path(input())
-		print_path_blue("\nUpdating shallow-backup path to:", abs_path)
-		mkdir_warn_overwrite(abs_path)
-		move_git_repo(current_path, abs_path)
-		config["backup_path"] = abs_path
-		write_config(config)
+		while True:
+			print_green_bold("Enter relative or absolute path:")
+			abs_path = expand_to_abs_path(input())
+
+			if os.path.isfile(abs_path):
+				print_path_red('New path is an existing file:', abs_path)
+				print_red_bold('Please enter a directory.\n')
+				continue
+
+			print_path_blue("\nUpdating shallow-backup path to:", abs_path)
+			mkdir_warn_overwrite(abs_path)
+			move_git_repo(current_path, abs_path)
+			config["backup_path"] = abs_path
+			write_config(config)
+			break
 
 
 def git_url_prompt(repo):
@@ -159,4 +168,9 @@ def main_menu_prompt():
 	             ]
 
 	answers = inquirer.prompt(questions)
-	return answers.get('choice').strip().lower()
+
+	if answers:
+		return answers.get('choice').strip().lower()
+	else:
+		# KeyboardInterrupts
+		sys.exit(1)

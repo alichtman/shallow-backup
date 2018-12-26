@@ -102,59 +102,53 @@ def backup_packages(backup_path, skip=False):
 		print_pkg_mgr_backup(mgr)
 		command = "{} list".format(mgr)
 		dest = "{}/{}_list.txt".format(backup_path, mgr.replace(" ", "-"))
-		run_cmd_write_stdout(command, dest)
+		run_cmd_write_stdout(command, dest, mgr)
 
 	# cargo
 	print_pkg_mgr_backup("cargo")
 	command = "ls {}".format(home_prefix(".cargo/bin/"))
 	dest = "{}/cargo_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest, 'cargo')
 
 	# pip
 	print_pkg_mgr_backup("pip")
 	command = "pip list --format=freeze"
 	dest = "{}/pip_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest, 'pip')
 
 	# npm
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, temp_file_path)
-	npm_dest_file = "{0}/npm_list.txt".format(backup_path)
-	# Parse npm output
-	with open(temp_file_path, mode="r+") as temp_file:
-		# Skip first line of file
-		temp_file.seek(1)
-		with open(npm_dest_file, mode="w+") as dest:
-			for line in temp_file:
-				dest.write(line.split("/")[-1])
-
-	os.remove(temp_file_path)
+	if run_cmd_write_stdout(command, temp_file_path, 'npm') == 0:
+		npm_dest_file = "{0}/npm_list.txt".format(backup_path)
+		# Parse npm output
+		with open(temp_file_path, mode="r+") as temp_file:
+			# Skip first line of file
+			temp_file.seek(1)
+			with open(npm_dest_file, mode="w+") as dest:
+				for line in temp_file:
+					dest.write(line.split("/")[-1])
+		os.remove(temp_file_path)
 
 	# atom package manager
 	print_pkg_mgr_backup("Atom")
 	command = "apm list --installed --bare"
 	dest = "{}/apm_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest, 'Atom')
 
 	# macports
 	print_pkg_mgr_backup("macports")
 	command = "port installed requested"
 	dest = "{}/macports_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest)
+	run_cmd_write_stdout(command, dest, 'macports')
 
 	# system installs
 	print_pkg_mgr_backup("System Applications")
 	applications_path = get_applications_dir()
 	command = "ls {}".format(applications_path)
 	dest = "{}/system_apps_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest)
-
-	# Clean up empty package list files
-	for file in get_abs_path_subfiles(backup_path):
-		if os.path.getsize(file) == 0:
-			os.remove(file)
+	run_cmd_write_stdout(command, dest, 'system applications')
 
 
 def backup_fonts(backup_path, skip=False):

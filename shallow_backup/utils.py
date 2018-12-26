@@ -12,24 +12,30 @@ def run_cmd(command):
 	"""
 	try:
 		if not isinstance(command, list):
-			process = sp.run(command.split(), stdout=sp.PIPE)
+			process = sp.run(command.split(), stdout=sp.PIPE, stderr=sp.DEVNULL)
 			return process
 		else:
-			process = sp.run(command, stdout=sp.PIPE)
+			process = sp.run(command, stdout=sp.PIPE, stderr=sp.DEVNULL)
 			return process
-	except FileNotFoundError:  # If package manager is missing
+	except FileNotFoundError: # If package manager is missing 
 		return None
 
 
-def run_cmd_write_stdout(command, filepath):
+def run_cmd_write_stdout(command, filepath, package):
 	"""
 	Runs a command and then writes its stdout to a file
 	:param: command str representing command to run
+	:param: filepath str file to write command's stdout to
+	:param: package str name of package to print for failed commands
 	"""
 	process = run_cmd(command)
-	if process:
+	if process and process.returncode == 0:
 		with open(filepath, "w+") as f:
 			f.write(process.stdout.decode('utf-8'))
+		return 0
+	else:
+		print_pkg_mgr_error(package)  # skip package or say it's not installed?
+		return 1
 
 
 def safe_mkdir(directory):
@@ -47,7 +53,6 @@ def mkdir_overwrite(path):
 	if os.path.isdir(path):
 		rmtree(path)
 	os.makedirs(path)
-
 
 def mkdir_warn_overwrite(path):
 	"""
