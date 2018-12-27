@@ -5,6 +5,8 @@ from .utils import run_cmd, get_abs_path_subfiles
 from .printing import *
 from .compatibility import *
 from .config import get_config
+from .prompts import prompt_yes_no
+from .backup import backup_packages
 from shutil import copytree, copyfile
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
@@ -44,13 +46,10 @@ def reinstall_configs_sb(configs_path):
 	"""
 	print_section_header("REINSTALLING CONFIG FILES", Fore.BLUE)
 
-	def backup_prefix(path):
-		return os.path.join(configs_path, path)
-
 	config = get_config()
 	for dest_path, backup_loc in config["config_mapping"].items():
 		dest_path = quote(dest_path)
-		path_to_backup = quote(backup_prefix(backup_loc))
+		path_to_backup = quote(os.path.join(configs_path, backup_loc))
 		# TODO: REFACTOR WITH GENERIC COPY FUNCTION.
 		if os.path.isdir(path_to_backup):
 			copytree(path_to_backup, dest_path)
@@ -64,6 +63,13 @@ def reinstall_packages_sb(packages_path):
 	"""
 	Reinstall all packages from the files in backup/installs.
 	"""
+	if not os.path.isdir(packages_path):
+		print_red_bold('No package backups found.')
+		if prompt_yes_no("Would you like to backup packages?", Fore.GREEN):
+			backup_packages(packages_path, skip=True)
+		else:
+			return
+
 	print_section_header("REINSTALLING PACKAGES", Fore.BLUE)
 
 	# Figure out which install lists they have saved
