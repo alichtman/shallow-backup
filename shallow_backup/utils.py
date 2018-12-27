@@ -17,7 +17,7 @@ def run_cmd(command):
 		else:
 			process = sp.run(command, stdout=sp.PIPE, stderr=sp.DEVNULL)
 			return process
-	except FileNotFoundError: # If package manager is missing 
+	except FileNotFoundError:  # If package manager is missing
 		return None
 
 
