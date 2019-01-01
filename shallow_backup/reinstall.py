@@ -5,8 +5,6 @@ from .utils import run_cmd, get_abs_path_subfiles
 from .printing import *
 from .compatibility import *
 from .config import get_config
-from .prompts import prompt_yes_no
-from .backup import backup_packages
 from shutil import copytree, copyfile
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
@@ -65,10 +63,7 @@ def reinstall_packages_sb(packages_path):
 	"""
 	if not os.path.isdir(packages_path):
 		print_red_bold('No package backups found.')
-		if prompt_yes_no("Would you like to backup packages?", Fore.GREEN):
-			backup_packages(packages_path, skip=True)
-		else:
-			return
+		sys.exit(1)
 
 	print_section_header("REINSTALLING PACKAGES", Fore.BLUE)
 
