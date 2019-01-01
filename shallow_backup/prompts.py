@@ -30,7 +30,7 @@ def path_update_prompt(config):
 			move_git_repo(current_path, abs_path)
 			config["backup_path"] = abs_path
 			write_config(config)
-			break
+			return
 
 
 def git_url_prompt(repo):
