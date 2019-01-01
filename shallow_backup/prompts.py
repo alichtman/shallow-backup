@@ -6,6 +6,7 @@ from .utils import *
 from .printing import *
 from .config import *
 from .git_wrapper import git_set_remote, move_git_repo
+from .utils import existing_file_check
 
 
 def path_update_prompt(config):
@@ -20,9 +21,7 @@ def path_update_prompt(config):
 			print_green_bold("Enter relative or absolute path:")
 			abs_path = expand_to_abs_path(input())
 
-			if os.path.isfile(abs_path):
-				print_path_red('New path is an existing file:', abs_path)
-				print_red_bold('Please enter a directory.\n')
+			if existing_file_check(abs_path):
 				continue
 
 			print_path_blue("\nUpdating shallow-backup path to:", abs_path)
