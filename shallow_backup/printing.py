@@ -84,17 +84,17 @@ def print_section_header(title, color):
 
 
 def print_pkg_mgr_backup(mgr):
-	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE,
-	                                                          Style.NORMAL, Style.RESET_ALL))
+	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr,
+															  Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
 def print_pkg_mgr_reinstall(mgr):
-	print("{}Reinstalling {}{}{}{}{}...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
+	print("{}Reinstalling {}{}{}{}{}...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW,
+												  mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
-def print_pkg_mgr_error(mgr):
-	print("{}Package {}{}{}{}{} not installed.{}".format(Fore.RED, Style.BRIGHT, Fore.YELLOW, mgr, Fore.RED,
-													     Style.NORMAL, Style.RESET_ALL))
+def print_pkg_mgr_error(cmd):
+	print("{}An error occurred while running:{} $ {}".format(Fore.RED, Style.RESET_ALL, cmd))
 
 
 def prompt_yes_no(message, color, invert=False):

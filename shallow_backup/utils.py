@@ -34,7 +34,7 @@ def run_cmd_write_stdout(command, filepath, package):
 			f.write(process.stdout.decode('utf-8'))
 		return 0
 	else:
-		print_pkg_mgr_error(package)  # skip package or say it's not installed?
+		print_pkg_mgr_error(command)  # skip package or say it's not installed?
 		return 1
 
 
