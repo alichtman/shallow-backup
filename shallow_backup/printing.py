@@ -112,4 +112,3 @@ def prompt_yes_no(message, color):
 		return answers.get('choice').strip().lower() == 'yes'
 	else:
 		sys.exit(1)
-
