@@ -116,3 +116,4 @@ def move_git_repo(source_path, dest_path):
 		print_blue_bold("Moving git repo to new location.")
 	except FileNotFoundError:
 		pass
+
