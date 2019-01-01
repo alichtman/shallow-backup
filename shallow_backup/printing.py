@@ -87,12 +87,15 @@ def print_pkg_mgr_backup(mgr):
 	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE,
 	                                                          Style.NORMAL, Style.RESET_ALL))
 
+
 def print_pkg_mgr_reinstall(mgr):
 	print("{}Reinstalling {}{}{}{}{}...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
+
 
 def print_pkg_mgr_error(mgr):
 	print("{}Package {}{}{}{}{} not installed.{}".format(Fore.RED, Style.BRIGHT, Fore.YELLOW, mgr, Fore.RED,
 													     Style.NORMAL, Style.RESET_ALL))
+
 
 def prompt_yes_no(message, color):
 	"""
@@ -109,3 +112,4 @@ def prompt_yes_no(message, color):
 		return answers.get('choice').strip().lower() == 'yes'
 	else:
 		sys.exit(1)
+
