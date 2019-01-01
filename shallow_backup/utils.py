@@ -60,6 +60,7 @@ def mkdir_overwrite(path):
 		rmtree(path)
 	os.makedirs(path)
 
+
 def mkdir_warn_overwrite(path):
 	"""
 	Make destination dir if path doesn't exist, confirm before overwriting if it does.
