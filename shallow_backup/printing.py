@@ -97,13 +97,14 @@ def print_pkg_mgr_error(mgr):
 													     Style.NORMAL, Style.RESET_ALL))
 
 
-def prompt_yes_no(message, color):
+def prompt_yes_no(message, color, invert=False):
 	"""
 	Print question and return True or False depending on user selection from list.
 	"""
+	choices = (' No', ' Yes') if invert else (' Yes', ' No')
 	questions = [inquirer.List('choice',
 	                           message=color + Style.BRIGHT + message + Fore.BLUE,
-	                           choices=[' Yes', ' No'],
+	                           choices=choices,
 	                           )
 	             ]
 
