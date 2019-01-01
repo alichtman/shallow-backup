@@ -61,7 +61,8 @@ def reinstall_packages_sb(packages_path):
 	"""
 	Reinstall all packages from the files in backup/installs.
 	"""
-	if not os.path.isdir(packages_path):
+	if not os.path.isdir(packages_path) or (os.path.isdir(packages_path) and 
+											not os.listdir(packages_path):
 		print_red_bold('No package backups found.')
 		sys.exit(1)
 
