@@ -38,7 +38,7 @@ def run_cmd_write_stdout(command, filepath):
 
 def new_dir_is_valid(abs_path):
 	if os.path.isfile(abs_path):
-		print_path_red('New path is an existing file:', abs_path)
+		print_path_red('New path is a file:', abs_path)
 		print_red_bold('Please enter a directory.\n')
 		return False
 	return True
