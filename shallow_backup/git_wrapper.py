@@ -97,6 +97,7 @@ def move_git_repo(source_path, dest_path):
 	dest_git_ignore = os.path.join(dest_path, '.gitignore')
 	git_exists = os.path.exists(dest_git_dir)
 	gitignore_exists = os.path.exists(dest_git_ignore)
+
 	if git_exists or gitignore_exists:
 		print_red_bold("Evidence of a git repo has been detected.")
 		if git_exists:
@@ -104,7 +105,7 @@ def move_git_repo(source_path, dest_path):
 		if gitignore_exists:
 			print_path_red("A gitignore file already exists here:", dest_git_ignore)
 		print_red_bold("Exiting to prevent accidental deletion of user data.")
-		sys.exit()
+		sys.exit(1)
 
 	git_dir = os.path.join(source_path, '.git')
 	git_ignore_file = os.path.join(source_path, '.gitignore')
@@ -115,3 +116,4 @@ def move_git_repo(source_path, dest_path):
 		print_blue_bold("Moving git repo to new location.")
 	except FileNotFoundError:
 		pass
+

@@ -12,10 +12,10 @@ def run_cmd(command):
 	"""
 	try:
 		if not isinstance(command, list):
-			process = sp.run(command.split(), stdout=sp.PIPE)
+			process = sp.run(command.split(), stdout=sp.PIPE, stderr=sp.DEVNULL)
 			return process
 		else:
-			process = sp.run(command, stdout=sp.PIPE)
+			process = sp.run(command, stdout=sp.PIPE, stderr=sp.DEVNULL)
 			return process
 	except FileNotFoundError:  # If package manager is missing
 		return None
@@ -25,11 +25,23 @@ def run_cmd_write_stdout(command, filepath):
 	"""
 	Runs a command and then writes its stdout to a file
 	:param: command str representing command to run
+	:param: filepath str file to write command's stdout to
 	"""
 	process = run_cmd(command)
-	if process:
+	if process and process.returncode == 0:
 		with open(filepath, "w+") as f:
 			f.write(process.stdout.decode('utf-8'))
+	else:
+		print_path_red("An error occurred while running: $", command)
+		return 1
+
+
+def new_dir_is_valid(abs_path):
+	if os.path.isfile(abs_path):
+		print_path_red('New path is a file:', abs_path)
+		print_red_bold('Please enter a directory.\n')
+		return False
+	return True
 
 
 def safe_mkdir(directory):
@@ -64,6 +76,12 @@ def mkdir_warn_overwrite(path):
 	elif not os.path.exists(path):
 		os.makedirs(path)
 		print_path_blue("Created directory:", path)
+
+
+def empty_backup_dir_check(backup_path, backup_type):
+	if not os.path.isdir(backup_path) or not os.listdir(backup_path):
+		print_red_bold('No {} backup found.'.format(backup_type))
+		sys.exit(1)
 
 
 def destroy_backup_dir(backup_path):
