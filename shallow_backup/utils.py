@@ -32,7 +32,7 @@ def run_cmd_write_stdout(command, filepath):
 		with open(filepath, "w+") as f:
 			f.write(process.stdout.decode('utf-8'))
 	else:
-		print_path_red("An error occurred while running: $", command)  # skip package or say it's not installed?
+		print_path_red("An error occurred while running: $", command)
 		return 1
 
 
