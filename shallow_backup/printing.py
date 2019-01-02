@@ -93,7 +93,7 @@ def print_pkg_mgr_reinstall(mgr):
 												  mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
-def print_pkg_mgr_error(cmd):
+def print_shell_cmd_error(cmd):
 	print("{}An error occurred while running:{} $ {}".format(Fore.RED, Style.RESET_ALL, cmd))
 
 
@@ -103,7 +103,7 @@ def prompt_yes_no(message, color, invert=False):
 	"""
 	questions = [inquirer.List('choice',
 	                           message=color + Style.BRIGHT + message + Fore.BLUE,
-	                           choices=(' No', ' Yes') if invert else (' Yes', ' No'),
+	                           choices=(' No', ' Yes') if invert else (' Yes', ' No')
 	                           )
 	             ]
 
