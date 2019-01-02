@@ -120,7 +120,7 @@ def backup_packages(backup_path, skip=False):
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
-	if run_cmd_write_stdout(command, temp_file_path) == 0:
+	if not run_cmd_write_stdout(command, temp_file_path):
 		npm_dest_file = "{0}/npm_list.txt".format(backup_path)
 		# Parse npm output
 		with open(temp_file_path, mode="r+") as temp_file:

@@ -21,7 +21,7 @@ def path_update_prompt(config):
 			print_green_bold("Enter relative or absolute path:")
 			abs_path = expand_to_abs_path(input())
 
-			if new_dir_is_valid(abs_path):
+			if not new_dir_is_valid(abs_path):
 				continue
 
 			print_path_blue("\nUpdating shallow-backup path to:", abs_path)
