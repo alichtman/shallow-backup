@@ -94,7 +94,7 @@ def print_pkg_mgr_reinstall(mgr):
 
 
 def print_shell_cmd_error(cmd):
-	print("{}An error occurred while running:{} $ {}".format(Fore.RED, Style.RESET_ALL, cmd))
+	print("{}$ {}".format(print_path_red('An error occurred while running: ') cmd))
 
 
 def prompt_yes_no(message, color, invert=False):
