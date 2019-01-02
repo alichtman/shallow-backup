@@ -67,7 +67,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 	if new_path:
 		abs_path = os.path.abspath(new_path)
 
-		if new_dir_is_valid(abs_path):
+		if not new_dir_is_valid(abs_path):
 			sys.exit(1)
 
 		print_path_blue("\nUpdating shallow-backup path to:", abs_path)
