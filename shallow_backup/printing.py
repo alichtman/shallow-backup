@@ -93,10 +93,6 @@ def print_pkg_mgr_reinstall(mgr):
 												  mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
-def print_shell_cmd_error(cmd):
-	print("{}$ {}".format(print_path_red('An error occurred while running: '), cmd))
-
-
 def prompt_yes_no(message, color, invert=False):
 	"""
 	Print question and return True or False depending on user selection from list.

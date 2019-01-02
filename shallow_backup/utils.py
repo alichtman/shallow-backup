@@ -31,9 +31,8 @@ def run_cmd_write_stdout(command, filepath):
 	if process and process.returncode == 0:
 		with open(filepath, "w+") as f:
 			f.write(process.stdout.decode('utf-8'))
-		return 0
 	else:
-		print_pkg_mgr_error(command)  # skip package or say it's not installed?
+		print_path_red("An error occurred while running: $", command)  # skip package or say it's not installed?
 		return 1
 
 
