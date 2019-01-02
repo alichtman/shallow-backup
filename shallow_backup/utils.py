@@ -78,6 +78,12 @@ def mkdir_warn_overwrite(path):
 		print_path_blue("Created directory:", path)
 
 
+def empty_backup_dir_check(backup_path):
+	if not os.path.isdir(backup_path) or not os.listdir(backup_path):
+		print_red_bold('No package backups found.')
+		sys.exit(1)
+
+
 def destroy_backup_dir(backup_path):
 	"""
 	Deletes the backup directory and its content
