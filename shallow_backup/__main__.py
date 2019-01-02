@@ -5,7 +5,7 @@ from .reinstall import *
 from .git_wrapper import *
 from .utils import (
 	mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path,
-	existing_file_check)
+	new_dir_is_valid)
 
 
 # custom help options
@@ -67,7 +67,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 	if new_path:
 		abs_path = os.path.abspath(new_path)
 
-		if existing_file_check(abs_path):
+		if new_dir_is_valid(abs_path):
 			sys.exit(1)
 
 		print_path_blue("\nUpdating shallow-backup path to:", abs_path)

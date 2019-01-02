@@ -102,25 +102,25 @@ def backup_packages(backup_path, skip=False):
 		print_pkg_mgr_backup(mgr)
 		command = "{} list".format(mgr)
 		dest = "{}/{}_list.txt".format(backup_path, mgr.replace(" ", "-"))
-		run_cmd_write_stdout(command, dest, mgr)
+		run_cmd_write_stdout(command, dest)
 
 	# cargo
 	print_pkg_mgr_backup("cargo")
 	command = "ls {}".format(home_prefix(".cargo/bin/"))
 	dest = "{}/cargo_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest, 'cargo')
+	run_cmd_write_stdout(command, dest)
 
 	# pip
 	print_pkg_mgr_backup("pip")
 	command = "pip list --format=freeze"
 	dest = "{}/pip_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest, 'pip')
+	run_cmd_write_stdout(command, dest)
 
 	# npm
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
-	if run_cmd_write_stdout(command, temp_file_path, 'npm') == 0:
+	if run_cmd_write_stdout(command, temp_file_path) == 0:
 		npm_dest_file = "{0}/npm_list.txt".format(backup_path)
 		# Parse npm output
 		with open(temp_file_path, mode="r+") as temp_file:
@@ -135,20 +135,20 @@ def backup_packages(backup_path, skip=False):
 	print_pkg_mgr_backup("Atom")
 	command = "apm list --installed --bare"
 	dest = "{}/apm_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest, 'Atom')
+	run_cmd_write_stdout(command, dest)
 
 	# macports
 	print_pkg_mgr_backup("macports")
 	command = "port installed requested"
 	dest = "{}/macports_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest, 'macports')
+	run_cmd_write_stdout(command, dest)
 
 	# system installs
 	print_pkg_mgr_backup("System Applications")
 	applications_path = get_applications_dir()
 	command = "ls {}".format(applications_path)
 	dest = "{}/system_apps_list.txt".format(backup_path)
-	run_cmd_write_stdout(command, dest, 'system applications')
+	run_cmd_write_stdout(command, dest)
 
 
 def backup_fonts(backup_path, skip=False):

@@ -21,12 +21,11 @@ def run_cmd(command):
 		return None
 
 
-def run_cmd_write_stdout(command, filepath, package):
+def run_cmd_write_stdout(command, filepath):
 	"""
 	Runs a command and then writes its stdout to a file
 	:param: command str representing command to run
 	:param: filepath str file to write command's stdout to
-	:param: package str name of package to print for failed commands
 	"""
 	process = run_cmd(command)
 	if process and process.returncode == 0:
