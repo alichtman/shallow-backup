@@ -101,10 +101,9 @@ def prompt_yes_no(message, color, invert=False):
 	"""
 	Print question and return True or False depending on user selection from list.
 	"""
-	choices = (' No', ' Yes') if invert else (' Yes', ' No')
 	questions = [inquirer.List('choice',
 	                           message=color + Style.BRIGHT + message + Fore.BLUE,
-	                           choices=choices,
+	                           choices=(' No', ' Yes') if invert else (' Yes', ' No'),
 	                           )
 	             ]
 
