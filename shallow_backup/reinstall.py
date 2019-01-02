@@ -15,7 +15,7 @@ def reinstall_dots_sb(dots_path):
 	"""
 	Reinstall all dotfiles and folders by copying them to the home dir.
 	"""
-	empty_backup_dir_check(dots_path)
+	empty_backup_dir_check(dots_path, 'dotfile')
 	print_section_header("REINSTALLING DOTFILES", Fore.BLUE)
 
 	home_path = os.path.expanduser('~')
@@ -31,7 +31,7 @@ def reinstall_fonts_sb(fonts_path):
 	"""
 	Reinstall all fonts.
 	"""
-	empty_backup_dir_check(fonts_path)
+	empty_backup_dir_check(fonts_path, 'font')
 	print_section_header("REINSTALLING FONTS", Fore.BLUE)
 
 	# Copy every file in fonts_path to ~/Library/Fonts
@@ -46,7 +46,7 @@ def reinstall_configs_sb(configs_path):
 	"""
 	Reinstall all configs from the backup.
 	"""
-	empty_backup_dir_check(configs_path)
+	empty_backup_dir_check(configs_path, 'config')
 	print_section_header("REINSTALLING CONFIG FILES", Fore.BLUE)
 
 	config = get_config()
@@ -66,7 +66,7 @@ def reinstall_packages_sb(packages_path):
 	"""
 	Reinstall all packages from the files in backup/installs.
 	"""
-	empty_backup_dir_check(packages_path)
+	empty_backup_dir_check(packages_path, 'package')
 	print_section_header("REINSTALLING PACKAGES", Fore.BLUE)
 
 	# Figure out which install lists they have saved

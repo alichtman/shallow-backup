@@ -78,9 +78,9 @@ def mkdir_warn_overwrite(path):
 		print_path_blue("Created directory:", path)
 
 
-def empty_backup_dir_check(backup_path):
+def empty_backup_dir_check(backup_path, backup_type):
 	if not os.path.isdir(backup_path) or not os.listdir(backup_path):
-		print_red_bold('No package backups found.')
+		print_red_bold('No package {} found.'.format(backup_type))
 		sys.exit(1)
 
 
