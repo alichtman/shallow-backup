@@ -18,9 +18,8 @@ def get_config_paths():
 		sublime2_path = os.path.join(get_home(), "Library/Application Support/Sublime Text 2")
 		sublime3_path = os.path.join(get_home(), "Library/Application Support/Sublime Text 3")
 		vscode_path_1 = os.path.join(get_home(), "Library/Application Support/Code/User/settings.json")
-		vscode_path_2 = os.path.join(get_home(), "Library/Application Support/Code/User/syncLocalSettings.json")
-		vscode_path_3 = os.path.join(get_home(), "Library/Application Support/Code/User/Snippets")
-		vscode_path_4 = os.path.join(get_home(), "Library/Application Support/Code/User/keybindings.json")
+		vscode_path_2 = os.path.join(get_home(), "Library/Application Support/Code/User/Snippets")
+		vscode_path_3 = os.path.join(get_home(), "Library/Application Support/Code/User/keybindings.json")
 		atom_path = os.path.join(get_home(), ".atom")
 		terminal_path = os.path.join(get_home(), "Library/Preferences/com.apple.Terminal.plist")
 
@@ -28,9 +27,8 @@ def get_config_paths():
 			sublime2_path: "sublime2",
 			sublime3_path: "sublime3",
 			vscode_path_1: "vscode_settings",
-			vscode_path_2: "vscode_sync_local_settings",
-			vscode_path_3: "vscode_snippets",
-			vscode_path_4: "vscode_keybindings",
+			vscode_path_2: "vscode_snippets",
+			vscode_path_3: "vscode_keybindings",
 			atom_path: "atom",
 			terminal_path: "terminal_plist"
 		}
@@ -38,18 +36,16 @@ def get_config_paths():
 		sublime2_path = "/.config/sublime-text-2"
 		sublime3_path = "/.config/sublime-text-3"
 		vscode_path_1 = "/.config/Code/User/settings.json"
-		vscode_path_2 = "/.config/Code/User/syncLocalSettings.json"
-		vscode_path_3 = "/.config/Code/User/Snippets"
-		vscode_path_4 = "/.config/Code/User/keybindings.json"
+		vscode_path_2 = "/.config/Code/User/Snippets"
+		vscode_path_3 = "/.config/Code/User/keybindings.json"
 		atom_path = os.path.join(get_home(), ".atom")
 		return {
 			# TODO: Double check these paths. Not sure these are right.
 			sublime2_path: "sublime2",
 			sublime3_path: "sublime3",
 			vscode_path_1: "vscode_settings",
-			vscode_path_2: "vscode_sync_local_settings",
-      vscode_path_3: "vscode_snippets",
-			vscode_path_4: "vscode_keybindings",
+      vscode_path_2: "vscode_snippets",
+			vscode_path_3: "vscode_keybindings",
 			atom_path: "atom"
 		}
 
