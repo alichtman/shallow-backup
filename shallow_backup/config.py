@@ -47,9 +47,7 @@ def get_default_config():
 		],
 		"dotfolders"       : [
 			".ssh",
-			".vim",
-			".vscode"
-		],
+			".vim"		],
 		"default-gitignore": [
 			"dotfiles/.ssh",
 			"dotfiles/.pypirc",
