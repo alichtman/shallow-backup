@@ -26,9 +26,9 @@ def get_config_paths():
 		return {
 			sublime2_path: "sublime2",
 			sublime3_path: "sublime3",
-			vscode_path_1: "vscode_settings",
-			vscode_path_2: "vscode_snippets",
-			vscode_path_3: "vscode_keybindings",
+			vscode_path_1: "vscode/settings",
+			vscode_path_2: "vscode/Snippets",
+			vscode_path_3: "vscode/keybindings",
 			atom_path: "atom",
 			terminal_path: "terminal_plist"
 		}
