@@ -1,10 +1,12 @@
 import os
+import sys
 import inquirer
 from colorama import Fore, Style
 from .utils import *
 from .printing import *
 from .config import *
 from .git_wrapper import git_set_remote, move_git_repo
+from .utils import new_dir_is_valid
 
 
 def path_update_prompt(config):
@@ -14,14 +16,20 @@ def path_update_prompt(config):
 	"""
 	current_path = config["backup_path"]
 	print_path_blue("Current shallow-backup path:", current_path)
-	if prompt_yes_no("Would you like to update this?", Fore.GREEN):
-		print_green_bold("Enter relative or absolute path:")
-		abs_path = expand_to_abs_path(input())
-		print_path_blue("\nUpdating shallow-backup path to:", abs_path)
-		mkdir_warn_overwrite(abs_path)
-		move_git_repo(current_path, abs_path)
-		config["backup_path"] = abs_path
-		write_config(config)
+	if prompt_yes_no("Would you like to update this?", Fore.GREEN, invert=True):
+		while True:
+			print_green_bold("Enter relative or absolute path:")
+			abs_path = expand_to_abs_path(input())
+
+			if not new_dir_is_valid(abs_path):
+				continue
+
+			print_path_blue("\nUpdating shallow-backup path to:", abs_path)
+			mkdir_warn_overwrite(abs_path)
+			move_git_repo(current_path, abs_path)
+			config["backup_path"] = abs_path
+			write_config(config)
+			return
 
 
 def git_url_prompt(repo):
@@ -159,4 +167,9 @@ def main_menu_prompt():
 	             ]
 
 	answers = inquirer.prompt(questions)
-	return answers.get('choice').strip().lower()
+
+	if answers:
+		return answers.get('choice').strip().lower()
+	else:
+		# KeyboardInterrupts
+		sys.exit(1)

@@ -1,3 +1,4 @@
+import sys
 import inquirer
 from colorama import Fore, Style
 from .constants import ProjInfo
@@ -83,23 +84,27 @@ def print_section_header(title, color):
 
 
 def print_pkg_mgr_backup(mgr):
-	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE,
-	                                                          Style.NORMAL, Style.RESET_ALL))
+	print("{}Backing up {}{}{}{}{} packages list...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr,
+															  Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
 def print_pkg_mgr_reinstall(mgr):
-	print("{}Reinstalling {}{}{}{}{}...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW, mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
+	print("{}Reinstalling {}{}{}{}{}...{}".format(Fore.BLUE, Style.BRIGHT, Fore.YELLOW,
+												  mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
-def prompt_yes_no(message, color):
+def prompt_yes_no(message, color, invert=False):
 	"""
 	Print question and return True or False depending on user selection from list.
 	"""
 	questions = [inquirer.List('choice',
 	                           message=color + Style.BRIGHT + message + Fore.BLUE,
-	                           choices=[' Yes', ' No'],
+	                           choices=(' No', ' Yes') if invert else (' Yes', ' No')
 	                           )
 	             ]
 
 	answers = inquirer.prompt(questions)
-	return answers.get('choice').strip().lower() == 'yes'
+	if answers:
+		return answers.get('choice').strip().lower() == 'yes'
+	else:
+		sys.exit(1)
