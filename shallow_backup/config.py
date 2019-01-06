@@ -52,6 +52,7 @@ def get_default_config():
 		"default-gitignore": [
 			"dotfiles/.ssh",
 			"dotfiles/.pypirc",
+			".DS_Store"
 		],
 		"config_mapping"   : get_config_paths()
 	}
