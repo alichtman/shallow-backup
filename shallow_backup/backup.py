@@ -116,6 +116,12 @@ def backup_packages(backup_path, skip=False):
 	dest = "{}/pip_list.txt".format(backup_path)
 	run_cmd_write_stdout(command, dest)
 
+	# pip3
+	print_pkg_mgr_backup("pip3")
+	command = "pip3 list --format=freeze"
+	dest = "{}/pip_list.txt".format(backup_path)
+	run_cmd_write_stdout(command, dest)
+
 	# npm
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
