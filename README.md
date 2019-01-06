@@ -90,6 +90,7 @@ By default, `shallow-backup` backs these up.
 
 2. App Config Files
     * Atom
+    * VSCode
     * Sublime Text 2/3
     * Terminal.app
 
@@ -99,8 +100,10 @@ By default, `shallow-backup` backs these up.
     * `cargo`
     * `gem`
     * `pip`
+    * `pip3`
     * `npm`
     * `macports`
+    * `VSCode` Extensions
     * `Sublime Text 2/3` Packages
     * System Applications
 
