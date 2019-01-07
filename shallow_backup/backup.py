@@ -116,6 +116,12 @@ def backup_packages(backup_path, skip=False):
 	dest = "{}/pip_list.txt".format(backup_path)
 	run_cmd_write_stdout(command, dest)
 
+	# pip3
+	print_pkg_mgr_backup("pip3")
+	command = "pip3 list --format=freeze"
+	dest = "{}/pip3_list.txt".format(backup_path)
+	run_cmd_write_stdout(command, dest)
+
 	# npm
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
@@ -135,6 +141,12 @@ def backup_packages(backup_path, skip=False):
 	print_pkg_mgr_backup("Atom")
 	command = "apm list --installed --bare"
 	dest = "{}/apm_list.txt".format(backup_path)
+	run_cmd_write_stdout(command, dest)
+
+	# vscode extensions
+	print_pkg_mgr_backup("VSCode")
+	command = "code --list-extensions --show-versions"
+	dest = "{}/vscode_list.txt".format(backup_path)
 	run_cmd_write_stdout(command, dest)
 
 	# macports

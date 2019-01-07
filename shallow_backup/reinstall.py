@@ -73,7 +73,7 @@ def reinstall_packages_sb(packages_path):
 	package_mgrs = set()
 	for file in os.listdir(packages_path):
 		manager = file.split("_")[0].replace("-", " ")
-		if manager in ["gem", "brew-cask", "cargo", "npm", "pip", "brew", "apm", "macports"]:
+		if manager in ["gem", "brew-cask", "cargo", "npm", "pip", "pip3", "brew", "vscode", "apm", "macports"]:
 			package_mgrs.add(file.split("_")[0])
 
 	print_blue_bold("Package Manager Backups Found:")
@@ -97,6 +97,16 @@ def reinstall_packages_sb(packages_path):
 			print_pkg_mgr_reinstall(pm)
 			cmd = "pip install -r {0}/pip_list.txt".format(packages_path)
 			run_cmd(cmd)
+		elif pm == "pip3":
+			print_pkg_mgr_reinstall(pm)
+			cmd = "pip3 install -r {0}/pip3_list.txt".format(packages_path)
+			run_cmd(cmd)
+		elif pm == "vscode":
+			print_pkg_mgr_reinstall(pm)
+			with open("{0}/vscode_list.txt".format(packages_path), "r") as f:
+				for x in f:
+					cmd = "code --install-extension {0}".format(x)
+					run_cmd(cmd)
 		elif pm == "apm":
 			print_pkg_mgr_reinstall(pm)
 			cmd = "apm install --packages-file {0}/apm_list.txt".format(packages_path)
