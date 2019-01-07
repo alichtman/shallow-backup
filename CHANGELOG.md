@@ -1,5 +1,70 @@
 # Change Log
 
+## [v2.3](https://github.com/alichtman/shallow-backup/tree/v2.3) (2019-01-07)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.2...v2.3)
+
+**Fixed bugs:**
+
+- Backup pip3 packages [\#211](https://github.com/alichtman/shallow-backup/issues/211)
+
+**Closed issues:**
+
+- Restore VSCode backups [\#213](https://github.com/alichtman/shallow-backup/issues/213)
+- Reinstall VSCode backup [\#212](https://github.com/alichtman/shallow-backup/issues/212)
+- Exception handling [\#206](https://github.com/alichtman/shallow-backup/issues/206)
+- Ruby gems Backup and VSCode [\#204](https://github.com/alichtman/shallow-backup/issues/204)
+- Don't prompt for confirmation to delete subdir if all files in the subdir are tracked and unchanged [\#146](https://github.com/alichtman/shallow-backup/issues/146)
+- VSCode Backup [\#45](https://github.com/alichtman/shallow-backup/issues/45)
+
+**Merged pull requests:**
+
+- Exception handling [\#207](https://github.com/alichtman/shallow-backup/pull/207) ([bl0nd](https://github.com/bl0nd))
+- Added VSCode settings and extensions backup/reinstall, pip3 backup. [\#205](https://github.com/alichtman/shallow-backup/pull/205) ([AlexanderProd](https://github.com/AlexanderProd))
+
+## [v2.2](https://github.com/alichtman/shallow-backup/tree/v2.2) (2018-12-14)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.1...v2.2)
+
+**Fixed bugs:**
+
+- KeyError: 'sublime2' when creating a backup [\#202](https://github.com/alichtman/shallow-backup/issues/202)
+- gitpython Not Installed Automatically w/ setup.py [\#200](https://github.com/alichtman/shallow-backup/issues/200)
+- Configs need to be a mapping in the config file. [\#195](https://github.com/alichtman/shallow-backup/issues/195)
+- Prompt to remove outdated config if detected. [\#189](https://github.com/alichtman/shallow-backup/issues/189)
+- Remove this plist special case logic.  [\#187](https://github.com/alichtman/shallow-backup/issues/187)
+
+**Closed issues:**
+
+- Fix tests that fail due to multiprocessing [\#196](https://github.com/alichtman/shallow-backup/issues/196)
+- Test abspath/env expanding function [\#194](https://github.com/alichtman/shallow-backup/issues/194)
+- Extract all config section names to a dict in config.py [\#190](https://github.com/alichtman/shallow-backup/issues/190)
+- Extract messages to constants file [\#179](https://github.com/alichtman/shallow-backup/issues/179)
+- Turn this into a generic copy method [\#177](https://github.com/alichtman/shallow-backup/issues/177)
+- Extract package managers to config file [\#165](https://github.com/alichtman/shallow-backup/issues/165)
+- Option to add ssh keys when they're reinstalled [\#150](https://github.com/alichtman/shallow-backup/issues/150)
+- Selectively back up from .atom folder [\#133](https://github.com/alichtman/shallow-backup/issues/133)
+- Separate public and private backups [\#132](https://github.com/alichtman/shallow-backup/issues/132)
+- Symlink instead of copying files [\#125](https://github.com/alichtman/shallow-backup/issues/125)
+
+**Merged pull requests:**
+
+- Remove Sublime \[2/3\] packages backup [\#203](https://github.com/alichtman/shallow-backup/pull/203) ([alichtman](https://github.com/alichtman))
+- \#200 added gitpython to setup.py [\#201](https://github.com/alichtman/shallow-backup/pull/201) ([AlexanderProd](https://github.com/AlexanderProd))
+
+## [v2.1](https://github.com/alichtman/shallow-backup/tree/v2.1) (2018-11-14)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.0...v2.1)
+
+**Fixed bugs:**
+
+- Jetbrains IDE backups do not work [\#158](https://github.com/alichtman/shallow-backup/issues/158)
+
+**Closed issues:**
+
+- Test Package Reinstallation [\#185](https://github.com/alichtman/shallow-backup/issues/185)
+
+**Merged pull requests:**
+
+- Add test for backups. [\#191](https://github.com/alichtman/shallow-backup/pull/191) ([alichtman](https://github.com/alichtman))
+
 ## [v2.0](https://github.com/alichtman/shallow-backup/tree/v2.0) (2018-11-09)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v1.3...v2.0)
 
