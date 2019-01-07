@@ -146,7 +146,7 @@ def backup_packages(backup_path, skip=False):
 	# vscode extensions
 	print_pkg_mgr_backup("VSCode")
 	command = "code --list-extensions --show-versions"
-	dest = "{}/vscode_extensions_list.txt".format(backup_path)
+	dest = "{}/vscode_list.txt".format(backup_path)
 	run_cmd_write_stdout(command, dest)
 
 	# macports
