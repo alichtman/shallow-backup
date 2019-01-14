@@ -171,14 +171,15 @@ def backup_fonts(backup_path, skip=False):
 	overwrite_dir_prompt_if_needed(backup_path, skip)
 	print_blue("Copying '.otf' and '.ttf' fonts...")
 	fonts_path = get_fonts_dir()
-	fonts = [quote(os.path.join(fonts_path, font)) for font in os.listdir(fonts_path) if
-	         font.endswith(".otf") or font.endswith(".ttf")]
+	if os.path.isdir(fonts_path):
+		fonts = [quote(os.path.join(fonts_path, font)) for font in os.listdir(fonts_path) if
+			font.endswith(".otf") or font.endswith(".ttf")]
 
-	for font in fonts:
-		if os.path.exists(font):
-			copyfile(font, os.path.join(backup_path, font.split("/")[-1]))
+		for font in fonts:
+			if os.path.exists(font):
+				copyfile(font, os.path.join(backup_path, font.split("/")[-1]))
 
-
+				
 def backup_all(dotfiles_path, packages_path, fonts_path, configs_path, skip=False):
 	"""
 	Complete backup procedure.
