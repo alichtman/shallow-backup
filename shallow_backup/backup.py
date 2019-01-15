@@ -178,7 +178,7 @@ def backup_fonts(backup_path, skip=False):
 		for font in fonts:
 			if os.path.exists(font):
 				copyfile(font, os.path.join(backup_path, font.split("/")[-1]))
-
+	else: print_red ('Skipping fonts backup, no fonts directory found')
 				
 def backup_all(dotfiles_path, packages_path, fonts_path, configs_path, skip=False):
 	"""
