@@ -116,4 +116,3 @@ def show_config():
 			for item in contents:
 				print("    {}".format(item))
 
-	print()
