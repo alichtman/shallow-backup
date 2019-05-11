@@ -54,11 +54,18 @@ def safe_mkdir(directory):
 
 def mkdir_overwrite(path):
 	"""
-	Makes a new directory, destroying the one at the path if it exits.
+	Makes a new directory, destroying the contents of the dir at path, if it exits.
+	Ensures .git and .gitignore files inside of directory are not delected.
 	"""
 	if os.path.isdir(path):
-		rmtree(path)
-	os.makedirs(path)
+		for dirpath, dirs, files in os.walk(path):
+			# Delete files
+			[os.remove(os.path.join(dirpath, name)) for name in files if name != ".gitignore"]
+
+			# Delete directories
+			[rmtree(os.path.join(dirpath, name)) for name in dirs if name != ".git"]
+	else:
+		os.makedirs(path)
 
 
 def mkdir_warn_overwrite(path):
