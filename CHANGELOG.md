@@ -1,5 +1,23 @@
 # Change Log
 
+## [v2.4](https://github.com/alichtman/shallow-backup/tree/v2.4) (2019-05-12)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.3...v2.4)
+
+**Fixed bugs:**
+
+- Back up fonts directory  [\#219](https://github.com/alichtman/shallow-backup/issues/219)
+
+**Closed issues:**
+
+- When clearing old backup files, delete everything except `.git/` and `.gitignore` [\#223](https://github.com/alichtman/shallow-backup/issues/223)
+- You should try asciinema instead of upload big GIF file demo [\#222](https://github.com/alichtman/shallow-backup/issues/222)
+- Similar\(ish\) project to be aware of? [\#220](https://github.com/alichtman/shallow-backup/issues/220)
+
+**Merged pull requests:**
+
+- Don't delete .git when removing old backups [\#224](https://github.com/alichtman/shallow-backup/pull/224) ([alichtman](https://github.com/alichtman))
+- No such file or directory during fonts backup [\#217](https://github.com/alichtman/shallow-backup/pull/217) ([robbixc](https://github.com/robbixc))
+
 ## [v2.3](https://github.com/alichtman/shallow-backup/tree/v2.3) (2019-01-07)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.2...v2.3)
 
