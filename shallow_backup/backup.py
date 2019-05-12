@@ -173,15 +173,15 @@ def backup_fonts(backup_path, skip=False):
 	fonts_path = get_fonts_dir()
 	if os.path.isdir(fonts_path):
 		fonts = [quote(os.path.join(fonts_path, font)) for font in os.listdir(fonts_path) if
-			font.endswith(".otf") or font.endswith(".ttf")]
+		         font.endswith(".otf") or font.endswith(".ttf")]
 
 		for font in fonts:
 			if os.path.exists(font):
 				copyfile(font, os.path.join(backup_path, font.split("/")[-1]))
-	else: 
-		print_red ('Skipping fonts backup. No fonts directory found.')
-	
-	
+	else:
+		print_red('Skipping fonts backup. No fonts directory found.')
+
+
 def backup_all(dotfiles_path, packages_path, fonts_path, configs_path, skip=False):
 	"""
 	Complete backup procedure.

@@ -54,11 +54,27 @@ def safe_mkdir(directory):
 
 def mkdir_overwrite(path):
 	"""
-	Makes a new directory, destroying the one at the path if it exits.
+	Makes a new directory, destroying the contents of the dir at path, if it exits.
+	Ensures .git and .gitignore files inside of directory are not delected.
 	"""
 	if os.path.isdir(path):
-		rmtree(path)
-	os.makedirs(path)
+		dirs = []
+		files = []
+		for f in os.listdir(path):
+			full_path = os.path.join(path, f)
+			# Allow dotfiles to be a sub-repo.
+			if full_path.endswith(".git") or full_path.endswith(".gitignore") or full_path.endswith("README.md"):
+				continue
+
+			if os.path.isdir(full_path):
+				dirs.append(full_path)
+			else:
+				files.append(full_path)
+
+		[os.remove(file) for file in files]
+		[rmtree(dir) for dir in dirs]
+	else:
+		os.makedirs(path)
 
 
 def mkdir_warn_overwrite(path):
