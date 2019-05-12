@@ -14,9 +14,9 @@ Contents
 
  * [Installation](#installation)
  * [Usage](#usage)
- * [A Word of Caution](#a-word-of-caution)
+ * [Git Integration](#git-integration)
  * [What can I back up?](#what-can-i-back-up)
- * [Customization](#customization)
+ * [Backup Customization](#backup-customization)
  * [Output Structure](#output-structure)
  * [Inspiration](#inspiration)
  * [Want to contribute?](#want-to-contribute)
@@ -66,12 +66,20 @@ Options:
   -h, -help, --help            Show this message and exit.
 ```
 
-### A Word of Caution
+### Git Integration
 ---
 
-This backup tool is git-integrated, meaning that you can easily store your backups remotely (on GitHub, for example.) Dotfiles and configuration files may contain sensitive information like API keys and ssh keys, and you don't want to make those public. To make sure no sensitive files are uploaded accidentally, `shallow-backup` creates a `.gitignore` file if it can't find one in the directory. It excludes `.ssh/` and `.pypirc` by default. It's safe to remove these restrictions if you're pushing to a remote private repository, or you're only backing up locally. To do this, you should clear the `.gitignore` file without deleting it.  
+**A Word of Caution**
 
-**Tl;dr: If you choose to back up to a public repository, look at every file you're backing up to make sure you want it to be public.**
+This backup tool is git-integrated, meaning that you can easily store your backups remotely (on GitHub, for example.) Dotfiles and configuration files may contain sensitive information like API keys and ssh keys, and you don't want to make those public. To make sure no sensitive files are uploaded accidentally, `shallow-backup` creates a `.gitignore` file if it can't find one in the directory. It excludes `.ssh/` and `.pypirc` by default. It's safe to remove these restrictions if you're pushing to a remote private repository, or you're only backing up locally. To do this, you should clear the `.gitignore` file without deleting it.
+
+_If you choose to back up to a public repository, look at every file you're backing up to make sure you want it to be public._
+
+**What if I'd like to maintain a separate repo for my dotfiles?**
+
+`shallow-backup` makes this easy! After making your first backup, `cd` into the `dotfiles/` directory and run `$ git init`. Create a `.gitignore` and a new repo on your favorite version control platform. This repo will be maintained independently (manually) of the base `shallow-backup` repo.
+
+
 
 ### What can I back up?
 ---
@@ -109,7 +117,7 @@ By default, `shallow-backup` backs these up.
 
 4. User installed `fonts`.
 
-### Customization
+### Backup Customization
 
 If you'd like to modify which files are backed up, you have to edit the `~/.shallow-backup` file. There are two recommended ways of doing this.
 
@@ -167,7 +175,7 @@ backup_dir/
 
 I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at what was actually being backed up. I saw that my `brew`, `npm`, and `pip` libraries took up a ton more space than I imagined.
 
-*And that's totally unnecessary.* When you back something up, you do it with the intention of being able to get back to that exact state at some point in the future. The minimum you need in order to recreate those package libraries later is just a list of the packages that are installed with each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example. 
+*And that's totally unnecessary.* When you back something up, you do it with the intention of being able to get back to that exact state at some point in the future. The minimum you need in order to recreate those package libraries later is just a list of the packages that are installed with each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example.
 
 I cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` libraries with simple text files. I also cut down the back up time significantly since many fewer files were being copied.
 
