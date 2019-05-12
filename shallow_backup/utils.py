@@ -58,12 +58,21 @@ def mkdir_overwrite(path):
 	Ensures .git and .gitignore files inside of directory are not delected.
 	"""
 	if os.path.isdir(path):
-		for dirpath, dirs, files in os.walk(path):
-			# Delete files
-			[os.remove(os.path.join(dirpath, name)) for name in files if name != ".gitignore"]
+		dirs = []
+		files = []
+		for f in os.listdir(path):
+			full_path = os.path.join(path, f)
+			# Allow dotfiles to be a sub-repo.
+			if full_path.endswith(".git") or full_path.endswith(".gitignore") or full_path.endswith("README.md"):
+				continue
 
-			# Delete directories
-			[rmtree(os.path.join(dirpath, name)) for name in dirs if name != ".git"]
+			if os.path.isdir(full_path):
+				dirs.append(full_path)
+			else:
+				files.append(full_path)
+
+		[os.remove(file) for file in files]
+		[rmtree(dir) for dir in dirs]
 	else:
 		os.makedirs(path)
 
