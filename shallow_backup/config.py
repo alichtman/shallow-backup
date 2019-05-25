@@ -40,6 +40,7 @@ def get_default_config():
 			".profile",
 			".pypirc",
 			".shallow-backup",
+			".tmux.conf",
 			".vimrc",
 			".zlogin",
 			".zprofile",
