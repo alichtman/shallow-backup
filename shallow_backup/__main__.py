@@ -17,6 +17,7 @@ from .utils import (
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
 @click.option('--new_path', default=None, help="Input a new back up directory path.")
+@click.option('-no_splash', is_flag=True, default=False, help="Don't display splash screen.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path prompt.")
 @click.option('-packages', is_flag=True, default=False, help="Back up package libraries.")
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs.")
@@ -27,7 +28,7 @@ from .utils import (
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
-def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remote, reinstall_all,
+def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, no_splash, remote, reinstall_all,
         reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, version):
 	"""
 	\b
@@ -59,7 +60,8 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, remot
 		sys.exit()
 
 	# Start CLI
-	splash_screen()
+	if not no_splash:
+		splash_screen()
 	safe_create_config()
 	backup_config = get_config()
 
