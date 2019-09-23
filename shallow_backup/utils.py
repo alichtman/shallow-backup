@@ -166,3 +166,7 @@ def overwrite_dir_prompt_if_needed(path, needed):
 		mkdir_warn_overwrite(path)
 	else:
 		mkdir_overwrite(path)
+
+
+def create_dir_if_doesnt_exist(path):
+	os.makedirs(path, exist_ok=True)

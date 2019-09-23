@@ -12,3 +12,4 @@ build/lib
 .coverage
 .coverage.*
 code_coverage/*
+dist
