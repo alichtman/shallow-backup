@@ -38,7 +38,7 @@ To start the interactive program, simply run `$ shallow-backup`.
 `shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line args.
 
 ```shell
-Usage: cli.py [OPTIONS]
+Usage: shallow-backup [OPTIONS]
 
   Easily back up installed packages, dotfiles, and more.
   You can edit which files are backed up in ~/.shallow-backup.
@@ -46,24 +46,27 @@ Usage: cli.py [OPTIONS]
   Written by Aaron Lichtman (@alichtman).
 
 Options:
-  -all                         Full back up.
-  -configs                     Back up app config files.
-  -delete_config               Delete config file.
-  -destroy_backup              Delete backup directory.
-  -dotfiles                    Back up dotfiles.
-  -fonts                       Back up installed fonts.
-  --new_path TEXT              Input a new back up directory path.
-  -old_path                    Skip setting new back up directory path prompt.
-  -packages                    Back up package libraries.
-  -reinstall_configs           Reinstall configs.
-  -reinstall_dots              Reinstall dotfiles and dotfolders.
-  -reinstall_fonts             Reinstall fonts.
-  -reinstall_packages          Reinstall packages.
-  -reinstall_all               Full reinstallation.
-  --remote TEXT                Set remote URL for the git repo.
-  -show                        Display config file.
-  -v, --version                Display version and author info.
-  -h, -help, --help            Show this message and exit.
+  -all                     Full back up.
+  -configs                 Back up app config files.
+  -delete_config           Delete config file.
+  -destroy_backup          Delete backup directory.
+  -dotfiles                Back up dotfiles.
+  -fonts                   Back up installed fonts.
+  --new_path TEXT          Input a new back up directory path.
+  -no_splash               Don't display splash screen.
+  -old_path                Skip setting new back up directory path prompt.
+  -packages                Back up package libraries.
+  -reinstall_all           Full reinstallation.
+  -reinstall_configs       Reinstall configs.
+  -reinstall_dots          Reinstall dotfiles and dotfolders.
+  -reinstall_fonts         Reinstall fonts.
+  -reinstall_packages      Reinstall packages.
+  --remote TEXT            Set remote URL for the git repo.
+  -separate_dotfiles_repo  Use if you are trying to maintain a separate
+                           dotfiles repo and running into issue #229.
+  -show                    Display config file.
+  -v, --version            Display version and author info.
+  -help, -h, --help        Show this message and exit.
 ```
 
 ### Git Integration
@@ -77,9 +80,7 @@ _If you choose to back up to a public repository, look at every file you're back
 
 **What if I'd like to maintain a separate repo for my dotfiles?**
 
-`shallow-backup` makes this easy! After making your first backup, `cd` into the `dotfiles/` directory and run `$ git init`. Create a `.gitignore` and a new repo on your favorite version control platform. This repo will be maintained independently (manually) of the base `shallow-backup` repo.
-
-
+`shallow-backup` makes this easy! After making your first backup, `cd` into the `dotfiles/` directory and run `$ git init`. Create a `.gitignore` and a new repo on your favorite version control platform. This repo will be maintained independently (manually) of the base `shallow-backup` repo. Note that you may need to use the `-separate_dotfiles_repo` flag to get this to work, and it may [break some other functionality of the tool](https://github.com/alichtman/shallow-backup/issues/229). It's ok for my use case, though.
 
 ### What can I back up?
 ---
