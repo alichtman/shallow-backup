@@ -20,16 +20,19 @@ from .utils import (
 @click.option('-no_splash', is_flag=True, default=False, help="Don't display splash screen.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path prompt.")
 @click.option('-packages', is_flag=True, default=False, help="Back up package libraries.")
+@click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs.")
 @click.option('-reinstall_dots', is_flag=True, default=False, help="Reinstall dotfiles and dotfolders.")
 @click.option('-reinstall_fonts', is_flag=True, default=False, help="Reinstall fonts.")
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
-@click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
+@click.option('-separate_dotfiles_repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
-def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, no_splash, remote, reinstall_all,
-        reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, delete_config, destroy_backup, version):
+def cli(all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
+        no_splash, old_path, packages, reinstall_all, reinstall_configs,
+        reinstall_dots, reinstall_fonts, reinstall_packages, remote,
+        separate_dotfiles_repo, show, version):
 	"""
 	\b
 	Easily back up installed packages, dotfiles, and more.
@@ -118,7 +121,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, no_sp
 			git_add_all_commit_push(repo, "all")
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path, skip=True)
-			git_add_all_commit_push(repo, "dotfiles")
+			git_add_all_commit_push(repo, "dotfiles", separate_dotfiles_repo)
 		elif configs:
 			backup_configs(configs_path, skip=True)
 			git_add_all_commit_push(repo, "configs")
@@ -138,7 +141,7 @@ def cli(show, all, dotfiles, configs, packages, fonts, old_path, new_path, no_sp
 				git_add_all_commit_push(repo, selection_words[-1])
 			elif selection_words[-1] == "dotfiles":
 				backup_dotfiles(dotfiles_path)
-				git_add_all_commit_push(repo, selection_words[-1])
+				git_add_all_commit_push(repo, selection_words[-1], separate_dotfiles_repo)
 			elif selection_words[-1] == "configs":
 				backup_configs(configs_path)
 				git_add_all_commit_push(repo, selection_words[-1])

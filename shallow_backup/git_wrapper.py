@@ -68,15 +68,33 @@ def safe_git_init(dir_path):
 		return repo, False
 
 
-def git_add_all_commit_push(repo, message):
+def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
 	"""
 	Stages all changed files in dir_path and its children folders for commit,
 	commits them and pushes to a remote if it's configured.
+
+	:param git.repo repo: The repo
+	:param str message: The commit message
+	:param bool separate_dotfiles_repo: Flag for denoting a workflow where git submodules are used to maintain a separate repo for just dotfiles.
 	"""
+	if separate_dotfiles_repo:
+		print_yellow_bold("Skipping commit to avoid git submodule error.")
+		print_yellow_bold("Issue tracked at: https://github.com/alichtman/shallow-backup/issues/229")
+		return
+
 	if repo.index.diff(None) or repo.untracked_files:
 		print_yellow_bold("Making new commit...")
 		repo.git.add(A=True)
-		repo.git.commit(m=COMMIT_MSG[message])
+		try:
+			repo.git.commit(m=COMMIT_MSG[message])
+		 	# Git submodule issue https://github.com/alichtman/shallow-backup/issues/229
+		except git.exc.GitCommandError as e:
+			error = e.stdout.strip()
+			error = error[error.find("\'") + 1:-1]
+			print_red_bold(f"ERROR on Commit: {e.command}\n{error}\n")
+			print_red_bold("Issue tracked at: https://github.com/alichtman/shallow-backup/issues/229")
+			return
+
 		print_yellow_bold("Successful commit.")
 
 		if "origin" in [remote.name for remote in repo.remotes]:
