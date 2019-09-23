@@ -15,33 +15,30 @@ def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=Fa
 	Assumes that dotfiles are stored in the home directory.
 	:param skip: Boolean flag to skip prompting for overwrite. Used for scripting.
 	:param backup_dest_path: Destination path for dotfiles. Like, ~/shallow-backup/dotfiles
-	:param home_path: Path where dotfiles will be found. Used for testing. Assumed to be ~ otherwise.
+	:param home_path: Path where dotfiles will be found. $HOME by default.
 	"""
 	print_section_header("DOTFILES", Fore.BLUE)
 	overwrite_dir_prompt_if_needed(backup_dest_path, skip)
 
 	# get dotfolders and dotfiles
 	config = get_config()
-	dotfiles_for_backup = config["dotfiles"]
-	dotfolders_for_backup = config["dotfolders"]
-
-	# Add dotfile/folder for backup if it exists on the machine
-	dotfiles = [file for file in dotfiles_for_backup if os.path.isfile(
-		os.path.join(home_path, file))]
-	dotfolders = [folder for folder in dotfolders_for_backup if os.path.exists(
-		os.path.join(home_path, folder))]
 
 	# dotfiles/folders multiprocessing format: [(full_dotfile_path, full_dest_path), ...]
 	dotfolders_mp_in = []
-	for dotfolder in dotfolders:
-		dotfolder_path = quote(os.path.join(home_path, dotfolder))
-		dotfolders_mp_in.append((dotfolder_path, backup_dest_path))
+	for dotfolder in [os.path.join(home_path, folder) for folder in config["dotfolders"]]:
+		if os.path.isdir(dotfolder):
+			dotfolders_mp_in.append((quote(dotfolder), backup_dest_path))
 
 	dotfiles_mp_in = []
-	for dotfile in dotfiles:
-		dotfile_path = quote(os.path.join(home_path, dotfile))
-		dest_path = quote(os.path.join(backup_dest_path, dotfile))
-		dotfiles_mp_in.append((dotfile_path, dest_path))
+	for dotfile in config["dotfiles"]:
+		full_dotfile_path = os.path.join(home_path, dotfile)
+		if os.path.isfile(full_dotfile_path):
+			dest_path = quote(os.path.join(backup_dest_path, dotfile))
+			dotfiles_mp_in.append((quote(full_dotfile_path), dest_path))
+
+	# Fix https://github.com/alichtman/shallow-backup/issues/230
+	for dest_path in [path_pair[1] for path_pair in dotfiles_mp_in]:
+		create_dir_if_doesnt_exist(os.path.split(dest_path)[0])
 
 	with mp.Pool(mp.cpu_count()):
 		print_blue_bold("Backing up dotfolders...")
