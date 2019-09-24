@@ -62,8 +62,11 @@ def mkdir_overwrite(path):
 		files = []
 		for f in os.listdir(path):
 			full_path = os.path.join(path, f)
-			# Allow dotfiles to be a sub-repo.
-			if full_path.endswith(".git") or full_path.endswith(".gitignore") or full_path.endswith("README.md"):
+			# Allow dotfiles to be a sub-repo, and protect img folder.
+			if full_path.endswith(".git") or \
+			   full_path.endswith(".gitignore") or \
+			   full_path.endswith("README.md") or \
+			   full_path.endswith("img"):
 				continue
 
 			if os.path.isdir(full_path):
@@ -92,6 +95,19 @@ def mkdir_warn_overwrite(path):
 	elif not os.path.exists(path):
 		os.makedirs(path)
 		print_path_blue("Created directory:", path)
+
+
+def overwrite_dir_prompt_if_needed(path, needed):
+	"""
+	Prompts the user before deleting the directory if needed.
+	This function lets the CLI args silence the prompts.
+	:param path: absolute path
+	:param needed: boolean
+	"""
+	if not needed:
+		mkdir_warn_overwrite(path)
+	else:
+		mkdir_overwrite(path)
 
 
 def empty_backup_dir_check(backup_path, backup_type):
@@ -153,19 +169,6 @@ def expand_to_abs_path(path):
 	expanded_path = os.path.expanduser(path)
 	expanded_path = os.path.expandvars(expanded_path)
 	return os.path.abspath(expanded_path)
-
-
-def overwrite_dir_prompt_if_needed(path, needed):
-	"""
-	Prompts the user before deleting the directory if needed.
-	This function lets the CLI args silence the prompts.
-	:param path: absolute path
-	:param needed: boolean
-	"""
-	if not needed:
-		mkdir_warn_overwrite(path)
-	else:
-		mkdir_overwrite(path)
 
 
 def create_dir_if_doesnt_exist(path):
