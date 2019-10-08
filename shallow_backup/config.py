@@ -14,8 +14,13 @@ def get_config():
 	Returns the config.
 	:return: dictionary for config
 	"""
-	with open(get_config_path()) as f:
-		config = json.load(f)
+	config_path = get_config_path()
+	with open(config_path) as f:
+		try:
+			config = json.load(f)
+		except json.decoder.JSONDecodeError as e:
+			print_red_bold(f"ERROR: Invalid syntax in {config_path}")
+			sys.exit(1)
 	return config
 
 
