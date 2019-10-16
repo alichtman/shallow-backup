@@ -27,7 +27,8 @@ def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=Fa
 	dotfolders_mp_in = []
 	for dotfolder in [os.path.join(home_path, folder) for folder in config["dotfolders"]]:
 		if os.path.isdir(dotfolder):
-			dotfolders_mp_in.append((quote(dotfolder), backup_dest_path))
+			dest_path_nested_dir = os.path.join(backup_dest_path, dotfolder.replace(home_path + "/", ""))
+			dotfolders_mp_in.append((quote(dotfolder), quote(dest_path_nested_dir)))
 
 	dotfiles_mp_in = []
 	for dotfile in config["dotfiles"]:
@@ -37,7 +38,7 @@ def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=Fa
 			dotfiles_mp_in.append((quote(full_dotfile_path), dest_path))
 
 	# Fix https://github.com/alichtman/shallow-backup/issues/230
-	for dest_path in [path_pair[1] for path_pair in dotfiles_mp_in]:
+	for dest_path in [path_pair[1] for path_pair in dotfiles_mp_in + dotfolders_mp_in]:
 		create_dir_if_doesnt_exist(os.path.split(dest_path)[0])
 
 	with mp.Pool(mp.cpu_count()):
