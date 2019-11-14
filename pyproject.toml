@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "shallow-backup"
+version = "2.9a"
+description = "Easily create lightweight backups of installed packages, dotfiles, and more."
+authors = ["Aaron Lichtman <aaronlichtman@gmail.com>"]
+
+readme = 'README.md'
+
+repository = "https://github.com/alichtman/shallow-backup"
+homepage = "https://github.com/alichtman/shallow-backup"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+click = "^7.0"
+inquirer = "^2.6"
+gitpython = "^3.0"
+colorama = "^0.4.1"
+
+[tool.poetry.dev-dependencies]
+pytest = "^3.4"
+pytest-cov = "^2.8"
