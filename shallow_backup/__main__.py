@@ -6,6 +6,8 @@ from .git_wrapper import *
 from .utils import (
 	mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path,
 	new_dir_is_valid)
+from .config import *
+from .upgrade import upgrade_from_pre_v3
 
 
 # custom help options
@@ -40,6 +42,7 @@ def cli(all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
 
 	Written by Aaron Lichtman (@alichtman).
 	"""
+	upgrade_from_pre_v3()
 
 	# Process CLI args
 	admin_action = any([version, delete_config, destroy_backup, show])
