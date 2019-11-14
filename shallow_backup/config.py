@@ -3,6 +3,7 @@ import json
 from os import path, environ
 from .printing import *
 from .compatibility import *
+from .utils import safe_mkdir
 
 
 def get_config_path():
@@ -75,9 +76,11 @@ def safe_create_config():
 	if not os.path.exists(backup_config_path):
 		print_path_blue("Creating config file at:", backup_config_path)
 		backup_config = get_default_config()
+		safe_mkdir(os.path.split(backup_config_path)[0])
 		write_config(backup_config)
 	else:
 		# If it does exist, make sure it's not outdated.
+		# TODO: Move this to upgrade.py
 		with open(backup_config_path) as config:
 			if "[USER]" in config.readline().strip():
 				if prompt_yes_no("An outdated config file has been detected. Would you like to update this?",
