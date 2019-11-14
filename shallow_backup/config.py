@@ -1,12 +1,13 @@
 import sys
 import json
+from os import path, environ
 from .printing import *
 from .compatibility import *
-from .utils import home_prefix
 
 
 def get_config_path():
-	return home_prefix(".shallow-backup")
+	xdg_config_home = environ.get('XDG_CONFIG_HOME') or path.join(path.expanduser('~'), '.config')
+	return path.join(xdg_config_home, "shallow-backup", "shallow-backup.conf")
 
 
 def get_config():
@@ -18,7 +19,7 @@ def get_config():
 	with open(config_path) as f:
 		try:
 			config = json.load(f)
-		except json.decoder.JSONDecodeError as e:
+		except json.decoder.JSONDecodeError:
 			print_red_bold(f"ERROR: Invalid syntax in {config_path}")
 			sys.exit(1)
 	return config
@@ -44,7 +45,7 @@ def get_default_config():
 			".gitconfig",
 			".profile",
 			".pypirc",
-			".shallow-backup",
+			f"{get_config_path}",
 			".tmux.conf",
 			".vimrc",
 			".zlogin",
@@ -121,4 +122,3 @@ def show_config():
 			print_red_bold("\n{}: ".format(section.capitalize()))
 			for item in contents:
 				print("    {}".format(item))
-
