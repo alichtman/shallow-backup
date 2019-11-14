@@ -7,6 +7,7 @@ git:
 
 before_install:
   - curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
+  - source $HOME/.poetry/env
 install:
   - poetry install
   - pip install coveralls
