@@ -1,12 +1,12 @@
 sudo: false
 language: python
 python:
-  - "3.6"
+  - "3.8"
 git:
   depth: false
 
 install:
-  - pip install pipenv
+  - poetry install --dev
   - pip install coveralls
   - pipenv install --dev
 
