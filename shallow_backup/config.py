@@ -7,8 +7,12 @@ from .utils import safe_mkdir
 
 
 def get_config_path():
-	xdg_config_home = environ.get('XDG_CONFIG_HOME') or path.join(path.expanduser('~'), '.config')
-	return path.join(xdg_config_home, "shallow-backup", "shallow-backup.conf")
+	test_config_path = environ.get('SHALLOW_BACKUP_TEST_CONFIG_PATH', None)
+	if test_config_path:
+		return test_config_path
+	else:
+		xdg_config_home = environ.get('XDG_CONFIG_HOME') or path.join(path.expanduser('~'), '.config')
+		return path.join(xdg_config_home, "shallow-backup", "shallow-backup.conf")
 
 
 def get_config():
