@@ -11,6 +11,7 @@ install:
   - pipenv install --dev
 
 script:
+  - mkdir /tmp
   - pytest --cov
 
 after_success:
