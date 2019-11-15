@@ -17,7 +17,9 @@ def unset_env_vars():
 
 
 def create_config_for_test():
-	os.remove(os.environ["SHALLOW_BACKUP_TEST_CONFIG_PATH"])
+	config_file = os.environ["SHALLOW_BACKUP_TEST_CONFIG_PATH"]
+	if os.path.isfile(config_file):
+		os.remove(config_file)
 	safe_create_config()
 
 
