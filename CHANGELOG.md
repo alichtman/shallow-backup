@@ -1,5 +1,13 @@
 # Changelog
 
+## [v3.2](https://github.com/alichtman/shallow-backup/tree/v3.2) (2019-11-17)
+
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.1...v3.2)
+
+**Merged pull requests:**
+
+- Move config to ~/.config/shallow-backup.conf [\#242](https://github.com/alichtman/shallow-backup/pull/242) ([alichtman](https://github.com/alichtman))
+
 ## [v3.1](https://github.com/alichtman/shallow-backup/tree/v3.1) (2019-11-15)
 
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.8...v3.1)
@@ -91,7 +99,6 @@
 **Merged pull requests:**
 
 - Exception handling [\#207](https://github.com/alichtman/shallow-backup/pull/207) ([bl0nd](https://github.com/bl0nd))
-- Added VSCode settings and extensions backup/reinstall, pip3 backup. [\#205](https://github.com/alichtman/shallow-backup/pull/205) ([AlexanderProd](https://github.com/AlexanderProd))
 
 ## [v2.2](https://github.com/alichtman/shallow-backup/tree/v2.2) (2018-12-14)
 
@@ -137,6 +144,7 @@
 
 **Merged pull requests:**
 
+- Added VSCode settings and extensions backup/reinstall, pip3 backup. [\#205](https://github.com/alichtman/shallow-backup/pull/205) ([AlexanderProd](https://github.com/AlexanderProd))
 - Add test for backups. [\#191](https://github.com/alichtman/shallow-backup/pull/191) ([alichtman](https://github.com/alichtman))
 
 ## [v2.0](https://github.com/alichtman/shallow-backup/tree/v2.0) (2018-11-09)

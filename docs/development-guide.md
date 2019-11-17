@@ -27,13 +27,17 @@ Also, add any necessary tests for new code.
 ### Deployment
 
 - Bump version in `shallow-backup/constants.py`
-- Tag commit with `v{VERSION}`: `$ git tag -a v{VERSION} -m "shallow-backup v{VERSION}"`
-- Push commit to GitHub.
-- Run `$ github_changelog_generator --user alichtman --project shallow-backup`.
-- Make another commit with the changelog
-- Build the package: `$ pypibinary`
-- Create new release: `$ hub release create v{VERSION} --file dist/shallow-backup-{VERSION}.tar.gz -m "shallow-backup v{VERSION}"`
-- Push to PyPI with `$ pypiup`
+
+```bash
+$ export SB_RELEASE_VERSION="v{VERSION}VERSION"
+$ git checkout master && git pull
+$ git tag -a $SB_RELEASE_VERSION -m "shallow-backup $SB_RELEASE_VERSION" && git push
+$ github_changelog_generator --user alichtman --project shallow-backup
+$ ga . && gc -m "Add CHANGELOG for $SB_RELEASE_VERSION" && git push
+$ pypibinary
+$ hub release create $SB_RELEASE_VERSION --file dist/shallow-backup-$SB_RELEASE_VERSION.tar.gz -m "shallow-backup $SB_RELEASE_VERSION"
+$ pypiup
+```
 
 ### Code Style
 
