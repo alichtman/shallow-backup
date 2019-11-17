@@ -1,6 +1,6 @@
 class ProjInfo:
 	PROJECT_NAME = 'shallow-backup'
-	VERSION = '3.1'
+	VERSION = '3.2'
 	AUTHOR_GITHUB = 'alichtman'
 	AUTHOR_FULL_NAME = 'Aaron Lichtman'
 	DESCRIPTION = "Easily create lightweight backups of installed packages, dotfiles, and more."
