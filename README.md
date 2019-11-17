@@ -92,7 +92,7 @@ By default, `shallow-backup` backs these up.
     * `.bash_profile`
     * `.gitconfig`
     * `.pypirc`
-    * `.shallow-backup`
+    * `.config/shallow-backup.conf`
     * `.ssh/`
     * `.vim/`
     * `.zshrc`
@@ -120,7 +120,7 @@ By default, `shallow-backup` backs these up.
 
 ### Backup Customization
 
-If you'd like to modify which files are backed up, you have to edit the `~/.shallow-backup` file. There are two recommended ways of doing this.
+If you'd like to modify which files are backed up, you have to edit the `~/.config/shallow-backup.conf` file. There are two recommended ways of doing this.
 
 1. Select the appropriate option in the CLI and follow the prompts.
 2. Open the file in a text editor and make your changes.
