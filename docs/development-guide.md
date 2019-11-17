@@ -34,7 +34,7 @@ $ git checkout master && git pull
 $ git tag -a $SB_RELEASE_VERSION -m "shallow-backup $SB_RELEASE_VERSION" && git push
 $ github_changelog_generator --user alichtman --project shallow-backup
 $ ga . && gc -m "Add CHANGELOG for $SB_RELEASE_VERSION" && git push
-$ pypibinary
+$ rm -rf dist/* && python3 setup.py sdist
 $ hub release create $SB_RELEASE_VERSION --file dist/shallow-backup-$SB_RELEASE_VERSION.tar.gz -m "shallow-backup $SB_RELEASE_VERSION"
 $ pypiup
 ```
