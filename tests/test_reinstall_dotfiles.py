@@ -33,10 +33,10 @@ class TestReinstallDotfiles:
 
         # SAMPLE SUBFOLDER IN DOTFILES PATH
         try:
-            os.mkdir(os.path.join(DOTFILES_PATH, "testfolder"))
+            os.mkdir(os.path.join(DOTFILES_PATH, "testfolder/"))
         except FileExistsError:
-            shutil.rmtree(os.path.join(DOTFILES_PATH, "testfolder"))
-            os.mkdir(os.path.join(DOTFILES_PATH, "testfolder"))
+            shutil.rmtree(os.path.join(DOTFILES_PATH, "testfolder/"))
+            os.mkdir(os.path.join(DOTFILES_PATH, "testfolder/"))
 
         # SAMPLE DOTFILE TO REINSTALL
         file = os.path.join(DOTFILES_PATH, ".testrc")
@@ -55,4 +55,4 @@ class TestReinstallDotfiles:
         """
         reinstall_dots_sb(DOTFILES_PATH,home_path=FAKE_HOME_DIR)
         assert os.path.isfile(os.path.join(FAKE_HOME_DIR, '.testrc'))
-        assert os.path.isdir(os.path.join(FAKE_HOME_DIR, 'testfolder'))
+        assert os.path.isdir(os.path.join(FAKE_HOME_DIR, 'testfolder/'))
