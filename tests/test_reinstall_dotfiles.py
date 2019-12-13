@@ -32,7 +32,7 @@ class TestReinstallDotfiles:
             os.mkdir(DOTFILES_PATH)
 
         # SAMPLE DOTFILE TO REINSTALL
-        file = os.path.join(DOTFILES_PATH, ".testrc"),
+        file = os.path.join(DOTFILES_PATH, ".testrc")
         print(f"Creating {file}")
         with open(file, "w+") as f:
             f.write(TEST_TEXT_CONTENT)
