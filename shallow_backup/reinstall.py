@@ -11,14 +11,13 @@ from shutil import copytree, copyfile, copy
 #       conflict with the function names.
 
 
-def reinstall_dots_sb(dots_path):
+def reinstall_dots_sb(dots_path,home_path=os.path.expanduser("~")):
 	"""
 	Reinstall all dotfiles and folders by copying them to the home dir.
 	"""
 	empty_backup_dir_check(dots_path, 'dotfile')
 	print_section_header("REINSTALLING DOTFILES", Fore.BLUE)
 
-	home_path = os.path.expanduser('~')
 	for file in get_abs_path_subfiles(dots_path):
 		if os.path.isdir(file):
 			copytree(file, home_path, symlinks=True)
