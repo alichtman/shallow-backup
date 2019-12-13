@@ -5,6 +5,7 @@ from .utils import run_cmd, get_abs_path_subfiles, empty_backup_dir_check
 from .printing import *
 from .compatibility import *
 from .config import get_config
+from pathlib import Path
 from shutil import copytree, copyfile, copy
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
@@ -17,12 +18,22 @@ def reinstall_dots_sb(dots_path,home_path=os.path.expanduser("~")):
 	"""
 	empty_backup_dir_check(dots_path, 'dotfile')
 	print_section_header("REINSTALLING DOTFILES", Fore.BLUE)
+	parent = Path(dots_path)
 
 	for file in get_abs_path_subfiles(dots_path):
 		if os.path.isdir(file):
 			copytree(file, home_path, symlinks=True)
 		else:
-			copy(file, home_path)
+			son=Path(os.path.dirname(file))
+			destination=""
+			if parent in son.parents:
+				folderLevel = son.relative_to(parent)
+				destination = os.path.join(home_path,folderLevel)
+				if not os.path.exists(os.path.join(home_path,folderLevel)):
+					os.makedirs(os.path.join(home_path,folderLevel))
+			else:
+				destination = home_path
+			copy(file,destination)
 	print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
 
 

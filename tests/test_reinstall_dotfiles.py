@@ -32,14 +32,20 @@ class TestReinstallDotfiles:
             os.mkdir(DOTFILES_PATH)
 
         # SAMPLE SUBFOLDER IN DOTFILES PATH
+        print(os.path.join(DOTFILES_PATH, "testfolder/"))
         try:
             os.mkdir(os.path.join(DOTFILES_PATH, "testfolder/"))
         except FileExistsError:
             shutil.rmtree(os.path.join(DOTFILES_PATH, "testfolder/"))
             os.mkdir(os.path.join(DOTFILES_PATH, "testfolder/"))
 
-        # SAMPLE DOTFILE TO REINSTALL
+        # SAMPLE DOTFILES TO REINSTALL
         file = os.path.join(DOTFILES_PATH, ".testrc")
+        print(f"Creating {file}")
+        with open(file, "w+") as f:
+            f.write(TEST_TEXT_CONTENT)
+
+        file = os.path.join(DOTFILES_PATH, "testfolder/.testsubfolder_rc")
         print(f"Creating {file}")
         with open(file, "w+") as f:
             f.write(TEST_TEXT_CONTENT)
@@ -51,8 +57,10 @@ class TestReinstallDotfiles:
 
     def test_reinstall_dotfiles(self):
         """
-        Test resintalling dotfile to fake home dir
+        Test resintalling dotfiles to fake home dir
         """
         reinstall_dots_sb(DOTFILES_PATH,home_path=FAKE_HOME_DIR)
         assert os.path.isfile(os.path.join(FAKE_HOME_DIR, '.testrc'))
+        print(os.path.join(FAKE_HOME_DIR, 'testfolder/'))
         assert os.path.isdir(os.path.join(FAKE_HOME_DIR, 'testfolder/'))
+        assert os.path.isfile(os.path.join(FAKE_HOME_DIR, 'testfolder/.testsubfolder_rc'))
