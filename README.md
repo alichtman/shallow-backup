@@ -14,6 +14,7 @@ Contents
 
  * [Installation](#installation)
  * [Usage](#usage)
+   * [MacOS](#backup-steps-in-macos-to-github)
  * [Git Integration](#git-integration)
  * [What can I back up?](#what-can-i-back-up)
  * [Backup Customization](#backup-customization)
@@ -34,6 +35,19 @@ Contents
 ---
 
 To start the interactive program, simply run `$ shallow-backup`.
+
+#### Backup steps in MacOS to Github:
+First run steps:
+1. Go to Github.com in a browser, create an emtpy repo (no Readme)
+2. Open Terminal in your Mac
+3. Create a directory where you'll back up the files (i.e. `my-shallow-backup`)
+4. Inside that directory, run `$ shallow-backup` (Answer Yes to the remote repository question)
+5. Wait a couple minutes for the initial setup to finish
+6. You'll now see a `~ git-master $` message
+7. Go back to the repository you made in step 1, copy-paste in Terminal the commands from section "…or push an existing repository from the command line" 
+8. Wait a couple minutes for the initial upload to finish.
+9. Optional: If you have the Github app installed(recommended), add the folder for easier future backups (drag the folder into the app).
+
 
 `shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line args.
 
