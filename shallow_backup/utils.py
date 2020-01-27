@@ -129,7 +129,7 @@ def destroy_backup_dir(backup_path):
 
 def get_abs_path_subfiles(directory):
 	"""
-	Returns list of absolute paths of immediate files and folders in a directory.
+	Returns list of absolute paths of files and folders contained in a directory.
 	"""
 	file_paths = []
 	for path, subdirs, files in os.walk(directory):
