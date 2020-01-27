@@ -5,25 +5,34 @@ from .utils import run_cmd, get_abs_path_subfiles, empty_backup_dir_check
 from .printing import *
 from .compatibility import *
 from .config import get_config
-from shutil import copytree, copyfile
+from pathlib import Path
+from shutil import copytree, copyfile, copy
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
 #       conflict with the function names.
 
 
-def reinstall_dots_sb(dots_path):
+def reinstall_dots_sb(dots_path, home_path=os.path.expanduser("~")):
 	"""
 	Reinstall all dotfiles and folders by copying them to the home dir.
 	"""
 	empty_backup_dir_check(dots_path, 'dotfile')
 	print_section_header("REINSTALLING DOTFILES", Fore.BLUE)
 
-	home_path = os.path.expanduser('~')
+	dotfiles_source = Path(dots_path)
+
+	# Create intermediate directories if needed, and then copy file.
 	for file in get_abs_path_subfiles(dots_path):
-		if os.path.isdir(file):
-			copytree(file, home_path, symlinks=True)
+		parent_dir_of_dotfile = Path(os.path.dirname(file))
+
+		if dotfiles_source in parent_dir_of_dotfile.parents:
+			missing_dirs = parent_dir_of_dotfile.relative_to(dotfiles_source)
+			destination = os.path.join(home_path, missing_dirs)
+			if not os.path.exists(destination):
+				os.makedirs(destination)
 		else:
-			copyfile(file, home_path)
+			destination = home_path
+		copy(file, destination)
 	print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
 
 
@@ -116,8 +125,8 @@ def reinstall_packages_sb(packages_path):
 		elif pm == "gem":
 			print_red_bold("WARNING: Gem reinstallation is not supported.")
 		elif pm == "cargo":
-			print_red_bold("WARNING: Cargo reinstallation is not possible at the moment."
-			                 "\n -> https://github.com/rust-lang/cargo/issues/5593")
+			print_red_bold("WARNING: Cargo reinstallation is not possible at the moment.\
+			               \n -> https://github.com/rust-lang/cargo/issues/5593")
 
 	print_section_header("PACKAGE REINSTALLATION COMPLETED", Fore.BLUE)
 
