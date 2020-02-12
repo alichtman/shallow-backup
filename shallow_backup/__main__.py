@@ -12,6 +12,7 @@ from .upgrade import upgrade_from_pre_v3
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
+@click.option('--add', default=None, help="Add a dotfile or dotfolder by path.")
 @click.option('-all', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
@@ -31,7 +32,7 @@ from .upgrade import upgrade_from_pre_v3
 @click.option('-separate_dotfiles_repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
-def cli(all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
+def cli(add, all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
         no_splash, old_path, packages, reinstall_all, reinstall_configs,
         reinstall_dots, reinstall_fonts, reinstall_packages, remote,
         separate_dotfiles_repo, show, version):
@@ -45,12 +46,15 @@ def cli(all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
 	upgrade_from_pre_v3()
 
 	# Process CLI args
-	admin_action = any([version, delete_config, destroy_backup, show])
+	admin_action = any([add, delete_config, destroy_backup, show, version])
 	has_cli_arg = any([old_path, all, dotfiles, packages, fonts, configs,
 	                   reinstall_dots, reinstall_fonts, reinstall_all,
 	                   reinstall_configs, reinstall_packages])
 	skip_prompt = any([all, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
 	                   reinstall_fonts])
+
+	safe_create_config()
+	backup_config = get_config()
 
 	# Perform administrative action and exit.
 	if admin_action:
@@ -63,13 +67,14 @@ def cli(all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
 			destroy_backup_dir(backup_home_path)
 		elif show:
 			show_config()
+		elif add:
+			new_config = add_path(backup_config, add)
+			write_config(new_config)
 		sys.exit()
 
 	# Start CLI
 	if not no_splash:
 		splash_screen()
-	safe_create_config()
-	backup_config = get_config()
 
 	# User entered a new path, so update the config
 	if new_path:
