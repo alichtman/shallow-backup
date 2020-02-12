@@ -111,6 +111,31 @@ def delete_config_file():
 		print_red_bold("ERROR: No config file found.")
 
 
+def add_path(backup_config: dict, filePath: str) -> dict:
+	"""
+	Add a path to the config under the correct heading (dotfiles / dotfolders).
+	Exits if the filepath parameter is invalid.
+	:backup_config: dict representing current config
+	:add:           str  relative or absolute path of file to add to config
+	:return new backup config
+	"""
+	def strip_home(full_path):
+		"""
+		Removes the path to $HOME from the front of the absolute path.
+		"""
+		return full_path[len(os.path.expanduser("~")) + 1:]
+
+	absPath = path.abspath(filePath)
+	if not path.exists(absPath):
+		print_path_red("Invalid file path:", absPath)
+		sys.exit(1)
+	elif path.isdir(absPath):
+		backup_config["dotfolders"] += [strip_home(absPath)]
+	else:  # Otherwise it's a dotfile
+		backup_config["dotfiles"] += [strip_home(absPath)]
+	return backup_config
+
+
 def show_config():
 	"""
 	Print the config. Colorize section titles and indent contents.
