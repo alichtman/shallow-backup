@@ -18,6 +18,7 @@ Contents
  * [What can I back up?](#what-can-i-back-up)
  * [Backup Customization](#backup-customization)
  * [Output Structure](#output-structure)
+ * [Reinstallation](#reinstallation)
  * [Inspiration](#inspiration)
  * [Want to contribute?](#want-to-contribute)
 
@@ -46,6 +47,7 @@ Usage: shallow-backup [OPTIONS]
   Written by Aaron Lichtman (@alichtman).
 
 Options:
+  --add_dot                Add a dotfile or dotfolder to config by path.
   -all                     Full back up.
   -configs                 Back up app config files.
   -delete_config           Delete config file.
@@ -194,6 +196,10 @@ backup_dir/
     ├── pip_list.txt
     └── sublime3_list.txt
 ```
+
+### Reinstallation
+
+To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.conf` or `$XDG_CONFIG_HOME/.shallow_backup.conf`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall_dots`.
 
 ### Inspiration
 ---
