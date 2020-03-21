@@ -31,12 +31,13 @@ Also, add any necessary tests for new code.
 ```bash
 # From project root directory
 $ export SB_VERSION="v$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
+$ export SB_VERSION_NO_V="$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
 $ git checkout master && git pull
 $ git tag -a "$SB_VERSION" -m "shallow-backup $SB_VERSION" && git push
 $ github_changelog_generator --user alichtman --project shallow-backup
 $ ga . && gc -m "Add CHANGELOG for $SB_VERSION" && git push
 $ rm -rf dist/* && python3 setup.py sdist
-$ hub release create $SB_VERSION --file dist/shallow-backup-$SB_VERSION.tar.gz -m "shallow-backup $SB_VERSION"
+$ hub release create $SB_VERSION --file dist/shallow-backup-$SB_VERSION_NO_V.tar.gz -m "shallow-backup $SB_VERSION"
 $ pypiup
 ```
 
