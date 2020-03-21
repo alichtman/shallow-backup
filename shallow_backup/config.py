@@ -111,7 +111,7 @@ def delete_config_file():
 		print_red_bold("ERROR: No config file found.")
 
 
-def add_path(backup_config: dict, filePath: str) -> dict:
+def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 	"""
 	Add a path to the config under the correct heading (dotfiles / dotfolders).
 	Exits if the filepath parameter is invalid.
@@ -125,14 +125,14 @@ def add_path(backup_config: dict, filePath: str) -> dict:
 		"""
 		return full_path[len(os.path.expanduser("~")) + 1:]
 
-	absPath = path.abspath(filePath)
-	if not path.exists(absPath):
-		print_path_red("Invalid file path:", absPath)
+	abs_path = path.abspath(file_path)
+	if not path.exists(abs_path):
+		print_path_red("Invalid file path:", abs_path)
 		sys.exit(1)
-	elif path.isdir(absPath):
-		backup_config["dotfolders"] += [strip_home(absPath)]
+	elif path.isdir(abs_path):
+		backup_config["dotfolders"] += [strip_home(abs_path)]
 	else:  # Otherwise it's a dotfile
-		backup_config["dotfiles"] += [strip_home(absPath)]
+		backup_config["dotfiles"] += [strip_home(abs_path)]
 	return backup_config
 
 

@@ -46,6 +46,7 @@ Usage: shallow-backup [OPTIONS]
   Written by Aaron Lichtman (@alichtman).
 
 Options:
+  --add_dot                Add a dotfile or dotfolder to config by path.
   -all                     Full back up.
   -configs                 Back up app config files.
   -delete_config           Delete config file.
