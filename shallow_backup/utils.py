@@ -129,12 +129,14 @@ def destroy_backup_dir(backup_path):
 
 def get_abs_path_subfiles(directory):
 	"""
-	Returns list of absolute paths of files and folders contained in a directory.
+	Returns list of absolute paths of files and folders contained in a directory, excluding .git directories.
 	"""
 	file_paths = []
-	for path, subdirs, files in os.walk(directory):
+	for path, _, files in os.walk(directory):
 		for name in files:
-			file_paths.append(os.path.join(path, name))
+			joined = os.path.join(path, name)
+			if "/.git/" not in joined:
+				file_paths.append(os.path.join(path, name))
 	return file_paths
 
 

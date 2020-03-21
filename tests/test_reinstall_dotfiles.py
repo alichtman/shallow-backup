@@ -16,6 +16,19 @@ class TestReinstallDotfiles:
 
     @staticmethod
     def setup_method():
+
+        def create_dir(parent, name):
+            new_dir = os.path.join(parent, name)
+            print(f"Creating {new_dir}")
+            os.mkdir(new_dir)
+            return new_dir
+
+        def create_file(parent, name):
+            file = os.path.join(parent, name)
+            print(f"Creating {file}")
+            with open(file, "w+") as f:
+                f.write(TEST_TEXT_CONTENT)
+
         setup_env_vars()
         create_config_for_test()
         for directory in DIRS:
@@ -33,29 +46,19 @@ class TestReinstallDotfiles:
             os.mkdir(DOTFILES_PATH)
 
         # SAMPLE SUBFOLDER IN DOTFILES PATH
-        testfolder = os.path.join(DOTFILES_PATH, "testfolder1/")
-        print(f"Creating {testfolder}")
-        os.mkdir(testfolder)
+        testfolder = create_dir(DOTFILES_PATH, "testfolder1/")
+        testfolder2 = create_dir(testfolder, "testfolder2/")
 
-        testfolder2 = os.path.join(testfolder, "testfolder2/")
-        print(f"Creating {testfolder2}")
-        os.mkdir(testfolder2)
+        # Git dir that should not be reinstalled
+        git = create_dir(DOTFILES_PATH, ".git/")
+        git_objects = create_dir(git, "objects/")
+        create_file(git, "config")
+        create_file(git_objects, "obj1")
 
         # SAMPLE DOTFILES TO REINSTALL
-        file = os.path.join(testfolder2, ".testsubfolder_rc1")
-        print(f"Creating {file}")
-        with open(file, "w+") as f:
-            f.write(TEST_TEXT_CONTENT)
-
-        file = os.path.join(testfolder2, ".testsubfolder_rc2")
-        print(f"Creating {file}")
-        with open(file, "w+") as f:
-            f.write(TEST_TEXT_CONTENT)
-
-        file = os.path.join(DOTFILES_PATH, ".testrc")
-        print(f"Creating {file}")
-        with open(file, "w+") as f:
-            f.write(TEST_TEXT_CONTENT)
+        create_file(testfolder2, ".testsubfolder_rc1")
+        create_file(testfolder2, ".testsubfolder_rc2")
+        create_file(DOTFILES_PATH, ".testrc")
 
     @staticmethod
     def teardown_method():
@@ -72,3 +75,5 @@ class TestReinstallDotfiles:
         assert os.path.isdir(testfolder2)
         assert os.path.isfile(os.path.join(testfolder2, '.testsubfolder_rc1'))
         assert os.path.isfile(os.path.join(testfolder2, '.testsubfolder_rc2'))
+
+        assert not os.path.isdir(os.path.join(FAKE_HOME_DIR, '.git'))
