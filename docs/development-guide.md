@@ -29,13 +29,14 @@ Also, add any necessary tests for new code.
 - Bump version in `shallow-backup/constants.py`
 
 ```bash
-$ export SB_RELEASE_VERSION="v{VERSION}VERSION"
+# From project root directory
+$ export SB_VERSION="v$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
 $ git checkout master && git pull
-$ git tag -a $SB_RELEASE_VERSION -m "shallow-backup $SB_RELEASE_VERSION" && git push
+$ git tag -a "$SB_VERSION" -m "shallow-backup $SB_VERSION" && git push
 $ github_changelog_generator --user alichtman --project shallow-backup
-$ ga . && gc -m "Add CHANGELOG for $SB_RELEASE_VERSION" && git push
+$ ga . && gc -m "Add CHANGELOG for $SB_VERSION" && git push
 $ rm -rf dist/* && python3 setup.py sdist
-$ hub release create $SB_RELEASE_VERSION --file dist/shallow-backup-$SB_RELEASE_VERSION.tar.gz -m "shallow-backup $SB_RELEASE_VERSION"
+$ hub release create $SB_VERSION --file dist/shallow-backup-$SB_VERSION.tar.gz -m "shallow-backup $SB_VERSION"
 $ pypiup
 ```
 
