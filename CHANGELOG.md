@@ -1,7 +1,25 @@
-# Changelog
+# Change Log
+
+## [v3.3](https://github.com/alichtman/shallow-backup/tree/v3.3) (2020-03-21)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.2...v3.3)
+
+**Fixed bugs:**
+
+- Error when reinstalling all [\#216](https://github.com/alichtman/shallow-backup/issues/216)
+- copytree\(\) doesn't overwrite, so reinstall sometimes fails [\#209](https://github.com/alichtman/shallow-backup/issues/209)
+
+**Closed issues:**
+
+- Add `--add` flag for adding new paths to be backed up [\#247](https://github.com/alichtman/shallow-backup/issues/247)
+- Add Support for Hammerspoon dotfolder [\#244](https://github.com/alichtman/shallow-backup/issues/244)
+
+**Merged pull requests:**
+
+- Refactor --add option and bump to v3.3 [\#250](https://github.com/alichtman/shallow-backup/pull/250) ([alichtman](https://github.com/alichtman))
+- Add CLI option for adding paths to config [\#248](https://github.com/alichtman/shallow-backup/pull/248) ([alichtman](https://github.com/alichtman))
+- Fix IsADirectory error upon reinstallation [\#246](https://github.com/alichtman/shallow-backup/pull/246) ([alichtman](https://github.com/alichtman))
 
 ## [v3.2](https://github.com/alichtman/shallow-backup/tree/v3.2) (2019-11-17)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.1...v3.2)
 
 **Merged pull requests:**
@@ -9,7 +27,6 @@
 - Move config to ~/.config/shallow-backup.conf [\#242](https://github.com/alichtman/shallow-backup/pull/242) ([alichtman](https://github.com/alichtman))
 
 ## [v3.1](https://github.com/alichtman/shallow-backup/tree/v3.1) (2019-11-15)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.8...v3.1)
 
 **Closed issues:**
@@ -23,7 +40,6 @@
 - Fix tests [\#238](https://github.com/alichtman/shallow-backup/pull/238) ([alichtman](https://github.com/alichtman))
 
 ## [v2.8](https://github.com/alichtman/shallow-backup/tree/v2.8) (2019-10-16)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.7...v2.8)
 
 **Closed issues:**
@@ -31,7 +47,6 @@
 - Unable to run macOS [\#235](https://github.com/alichtman/shallow-backup/issues/235)
 
 ## [v2.7](https://github.com/alichtman/shallow-backup/tree/v2.7) (2019-10-08)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.6...v2.7)
 
 **Fixed bugs:**
@@ -43,7 +58,6 @@
 - Config syntax error handling [\#234](https://github.com/alichtman/shallow-backup/pull/234) ([alichtman](https://github.com/alichtman))
 
 ## [v2.6](https://github.com/alichtman/shallow-backup/tree/v2.6) (2019-09-23)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.4...v2.6)
 
 **Fixed bugs:**
@@ -61,7 +75,6 @@
 - Allow backing up dotfiles outside of $HOME [\#231](https://github.com/alichtman/shallow-backup/pull/231) ([alichtman](https://github.com/alichtman))
 
 ## [v2.4](https://github.com/alichtman/shallow-backup/tree/v2.4) (2019-05-12)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.3...v2.4)
 
 **Fixed bugs:**
@@ -80,7 +93,6 @@
 - No such file or directory during fonts backup [\#217](https://github.com/alichtman/shallow-backup/pull/217) ([robbixc](https://github.com/robbixc))
 
 ## [v2.3](https://github.com/alichtman/shallow-backup/tree/v2.3) (2019-01-07)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.2...v2.3)
 
 **Fixed bugs:**
@@ -99,9 +111,9 @@
 **Merged pull requests:**
 
 - Exception handling [\#207](https://github.com/alichtman/shallow-backup/pull/207) ([bl0nd](https://github.com/bl0nd))
+- Added VSCode settings and extensions backup/reinstall, pip3 backup. [\#205](https://github.com/alichtman/shallow-backup/pull/205) ([AlexanderProd](https://github.com/AlexanderProd))
 
 ## [v2.2](https://github.com/alichtman/shallow-backup/tree/v2.2) (2018-12-14)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.1...v2.2)
 
 **Fixed bugs:**
@@ -131,7 +143,6 @@
 - \#200 added gitpython to setup.py [\#201](https://github.com/alichtman/shallow-backup/pull/201) ([AlexanderProd](https://github.com/AlexanderProd))
 
 ## [v2.1](https://github.com/alichtman/shallow-backup/tree/v2.1) (2018-11-14)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.0...v2.1)
 
 **Fixed bugs:**
@@ -144,11 +155,9 @@
 
 **Merged pull requests:**
 
-- Added VSCode settings and extensions backup/reinstall, pip3 backup. [\#205](https://github.com/alichtman/shallow-backup/pull/205) ([AlexanderProd](https://github.com/AlexanderProd))
 - Add test for backups. [\#191](https://github.com/alichtman/shallow-backup/pull/191) ([alichtman](https://github.com/alichtman))
 
 ## [v2.0](https://github.com/alichtman/shallow-backup/tree/v2.0) (2018-11-09)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v1.3...v2.0)
 
 **Fixed bugs:**
@@ -267,11 +276,9 @@
 - Add -configs mode. [\#63](https://github.com/alichtman/shallow-backup/pull/63) ([schilli91](https://github.com/schilli91))
 
 ## [v1.3](https://github.com/alichtman/shallow-backup/tree/v1.3) (2018-05-30)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v1.2...v1.3)
 
 ## [v1.2](https://github.com/alichtman/shallow-backup/tree/v1.2) (2018-05-30)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v1.0...v1.2)
 
 **Fixed bugs:**
@@ -299,7 +306,6 @@
 - Clean up empty package list files [\#50](https://github.com/alichtman/shallow-backup/pull/50) ([alichtman](https://github.com/alichtman))
 
 ## [v1.0](https://github.com/alichtman/shallow-backup/tree/v1.0) (2018-05-14)
-
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v0.4...v1.0)
 
 **Closed issues:**
@@ -322,9 +328,6 @@
 - Coverage for other package managers [\#2](https://github.com/alichtman/shallow-backup/issues/2)
 
 ## [v0.4](https://github.com/alichtman/shallow-backup/tree/v0.4) (2018-04-14)
-
-[Full Changelog](https://github.com/alichtman/shallow-backup/compare/7c53c198f405828e6f1f0c4edf477b209b840fab...v0.4)
-
 **Closed issues:**
 
 - uninstall option [\#17](https://github.com/alichtman/shallow-backup/issues/17)
@@ -343,4 +346,4 @@
 
 
 
-\* *This Changelog was automatically generated by [github_changelog_generator](https://github.com/github-changelog-generator/github-changelog-generator)*
+\* *This Change Log was automatically generated by [github_changelog_generator](https://github.com/skywinder/Github-Changelog-Generator)*
