@@ -12,7 +12,7 @@ from .upgrade import upgrade_from_pre_v3
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
-@click.option('--add', default=None, help="Add a dotfile or dotfolder by path.")
+@click.option('--add_dot', default=None, help="Add a dotfile or dotfolder to config by path.")
 @click.option('-all', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
@@ -32,7 +32,7 @@ from .upgrade import upgrade_from_pre_v3
 @click.option('-separate_dotfiles_repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
-def cli(add, all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
+def cli(add_dot, all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
         no_splash, old_path, packages, reinstall_all, reinstall_configs,
         reinstall_dots, reinstall_fonts, reinstall_packages, remote,
         separate_dotfiles_repo, show, version):
@@ -46,7 +46,7 @@ def cli(add, all, configs, delete_config, destroy_backup, dotfiles, fonts, new_p
 	upgrade_from_pre_v3()
 
 	# Process CLI args
-	admin_action = any([add, delete_config, destroy_backup, show, version])
+	admin_action = any([add_dot, delete_config, destroy_backup, show, version])
 	has_cli_arg = any([old_path, all, dotfiles, packages, fonts, configs,
 	                   reinstall_dots, reinstall_fonts, reinstall_all,
 	                   reinstall_configs, reinstall_packages])
@@ -67,8 +67,8 @@ def cli(add, all, configs, delete_config, destroy_backup, dotfiles, fonts, new_p
 			destroy_backup_dir(backup_home_path)
 		elif show:
 			show_config()
-		elif add:
-			new_config = add_path(backup_config, add)
+		elif add_dot:
+			new_config = add_dot_path_to_config(backup_config, add_dot)
 			write_config(new_config)
 		sys.exit()
 
