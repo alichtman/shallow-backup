@@ -64,10 +64,15 @@ def get_default_config():
 			".ssh",
 			".vim"
 		],
-		"default-gitignore": [
+		"root-gitignore": [
 			"dotfiles/.ssh",
 			"dotfiles/.pypirc",
 			".DS_Store"
+		],
+		"dotfiles-gitignore": [
+			".ssh",
+			".pypirc",
+			".DS_Store",
 		],
 		"config_mapping"   : get_config_paths()
 	}
@@ -142,18 +147,15 @@ def show_config():
 	"""
 	print_section_header("SHALLOW BACKUP CONFIG", Fore.RED)
 	for section, contents in get_config().items():
-		# Hide gitignore config
-		if section == "default-gitignore":
-			continue
 		# Print backup path on same line
-		elif section == "backup_path":
+		if section == "backup_path":
 			print_path_red("Backup Path:", contents)
 		elif section == "config_mapping":
-			print_red_bold("Configs:")
+			print_red_bold("\nConfigs:")
 			for path, dest in contents.items():
 				print("    {} -> {}".format(path, dest))
 		# Print section header and intent contents. (Dotfiles/folders)
 		else:
-			print_red_bold("\n{}: ".format(section.capitalize()))
+			print_red_bold("\n{}: ".format(section.replace("-", " ").capitalize()))
 			for item in contents:
 				print("    {}".format(item))

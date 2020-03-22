@@ -151,6 +151,10 @@ If you'd like to modify which files are backed up, you have to edit the `~/.conf
 1. Select the appropriate option in the CLI and follow the prompts.
 2. Open the file in a text editor and make your changes.
 
+#### .gitignore
+
+As of `v4.0`, any `.gitignore` changes should be made in the `shallow-backup` config file. `.gitignore` changes that are meant to apply to all directories should be under the `root-gitignore` key. Dotfile specific gitignores should be placed under the `dotfiles-gitignore` key. The original `default-gitignore` key in the config is still supported for backwards compatibility, however, converting to the new config format is strongly encouraged.
+
 #### Output Structure
 ---
 

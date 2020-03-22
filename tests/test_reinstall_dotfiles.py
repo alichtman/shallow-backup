@@ -29,6 +29,14 @@ class TestReinstallDotfiles:
             with open(file, "w+") as f:
                 f.write(TEST_TEXT_CONTENT)
 
+        def create_git_dir(parent):
+            git_dir = create_dir(parent, ".git/")
+            git_objects = create_dir(git_dir, "objects/")
+            create_file(git_dir, "config")
+            create_file(git_objects, "obj1")
+            return git_dir
+
+
         setup_env_vars()
         create_config_for_test()
         for directory in DIRS:
@@ -49,14 +57,13 @@ class TestReinstallDotfiles:
         testfolder = create_dir(DOTFILES_PATH, "testfolder1/")
         testfolder2 = create_dir(testfolder, "testfolder2/")
 
-        # Git dir that should not be reinstalled
-        git = create_dir(DOTFILES_PATH, ".git/")
-        git_objects = create_dir(git, "objects/")
-        create_file(git, "config")
-        create_file(git_objects, "obj1")
+        git_dir_should_not_reinstall = create_git_dir(DOTFILES_PATH)
+        git_dir_should_reinstall = create_git_dir(testfolder2)
 
         # SAMPLE DOTFILES TO REINSTALL
         create_file(testfolder2, ".testsubfolder_rc1")
+        create_file(testfolder2, ".gitignore")
+        create_file(DOTFILES_PATH, ".gitignore")
         create_file(testfolder2, ".testsubfolder_rc2")
         create_file(DOTFILES_PATH, ".testrc")
 
@@ -76,4 +83,9 @@ class TestReinstallDotfiles:
         assert os.path.isfile(os.path.join(testfolder2, '.testsubfolder_rc1'))
         assert os.path.isfile(os.path.join(testfolder2, '.testsubfolder_rc2'))
 
-        assert not os.path.isdir(os.path.join(FAKE_HOME_DIR, '.git'))
+        # Don't reinstall root-level git files
+        assert not os.path.isdir(os.path.join(FAKE_HOME_DIR, ".git"))
+        assert not os.path.isfile(os.path.join(FAKE_HOME_DIR, ".gitignore"))
+        # Do reinstall all other git files
+        assert os.path.isdir(os.path.join(testfolder2, ".git"))
+        assert os.path.isfile(os.path.join(testfolder2, ".gitignore"))
