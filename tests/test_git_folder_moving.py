@@ -3,7 +3,7 @@ import sys
 import shutil
 from .test_utils import BACKUP_DEST_DIR, FAKE_HOME_DIR, DIRS, setup_env_vars, create_config_for_test
 sys.path.insert(0, "../shallow_backup")
-from shallow_backup.git_wrapper import move_git_repo, safe_git_init, safe_create_gitignore
+from shallow_backup.git_wrapper import move_git_repo, safe_git_init, create_gitignore
 
 
 class TestGitFolderCopying:
@@ -32,7 +32,7 @@ class TestGitFolderCopying:
         Test copying the .git folder and .gitignore from an old directory to a new one
         """
         safe_git_init(FAKE_HOME_DIR)
-        safe_create_gitignore(FAKE_HOME_DIR)
+        create_gitignore(FAKE_HOME_DIR, "root-gitignore")
         move_git_repo(FAKE_HOME_DIR, BACKUP_DEST_DIR)
         assert os.path.isdir(os.path.join(BACKUP_DEST_DIR, '.git/'))
         assert os.path.isfile(os.path.join(BACKUP_DEST_DIR, '.gitignore'))

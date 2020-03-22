@@ -129,14 +129,19 @@ def destroy_backup_dir(backup_path):
 
 def get_abs_path_subfiles(directory):
 	"""
-	Returns list of absolute paths of files and folders contained in a directory, excluding .git directories.
+	Returns list of absolute paths of files and folders contained in a directory,
+	excluding the root .git directory and root .gitignore..
 	"""
 	file_paths = []
 	for path, _, files in os.walk(directory):
 		for name in files:
 			joined = os.path.join(path, name)
-			if "/.git/" not in joined:
-				file_paths.append(os.path.join(path, name))
+			root_git_dir = os.path.join(directory, ".git")
+			root_gitignore = os.path.join(directory, ".gitignore")
+			if root_git_dir not in joined and root_gitignore not in joined:
+				file_paths.append(joined)
+			else:
+			    print(f"Excluded: {joined}")
 	return file_paths
 
 

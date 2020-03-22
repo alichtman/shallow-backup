@@ -38,19 +38,24 @@ def git_set_remote(repo, remote_url):
 		origin.fetch()
 
 
-def safe_create_gitignore(dir_path):
+def create_gitignore(dir_path, key):
 	"""
 	Creates a .gitignore file that ignores all files listed in config.
+	Handles backwards compatibility for the default-gitignore -> root-gitignore
+	change and the introduction of the dotfiles-gitignore key in v4.0.
 	"""
 	gitignore_path = os.path.join(dir_path, ".gitignore")
-	if os.path.exists(gitignore_path):
-		print_yellow_bold("Detected .gitignore file.")
-	else:
-		print_yellow_bold("Creating default .gitignore...")
-		files_to_ignore = get_config()["default-gitignore"]
-		with open(gitignore_path, "w+") as f:
-			for ignore in files_to_ignore:
-				f.write("{}\n".format(ignore))
+	print_yellow_bold(f"Updating .gitignore file at {gitignore_path} with config from {key}")
+	try:
+		files_to_ignore = get_config()[key]
+	except KeyError:
+		if key == "root-gitignore":
+			files_to_ignore = get_config()["default-gitignore"]
+		elif key == "dotfiles-gitignore":
+			pass
+	with open(os.path.join(dir_path, ".gitignore"), "w+") as f:
+		for ignore in files_to_ignore:
+			f.write("{}\n".format(ignore))
 
 
 def safe_git_init(dir_path):
@@ -87,7 +92,7 @@ def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
 		repo.git.add(A=True)
 		try:
 			repo.git.commit(m=COMMIT_MSG[message])
-		 	# Git submodule issue https://github.com/alichtman/shallow-backup/issues/229
+			# Git submodule issue https://github.com/alichtman/shallow-backup/issues/229
 		except git.exc.GitCommandError as e:
 			error = e.stdout.strip()
 			error = error[error.find("\'") + 1:-1]
