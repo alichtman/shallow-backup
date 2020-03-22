@@ -1,5 +1,8 @@
 # Change Log
 
+## [v3.4](https://github.com/alichtman/shallow-backup/tree/v3.4) (2020-03-22)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.3...v3.4)
+
 ## [v3.3](https://github.com/alichtman/shallow-backup/tree/v3.3) (2020-03-21)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.2...v3.3)
 
@@ -156,6 +159,7 @@
 **Merged pull requests:**
 
 - Add test for backups. [\#191](https://github.com/alichtman/shallow-backup/pull/191) ([alichtman](https://github.com/alichtman))
+- Exit if a git repository exists on the new backup path [\#171](https://github.com/alichtman/shallow-backup/pull/171) ([nunomdc](https://github.com/nunomdc))
 
 ## [v2.0](https://github.com/alichtman/shallow-backup/tree/v2.0) (2018-11-09)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v1.3...v2.0)
@@ -239,7 +243,6 @@
 - Config file refactor [\#181](https://github.com/alichtman/shallow-backup/pull/181) ([alichtman](https://github.com/alichtman))
 - Refactor config file architecture. [\#180](https://github.com/alichtman/shallow-backup/pull/180) ([alichtman](https://github.com/alichtman))
 - New print\_color\_bold\_path helper methods [\#173](https://github.com/alichtman/shallow-backup/pull/173) ([nunomdc](https://github.com/nunomdc))
-- Exit if a git repository exists on the new backup path [\#171](https://github.com/alichtman/shallow-backup/pull/171) ([nunomdc](https://github.com/nunomdc))
 - Added long option for version output [\#170](https://github.com/alichtman/shallow-backup/pull/170) ([nunomdc](https://github.com/nunomdc))
 - Expand environment variables [\#169](https://github.com/alichtman/shallow-backup/pull/169) ([nunomdc](https://github.com/nunomdc))
 - Expand ~ as user's home directory [\#161](https://github.com/alichtman/shallow-backup/pull/161) ([nunomdc](https://github.com/nunomdc))
