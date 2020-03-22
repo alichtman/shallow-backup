@@ -22,4 +22,4 @@ github_changelog_generator --user alichtman --project shallow-backup
 ga . && gc -m "Add CHANGELOG for $SB_VERSION" && git push
 rm -rf dist/* && python3 setup.py sdist
 hub release create $SB_VERSION --file dist/shallow-backup-$SB_VERSION_NO_V.tar.gz -m "shallow-backup $SB_VERSION"
-pypiup
+python3 setup.py sdist; twine upload --repository pypi dist/*
