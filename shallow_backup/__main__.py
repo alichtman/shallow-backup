@@ -95,19 +95,19 @@ def cli(add_dot, all, configs, delete_config, destroy_backup, dotfiles, fonts, n
 	backup_home_path = expand_to_abs_path(get_config()["backup_path"])
 	mkdir_warn_overwrite(backup_home_path)
 	repo, new_git_repo_created = safe_git_init(backup_home_path)
+	create_gitignore(backup_home_path, "root-gitignore")
 
-	# Create default gitignore if we just ran git init
-	if new_git_repo_created:
-		safe_create_gitignore(backup_home_path)
-		# Prompt user for remote URL
-		if not remote:
-			git_url_prompt(repo)
+	# Prompt user for remote URL if needed
+	if new_git_repo_created and not remote:
+		git_url_prompt(repo)
 
 	# Set remote URL from CLI arg
 	if remote:
 		git_set_remote(repo, remote)
 
 	dotfiles_path = os.path.join(backup_home_path, "dotfiles")
+	create_gitignore(dotfiles_path, "dotfiles-gitignore")
+
 	configs_path = os.path.join(backup_home_path, "configs")
 	packages_path = os.path.join(backup_home_path, "packages")
 	fonts_path = os.path.join(backup_home_path, "fonts")
