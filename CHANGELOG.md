@@ -1,5 +1,17 @@
 # Change Log
 
+## [v4.0](https://github.com/alichtman/shallow-backup/tree/v4.0) (2020-03-22)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.4...v4.0)
+
+**Closed issues:**
+
+- Interface for selecting which dotfiles to back up [\#228](https://github.com/alichtman/shallow-backup/issues/228)
+- Use symlinking instead of copying [\#188](https://github.com/alichtman/shallow-backup/issues/188)
+
+**Merged pull requests:**
+
+- Carefully reinstall .git and .gitignore files [\#251](https://github.com/alichtman/shallow-backup/pull/251) ([alichtman](https://github.com/alichtman))
+
 ## [v3.4](https://github.com/alichtman/shallow-backup/tree/v3.4) (2020-03-22)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.3...v3.4)
 
@@ -75,7 +87,6 @@
 **Merged pull requests:**
 
 - Patch failing commit behavior when submodules are present [\#232](https://github.com/alichtman/shallow-backup/pull/232) ([alichtman](https://github.com/alichtman))
-- Allow backing up dotfiles outside of $HOME [\#231](https://github.com/alichtman/shallow-backup/pull/231) ([alichtman](https://github.com/alichtman))
 
 ## [v2.4](https://github.com/alichtman/shallow-backup/tree/v2.4) (2019-05-12)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.3...v2.4)
@@ -94,6 +105,7 @@
 
 - Don't delete .git when removing old backups [\#224](https://github.com/alichtman/shallow-backup/pull/224) ([alichtman](https://github.com/alichtman))
 - No such file or directory during fonts backup [\#217](https://github.com/alichtman/shallow-backup/pull/217) ([robbixc](https://github.com/robbixc))
+- Remove Sublime \[2/3\] packages backup [\#203](https://github.com/alichtman/shallow-backup/pull/203) ([alichtman](https://github.com/alichtman))
 
 ## [v2.3](https://github.com/alichtman/shallow-backup/tree/v2.3) (2019-01-07)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.2...v2.3)
@@ -142,7 +154,6 @@
 
 **Merged pull requests:**
 
-- Remove Sublime \[2/3\] packages backup [\#203](https://github.com/alichtman/shallow-backup/pull/203) ([alichtman](https://github.com/alichtman))
 - \#200 added gitpython to setup.py [\#201](https://github.com/alichtman/shallow-backup/pull/201) ([AlexanderProd](https://github.com/AlexanderProd))
 
 ## [v2.1](https://github.com/alichtman/shallow-backup/tree/v2.1) (2018-11-14)
@@ -159,7 +170,7 @@
 **Merged pull requests:**
 
 - Add test for backups. [\#191](https://github.com/alichtman/shallow-backup/pull/191) ([alichtman](https://github.com/alichtman))
-- Exit if a git repository exists on the new backup path [\#171](https://github.com/alichtman/shallow-backup/pull/171) ([nunomdc](https://github.com/nunomdc))
+- Config file refactor [\#181](https://github.com/alichtman/shallow-backup/pull/181) ([alichtman](https://github.com/alichtman))
 
 ## [v2.0](https://github.com/alichtman/shallow-backup/tree/v2.0) (2018-11-09)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v1.3...v2.0)
@@ -238,11 +249,12 @@
 
 **Merged pull requests:**
 
+- Allow backing up dotfiles outside of $HOME [\#231](https://github.com/alichtman/shallow-backup/pull/231) ([alichtman](https://github.com/alichtman))
 - Linux compatibility [\#183](https://github.com/alichtman/shallow-backup/pull/183) ([alichtman](https://github.com/alichtman))
 - Added public repo warning [\#182](https://github.com/alichtman/shallow-backup/pull/182) ([alichtman](https://github.com/alichtman))
-- Config file refactor [\#181](https://github.com/alichtman/shallow-backup/pull/181) ([alichtman](https://github.com/alichtman))
 - Refactor config file architecture. [\#180](https://github.com/alichtman/shallow-backup/pull/180) ([alichtman](https://github.com/alichtman))
 - New print\_color\_bold\_path helper methods [\#173](https://github.com/alichtman/shallow-backup/pull/173) ([nunomdc](https://github.com/nunomdc))
+- Exit if a git repository exists on the new backup path [\#171](https://github.com/alichtman/shallow-backup/pull/171) ([nunomdc](https://github.com/nunomdc))
 - Added long option for version output [\#170](https://github.com/alichtman/shallow-backup/pull/170) ([nunomdc](https://github.com/nunomdc))
 - Expand environment variables [\#169](https://github.com/alichtman/shallow-backup/pull/169) ([nunomdc](https://github.com/nunomdc))
 - Expand ~ as user's home directory [\#161](https://github.com/alichtman/shallow-backup/pull/161) ([nunomdc](https://github.com/nunomdc))
