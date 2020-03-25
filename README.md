@@ -88,24 +88,27 @@ Here's a `bash` script that I wrote to automate my dotfile backup workflow. You 
 
 ```bash
 # Usage: backup-dots [COMMIT MESSAGE]
-function backup-dots() {
+backup-dots () {
 	echo "Backing up..."
+	crontab -l > ~/.config/crontab
 	(
-	shallow-backup -no_splash -dotfiles -separate_dotfiles_repo;
-	cd "$HOME/shallow-backup/dotfiles/" || exit
-	git add .
-
-	# If no commit message is provided, open vim.
-	# Otherwise, commit with the provided message
-	commit_msg="$1"
-	if [ -z "$commit_msg" ] ; then
-		git commit --verbose
-	else
-		git commit -m "$commit_msg"
-	fi
-	git push
+		shallow-backup -no_splash -dotfiles -separate_dotfiles_repo
+		cd "$HOME/shallow-backup/dotfiles/" || exit
+		hub stash
+		hub pull
+		hub stash pop
+		hub add .
+		commit_msg="$1" 
+		if [ -z "$commit_msg" ]
+		then
+			hub commit --verbose
+		else
+			hub commit -m "$commit_msg"
+		fi
+		hub push
 	)
 }
+
 ```
 
 ### What can I back up?
