@@ -5,7 +5,7 @@
 SB_VERSION="v$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
 SB_VERSION_NO_V="$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
 
-read -r -p "Release shallow-backup $SB_VERSION? [y/N] " response
+read -r -p "Release shallow-backup $SB_VERSION? Version bump should already be committed and pushed. [y/N] " response
 case "$response" in
     [yY][eE][sS]|[yY])
         echo "Releasing."
