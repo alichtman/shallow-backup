@@ -60,6 +60,11 @@ class TestReinstallDotfiles:
         git_dir_should_not_reinstall = create_git_dir(DOTFILES_PATH)
         git_dir_should_reinstall = create_git_dir(testfolder2)
 
+        # Dotfiles / folders to not reinstall
+        img_dir_should_not_reinstall = create_dir(DOTFILES_PATH, "img")
+        create_file(img_dir_should_not_reinstall, "test.png")
+        create_file(DOTFILES_PATH, "README.md")
+
         # SAMPLE DOTFILES TO REINSTALL
         create_file(testfolder2, ".testsubfolder_rc1")
         create_file(testfolder2, ".gitignore")
@@ -86,6 +91,9 @@ class TestReinstallDotfiles:
         # Don't reinstall root-level git files
         assert not os.path.isdir(os.path.join(FAKE_HOME_DIR, ".git"))
         assert not os.path.isfile(os.path.join(FAKE_HOME_DIR, ".gitignore"))
+        # Don't reinstall img or README.md
+        assert not os.path.isdir(os.path.join(FAKE_HOME_DIR, "img"))
+        assert not os.path.isfile(os.path.join(FAKE_HOME_DIR, "README.md"))
         # Do reinstall all other git files
         assert os.path.isdir(os.path.join(testfolder2, ".git"))
         assert os.path.isfile(os.path.join(testfolder2, ".gitignore"))
