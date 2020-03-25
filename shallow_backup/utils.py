@@ -139,8 +139,8 @@ def get_abs_path_subfiles(directory):
 			root_git_dir = os.path.join(directory, ".git")
 			root_gitignore = os.path.join(directory, ".gitignore")
 			img = os.path.join(directory, "img")
-			readme = os.path.join(directory, "readme.md")
-			if not any(root_git_dir, root_gitignore, img, readme) in joined:
+			readme = os.path.join(directory, "README.md")
+			if not any(x in joined for x in [root_git_dir, root_gitignore, img, readme]):
 				file_paths.append(joined)
 			else:
 				print_path_red("Excluded:", joined)

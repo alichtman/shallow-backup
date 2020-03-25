@@ -18,7 +18,7 @@ Contents
  * [What can I back up?](#what-can-i-back-up)
  * [Backup Customization](#backup-customization)
  * [Output Structure](#output-structure)
- * [Reinstallation](#reinstallation)
+ * [Reinstalling Dotfiles](#reinstalling-dotfiles)
  * [Inspiration](#inspiration)
  * [Want to contribute?](#want-to-contribute)
 
@@ -204,9 +204,12 @@ backup_dir/
     └── sublime3_list.txt
 ```
 
-### Reinstallation
+### Reinstalling Dotfiles
 
 To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.conf` or `$XDG_CONFIG_HOME/.shallow_backup.conf`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall_dots`.
+
+
+When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and `README.md` files / directories are ignored.
 
 ### Inspiration
 ---
