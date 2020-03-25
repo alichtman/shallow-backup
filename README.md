@@ -89,26 +89,29 @@ Here's a `bash` script that I wrote to automate my dotfile backup workflow. You 
 ```bash
 # Usage: backup-dots [COMMIT MESSAGE]
 backup-dots () {
-	echo "Backing up..."
-	crontab -l > ~/.config/crontab
-	(
-		shallow-backup -no_splash -dotfiles -separate_dotfiles_repo
-		cd "$HOME/shallow-backup/dotfiles/" || exit
-		hub stash
-		hub pull
-		hub stash pop
-		hub add .
-		commit_msg="$1" 
-		if [ -z "$commit_msg" ]
-		then
-			hub commit --verbose
-		else
-			hub commit -m "$commit_msg"
-		fi
-		hub push
-	)
+    echo "Backing up..."
+    crontab -l > ~/.config/crontab
+    (
+            shallow-backup -no_splash -dotfiles -separate_dotfiles_repo
+            cd "$HOME/shallow-backup/dotfiles/" || exit
+            git add .
+            commit_msg="$1"
+            if [ -z "$commit_msg" ]
+            then
+                    git commit --verbose
+            else
+                    git commit -m "$commit_msg"
+            fi
+            git pull
+            if [ "$?" -ne 0 ]
+            then
+                    echo "Merge conflict detected. Fix manually in subshell and Ctrl-D when done."
+                    git status
+                    $SHELL
+            fi
+            git push
+    )
 }
-
 ```
 
 ### What can I back up?
