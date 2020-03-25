@@ -154,7 +154,7 @@ def copy_dir_if_valid(source_dir, backup_path):
 	invalid = {".Trash", ".npm", ".cache", ".rvm"}
 	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
 		return
-	copytree(source_dir, backup_path, symlinks=True)
+	copytree(source_dir, backup_path, symlinks=False)
 
 
 def home_prefix(path):
