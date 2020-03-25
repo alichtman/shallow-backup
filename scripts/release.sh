@@ -19,7 +19,7 @@ esac
 git checkout master && git pull
 git tag -a "$SB_VERSION" -m "shallow-backup $SB_VERSION" && git push
 github_changelog_generator --user alichtman --project shallow-backup
-ga . && gc -m "Add CHANGELOG for $SB_VERSION" && git push
+ga CHANGELOG.md && gc -m "Add CHANGELOG for $SB_VERSION" && git push
 rm -rf dist/* && python3 setup.py sdist
-hub release create $SB_VERSION --file dist/shallow-backup-$SB_VERSION_NO_V.tar.gz -m "shallow-backup $SB_VERSION"
+hub release create "$SB_VERSION" --file "dist/shallow-backup-$SB_VERSION_NO_V.tar.gz" -m "shallow-backup $SB_VERSION"
 python3 setup.py sdist; twine upload --repository pypi dist/*
