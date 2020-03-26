@@ -36,6 +36,8 @@ def reinstall_dots_sb(dots_path, home_path=os.path.expanduser("~")):
 		    copy(file, destination)
 		except PermissionError as e:
 		    print_red_bold(f"ERROR: {e}")
+		except FileNotFoundError as e:
+		    print_red_bold(f"ERROR: {e}")
 	print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
 
 
