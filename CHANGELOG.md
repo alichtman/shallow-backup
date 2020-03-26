@@ -1,5 +1,8 @@
 # Change Log
 
+## [v4.0.3](https://github.com/alichtman/shallow-backup/tree/v4.0.3) (2020-03-26)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.2...v4.0.3)
+
 ## [v4.0.2](https://github.com/alichtman/shallow-backup/tree/v4.0.2) (2020-03-25)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.1...v4.0.2)
 
@@ -12,8 +15,8 @@
 
 **Merged pull requests:**
 
+- Correctly exclude files on reinstallation and add tests [\#255](https://github.com/alichtman/shallow-backup/pull/255) ([alichtman](https://github.com/alichtman))
 - Avoid reinstalling img/ and README from dotfiles [\#254](https://github.com/alichtman/shallow-backup/pull/254) ([alichtman](https://github.com/alichtman))
-- Remove Sublime \[2/3\] packages backup [\#203](https://github.com/alichtman/shallow-backup/pull/203) ([alichtman](https://github.com/alichtman))
 
 ## [v4.0](https://github.com/alichtman/shallow-backup/tree/v4.0) (2020-03-22)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.4...v4.0)
@@ -22,6 +25,10 @@
 
 - Interface for selecting which dotfiles to back up [\#228](https://github.com/alichtman/shallow-backup/issues/228)
 - Use symlinking instead of copying [\#188](https://github.com/alichtman/shallow-backup/issues/188)
+
+**Merged pull requests:**
+
+- Carefully reinstall .git and .gitignore files [\#251](https://github.com/alichtman/shallow-backup/pull/251) ([alichtman](https://github.com/alichtman))
 
 ## [v3.4](https://github.com/alichtman/shallow-backup/tree/v3.4) (2020-03-22)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v3.3...v3.4)
@@ -42,6 +49,7 @@
 **Merged pull requests:**
 
 - Refactor --add option and bump to v3.3 [\#250](https://github.com/alichtman/shallow-backup/pull/250) ([alichtman](https://github.com/alichtman))
+- Add CLI option for adding paths to config [\#248](https://github.com/alichtman/shallow-backup/pull/248) ([alichtman](https://github.com/alichtman))
 - Fix IsADirectory error upon reinstallation [\#246](https://github.com/alichtman/shallow-backup/pull/246) ([alichtman](https://github.com/alichtman))
 
 ## [v3.2](https://github.com/alichtman/shallow-backup/tree/v3.2) (2019-11-17)
@@ -61,7 +69,6 @@
 
 **Merged pull requests:**
 
-- Add CLI option for adding paths to config [\#248](https://github.com/alichtman/shallow-backup/pull/248) ([alichtman](https://github.com/alichtman))
 - Respect XDG Base Directory spec [\#239](https://github.com/alichtman/shallow-backup/pull/239) ([alichtman](https://github.com/alichtman))
 - Fix tests [\#238](https://github.com/alichtman/shallow-backup/pull/238) ([alichtman](https://github.com/alichtman))
 
@@ -165,6 +172,7 @@
 
 **Merged pull requests:**
 
+- Remove Sublime \[2/3\] packages backup [\#203](https://github.com/alichtman/shallow-backup/pull/203) ([alichtman](https://github.com/alichtman))
 - \#200 added gitpython to setup.py [\#201](https://github.com/alichtman/shallow-backup/pull/201) ([AlexanderProd](https://github.com/AlexanderProd))
 
 ## [v2.1](https://github.com/alichtman/shallow-backup/tree/v2.1) (2018-11-14)
@@ -259,7 +267,6 @@
 
 **Merged pull requests:**
 
-- Carefully reinstall .git and .gitignore files [\#251](https://github.com/alichtman/shallow-backup/pull/251) ([alichtman](https://github.com/alichtman))
 - Linux compatibility [\#183](https://github.com/alichtman/shallow-backup/pull/183) ([alichtman](https://github.com/alichtman))
 - Added public repo warning [\#182](https://github.com/alichtman/shallow-backup/pull/182) ([alichtman](https://github.com/alichtman))
 - Config file refactor [\#181](https://github.com/alichtman/shallow-backup/pull/181) ([alichtman](https://github.com/alichtman))
