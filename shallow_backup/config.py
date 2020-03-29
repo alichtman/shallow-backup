@@ -53,7 +53,7 @@ def get_default_config():
 			".gitconfig",
 			".profile",
 			".pypirc",
-			f"{get_config_path}",
+			f"{get_config_path()}",
 			".tmux.conf",
 			".vimrc",
 			".zlogin",
