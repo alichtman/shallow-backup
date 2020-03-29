@@ -3,9 +3,8 @@ from .backup import *
 from .prompts import *
 from .reinstall import *
 from .git_wrapper import *
-from .utils import (
-	mkdir_warn_overwrite, destroy_backup_dir, expand_to_abs_path,
-	new_dir_is_valid)
+from .utils import (mkdir_warn_overwrite, destroy_backup_dir,
+                    expand_to_abs_path, new_dir_is_valid)
 from .config import *
 from .upgrade import upgrade_from_pre_v3
 

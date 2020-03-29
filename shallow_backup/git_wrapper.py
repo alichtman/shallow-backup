@@ -4,6 +4,7 @@ import git
 from shutil import move
 from .printing import *
 from .config import get_config
+from .utils import safe_mkdir
 
 #########
 # GLOBALS
@@ -44,6 +45,7 @@ def create_gitignore(dir_path, key):
 	Handles backwards compatibility for the default-gitignore -> root-gitignore
 	change and the introduction of the dotfiles-gitignore key in v4.0.
 	"""
+	safe_mkdir(dir_path)
 	gitignore_path = os.path.join(dir_path, ".gitignore")
 	print_yellow_bold(f"Updating .gitignore file at {gitignore_path} with config from {key}")
 	try:
