@@ -1,5 +1,17 @@
 # Change Log
 
+## [v4.0.4](https://github.com/alichtman/shallow-backup/tree/v4.0.4) (2020-03-29)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.3...v4.0.4)
+
+**Fixed bugs:**
+
+- FileNotFoundError: ~/shallow-backup/dotfiles/.gitignore [\#257](https://github.com/alichtman/shallow-backup/issues/257)
+
+**Merged pull requests:**
+
+- Create dotfiles dir before creating .gitignore [\#259](https://github.com/alichtman/shallow-backup/pull/259) ([alichtman](https://github.com/alichtman))
+- Fix default config creation [\#258](https://github.com/alichtman/shallow-backup/pull/258) ([alichtman](https://github.com/alichtman))
+
 ## [v4.0.3](https://github.com/alichtman/shallow-backup/tree/v4.0.3) (2020-03-26)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.2...v4.0.3)
 
@@ -48,7 +60,6 @@
 
 **Merged pull requests:**
 
-- Refactor --add option and bump to v3.3 [\#250](https://github.com/alichtman/shallow-backup/pull/250) ([alichtman](https://github.com/alichtman))
 - Add CLI option for adding paths to config [\#248](https://github.com/alichtman/shallow-backup/pull/248) ([alichtman](https://github.com/alichtman))
 - Fix IsADirectory error upon reinstallation [\#246](https://github.com/alichtman/shallow-backup/pull/246) ([alichtman](https://github.com/alichtman))
 
@@ -172,6 +183,7 @@
 
 **Merged pull requests:**
 
+- Refactor --add option and bump to v3.3 [\#250](https://github.com/alichtman/shallow-backup/pull/250) ([alichtman](https://github.com/alichtman))
 - Remove Sublime \[2/3\] packages backup [\#203](https://github.com/alichtman/shallow-backup/pull/203) ([alichtman](https://github.com/alichtman))
 - \#200 added gitpython to setup.py [\#201](https://github.com/alichtman/shallow-backup/pull/201) ([AlexanderProd](https://github.com/AlexanderProd))
 
