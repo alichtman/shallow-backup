@@ -73,6 +73,12 @@ def reinstall_configs_sb(configs_path):
 		elif os.path.isfile(path_to_backup):
 			copyfile(path_to_backup, dest_path)
 
+	# reinstall crontab
+	with open("{0}/crontab.txt".format(configs_path), "r") as f:
+		for x in f:
+			cmd = "(crontab -l ; echo \"{0}\") | sort - | uniq - | crontab -".format(x)
+			run_cmd(cmd)
+
 	print_section_header("CONFIG REINSTALLATION COMPLETED", Fore.BLUE)
 
 
