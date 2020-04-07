@@ -78,7 +78,7 @@ def reinstall_configs_sb(configs_path):
 		for x in f:
 			# the replace sanitizes the crontab line of any present " characters.
 			sanitized = x.replace('"', '\\"')
-			cmd = f"(crontab -l ; echo \"{x}\") | sort - | uniq - | crontab -"
+			cmd = f"(crontab -l ; echo \"{sanitized}\") | sort - | uniq - | crontab -"
 			run_cmd(cmd)
 
 	print_section_header("CONFIG REINSTALLATION COMPLETED", Fore.BLUE)
