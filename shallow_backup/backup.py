@@ -83,7 +83,7 @@ def backup_configs(backup_path, skip=False):
 
 	# backup crontab
 	command = "crontab -l"
-	dest = os.path.join(backup_path, "/crontab.txt")
+	dest = os.path.join(backup_path, "crontab.txt")
 	run_cmd_write_stdout(command, dest)
 
 
