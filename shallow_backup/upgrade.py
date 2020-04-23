@@ -41,9 +41,6 @@ def upgrade_from_pre_v3():
 			else:
 				print_red_bold("Please downgrade to a version of shallow-backup before v3.0 if you do not want to upgrade your config.")
 				sys.exit()
-		elif os.path.isdir(old_config_path):
-			print_red_bold(f"ERROR: {old_config_path} is a directory, when we were expecting a file. Manual intervention is required.")
-			sys.exit(1)
 
 	# Clean up ~/.config/shallow-backup
 	incorrect_config_dir = os.path.join(get_xdg_config_path(), "shallow-backup")
