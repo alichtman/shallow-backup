@@ -16,7 +16,7 @@ def path_update_prompt(config):
 	"""
 	current_path = config["backup_path"]
 	print_path_blue("Current shallow-backup path:", current_path)
-	if prompt_yes_no("Would you like to update this?", Fore.GREEN, invert=True):
+	if prompt_yes_no("Would you like to move this somewhere else?", Fore.GREEN, invert=True):
 		while True:
 			print_green_bold("Enter relative or absolute path:")
 			abs_path = expand_to_abs_path(input())
