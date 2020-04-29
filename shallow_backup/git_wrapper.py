@@ -28,7 +28,7 @@ def git_set_remote(repo, remote_url):
 	Sets git repo upstream URL and fast-forwards history.
 	"""
 	print_path_yellow("Setting remote URL to:", "{}...".format(remote_url))
-
+	
 	try:
 		origin = repo.create_remote('origin', remote_url)
 		origin.fetch()
@@ -48,6 +48,7 @@ def create_gitignore(dir_path, key):
 	safe_mkdir(dir_path)
 	gitignore_path = os.path.join(dir_path, ".gitignore")
 	print_yellow_bold(f"Updating .gitignore file at {gitignore_path} with config from {key}")
+	files_to_ignore = []
 	try:
 		files_to_ignore = get_config()[key]
 	except KeyError:
@@ -88,7 +89,7 @@ def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
 		print_yellow_bold("Skipping commit to avoid git submodule error.")
 		print_yellow_bold("Issue tracked at: https://github.com/alichtman/shallow-backup/issues/229")
 		return
-
+	
 	if repo.index.diff(None) or repo.untracked_files:
 		print_yellow_bold("Making new commit...")
 		repo.git.add(A=True)
@@ -101,12 +102,12 @@ def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
 			print_red_bold(f"ERROR on Commit: {e.command}\n{error}\n")
 			print_red_bold("Issue tracked at: https://github.com/alichtman/shallow-backup/issues/229")
 			return
-
+		
 		print_yellow_bold("Successful commit.")
-
+		
 		if "origin" in [remote.name for remote in repo.remotes]:
 			print_path_yellow("Pushing to master:", "{}...".format(repo.remotes.origin.url))
-
+			
 			repo.git.fetch()
 			repo.git.push("--set-upstream", "origin", "master")
 	else:
@@ -122,7 +123,7 @@ def move_git_repo(source_path, dest_path):
 	dest_git_ignore = os.path.join(dest_path, '.gitignore')
 	git_exists = os.path.exists(dest_git_dir)
 	gitignore_exists = os.path.exists(dest_git_ignore)
-
+	
 	if git_exists or gitignore_exists:
 		print_red_bold("Evidence of a git repo has been detected.")
 		if git_exists:
@@ -131,10 +132,10 @@ def move_git_repo(source_path, dest_path):
 			print_path_red("A gitignore file already exists here:", dest_git_ignore)
 		print_red_bold("Exiting to prevent accidental deletion of user data.")
 		sys.exit(1)
-
+	
 	git_dir = os.path.join(source_path, '.git')
 	git_ignore_file = os.path.join(source_path, '.gitignore')
-
+	
 	try:
 		move(git_dir, dest_path)
 		move(git_ignore_file, dest_path)
