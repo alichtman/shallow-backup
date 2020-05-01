@@ -100,7 +100,6 @@ def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
 			print_red_bold(f"ERROR on Commit: {e.command}\n{error}\n")
 			print_red_bold("Issue tracked at: https://github.com/alichtman/shallow-backup/issues/229")
 			return
-		
 		print_yellow_bold("Successful commit.")
 		
 		if "origin" in [remote.name for remote in repo.remotes]:
