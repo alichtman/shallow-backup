@@ -88,7 +88,6 @@ def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
 		print_yellow_bold("Skipping commit to avoid git submodule error.")
 		print_yellow_bold("Issue tracked at: https://github.com/alichtman/shallow-backup/issues/229")
 		return
-	
 	if repo.index.diff(None) or repo.untracked_files:
 		print_yellow_bold("Making new commit...")
 		repo.git.add(A=True)
