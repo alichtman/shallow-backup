@@ -28,7 +28,6 @@ def git_set_remote(repo, remote_url):
 	Sets git repo upstream URL and fast-forwards history.
 	"""
 	print_path_yellow("Setting remote URL to:", "{}...".format(remote_url))
-	
 	try:
 		origin = repo.create_remote('origin', remote_url)
 		origin.fetch()
