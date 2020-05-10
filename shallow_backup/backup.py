@@ -74,7 +74,6 @@ def backup_configs(backup_path, skip=False):
 		print("TARGET:", target)
 		dest = os.path.join(backup_path, target)
 		if os.path.isdir(path_to_backup):
-			# TODO: Symlink to speed things up
 			copytree(path_to_backup, quote(dest), symlinks=True)
 		elif os.path.isfile(path_to_backup):
 			parent_dir = dest[:dest.rfind("/")]
