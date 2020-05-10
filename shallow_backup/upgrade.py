@@ -8,8 +8,7 @@ from .utils import home_prefix, safe_mkdir
 
 
 def upgrade_from_pre_v3():
-	"""
-	Before v3.0, the config file was stored at ~/.shallow-backup. In v3.0,
+	"""Before v3.0, the config file was stored at ~/.shallow-backup. In v3.0,
 	the XDG Base Directory specification was adopted and the new config is
 	stored in either $XDG_CONFIG_HOME/shallow-backup/shallow-backup.conf or
 	~/.config/shallow-backup.conf. This method upgrades from
