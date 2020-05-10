@@ -14,7 +14,7 @@ COMMIT_MSG = {
 	"fonts": "Back up fonts.",
 	"packages": "Back up packages.",
 	"configs": "Back up configs.",
-	"all": "Full back up.",
+	"full_backup": "Full back up.",
 	"dotfiles": "Back up dotfiles."
 }
 
@@ -54,7 +54,7 @@ def create_gitignore(dir_path, key):
 		if key == "root-gitignore":
 			files_to_ignore = get_config()["default-gitignore"]
 		elif key == "dotfiles-gitignore":
-			pass
+		    files_to_ignore = []
 	with open(os.path.join(dir_path, ".gitignore"), "w+") as f:
 		for ignore in files_to_ignore:
 			f.write("{}\n".format(ignore))

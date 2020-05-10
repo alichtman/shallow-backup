@@ -24,9 +24,9 @@ def get_config():
 	:return: dictionary for config
 	"""
 	config_path = get_config_path()
-	with open(config_path) as f:
+	with open(config_path) as file:
 		try:
-			config = json.load(f)
+			config = json.load(file)
 		except json.decoder.JSONDecodeError:
 			print_red_bold(f"ERROR: Invalid syntax in {config_path}")
 			sys.exit(1)
@@ -37,8 +37,8 @@ def write_config(config):
 	"""
 	Write to config file
 	"""
-	with open(get_config_path(), 'w') as f:
-		json.dump(config, f, indent=4)
+	with open(get_config_path(), 'w') as file:
+		json.dump(config, file, indent=4)
 
 
 def get_default_config():
@@ -46,8 +46,8 @@ def get_default_config():
 	Returns a default, platform specific config.
 	"""
 	return {
-		"backup_path"      : "~/shallow-backup",
-		"dotfiles"         : [
+		"backup_path": "~/shallow-backup",
+		"dotfiles": [
 			".bashrc",
 			".bash_profile",
 			".gitconfig",
@@ -60,7 +60,7 @@ def get_default_config():
 			".zprofile",
 			".zshrc"
 		],
-		"dotfolders"       : [
+		"dotfolders": [
 			".ssh",
 			".vim"
 		],
@@ -74,7 +74,7 @@ def get_default_config():
 			".pypirc",
 			".DS_Store",
 		],
-		"config_mapping"   : get_config_paths()
+		"config_mapping": get_config_paths()
 	}
 
 
@@ -90,18 +90,6 @@ def safe_create_config():
 		backup_config = get_default_config()
 		safe_mkdir(os.path.split(backup_config_path)[0])
 		write_config(backup_config)
-	else:
-		# If it does exist, make sure it's not outdated.
-		# TODO: Move this to upgrade.py
-		with open(backup_config_path) as config:
-			if "[USER]" in config.readline().strip():
-				if prompt_yes_no("An outdated config file has been detected. Would you like to update this?",
-				                 Fore.GREEN):
-					delete_config_file()
-					safe_create_config()
-				else:
-					print_red_bold("ERROR: Outdated config file found.")
-					sys.exit(0)
 
 
 def delete_config_file():

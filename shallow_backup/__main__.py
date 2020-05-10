@@ -12,7 +12,7 @@ from .upgrade import upgrade_from_pre_v3
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('--add_dot', default=None, help="Add a dotfile or dotfolder to config by path.")
-@click.option('-all', is_flag=True, default=False, help="Full back up.")
+@click.option('-full_backup', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
 @click.option('-destroy_backup', is_flag=True, default=False, help='Delete backup directory.')
@@ -31,7 +31,7 @@ from .upgrade import upgrade_from_pre_v3
 @click.option('-separate_dotfiles_repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
-def cli(add_dot, all, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
+def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
         no_splash, old_path, packages, reinstall_all, reinstall_configs,
         reinstall_dots, reinstall_fonts, reinstall_packages, remote,
         separate_dotfiles_repo, show, version):
@@ -46,10 +46,10 @@ def cli(add_dot, all, configs, delete_config, destroy_backup, dotfiles, fonts, n
 
 	# Process CLI args
 	admin_action = any([add_dot, delete_config, destroy_backup, show, version])
-	has_cli_arg = any([old_path, all, dotfiles, packages, fonts, configs,
+	has_cli_arg = any([old_path, full_backup, dotfiles, packages, fonts, configs,
 	                   reinstall_dots, reinstall_fonts, reinstall_all,
 	                   reinstall_configs, reinstall_packages])
-	skip_prompt = any([all, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
+	skip_prompt = any([full_backup, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
 	                   reinstall_fonts])
 
 	safe_create_config()
@@ -123,9 +123,9 @@ def cli(add_dot, all, configs, delete_config, destroy_backup, dotfiles, fonts, n
 			reinstall_dots_sb(dotfiles_path)
 		elif reinstall_all:
 			reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
-		elif all:
+		elif full_backup:
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path, skip=True)
-			git_add_all_commit_push(repo, "all")
+			git_add_all_commit_push(repo, "full_backup")
 		elif dotfiles:
 			backup_dotfiles(dotfiles_path, skip=True)
 			git_add_all_commit_push(repo, "dotfiles", separate_dotfiles_repo)
@@ -143,7 +143,7 @@ def cli(add_dot, all, configs, delete_config, destroy_backup, dotfiles, fonts, n
 		selection = main_menu_prompt().lower().strip()
 		selection_words = selection.split()
 		if selection.startswith("back up"):
-			if selection_words[-1] == "all":
+			if selection_words[-1] == "full_backup":
 				backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 				git_add_all_commit_push(repo, selection_words[-1])
 			elif selection_words[-1] == "dotfiles":
@@ -167,7 +167,7 @@ def cli(add_dot, all, configs, delete_config, destroy_backup, dotfiles, fonts, n
 				reinstall_fonts_sb(fonts_path)
 			elif selection_words[-1] == "dotfiles":
 				reinstall_dots_sb(dotfiles_path)
-			elif selection_words[-1] == "all":
+			elif selection_words[-1] == "full_backup":
 				reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
 		elif selection.endswith("config"):
 			if selection == "show config":

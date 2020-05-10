@@ -64,9 +64,9 @@ def mkdir_overwrite(path):
 			full_path = os.path.join(path, f)
 			# Allow dotfiles to be a sub-repo, and protect img folder.
 			if full_path.endswith(".git") or \
-			   full_path.endswith(".gitignore") or \
-			   full_path.endswith("README.md") or \
-			   full_path.endswith("img"):
+				full_path.endswith(".gitignore") or \
+				full_path.endswith("README.md") or \
+				full_path.endswith("img"):
 				continue
 
 			if os.path.isdir(full_path):
@@ -74,8 +74,11 @@ def mkdir_overwrite(path):
 			else:
 				files.append(full_path)
 
-		[os.remove(file) for file in files]
-		[rmtree(dir) for dir in dirs]
+		for file in files:
+			os.remove(file)
+
+		for directory in dirs:
+			rmtree(directory)
 	else:
 		os.makedirs(path)
 
@@ -152,7 +155,7 @@ def copy_dir_if_valid(source_dir, backup_path):
 	Copy dotfolder from $HOME, excluding invalid directories.
 	"""
 	invalid = {".Trash", ".npm", ".cache", ".rvm"}
-	if len(invalid.intersection(set(source_dir.split("/")))) != 0:
+	if invalid.intersection(set(source_dir.split("/"))) != set():
 		return
 	copytree(source_dir, backup_path, symlinks=False)
 
@@ -180,4 +183,5 @@ def expand_to_abs_path(path):
 
 
 def create_dir_if_doesnt_exist(path):
+	"""Create directory at path"""
 	os.makedirs(path, exist_ok=True)

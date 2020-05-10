@@ -66,17 +66,13 @@ def print_version_info(cli=True):
 
 
 def splash_screen():
-	"""
-	Display splash graphic, and then stylized version and author info.
-	"""
+	"""Display splash graphic, and then stylized version and author info."""
 	print(Fore.YELLOW + Style.BRIGHT + "\n" + ProjInfo.LOGO + Style.RESET_ALL)
 	print_version_info(False)
 
 
 def print_section_header(title, color):
-	"""
-	Prints variable sized section header
-	"""
+	"""Prints variable sized section header."""
 	block = "#" * (len(title) + 2)
 	print("\n" + color + Style.BRIGHT + block)
 	print("#", title)
