@@ -48,12 +48,12 @@ Usage: shallow-backup [OPTIONS]
 
 Options:
   --add_dot                Add a dotfile or dotfolder to config by path.
-  -all                     Full back up.
   -configs                 Back up app config files.
   -delete_config           Delete config file.
   -destroy_backup          Delete backup directory.
   -dotfiles                Back up dotfiles.
   -fonts                   Back up installed fonts.
+  -full_backup             Full back up.
   --new_path TEXT          Input a new back up directory path.
   -no_splash               Don't display splash screen.
   -old_path                Skip setting new back up directory path prompt.

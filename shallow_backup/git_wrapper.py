@@ -14,7 +14,7 @@ COMMIT_MSG = {
 	"fonts": "Back up fonts.",
 	"packages": "Back up packages.",
 	"configs": "Back up configs.",
-	"all": "Full back up.",
+	"full_backup": "Full back up.",
 	"dotfiles": "Back up dotfiles."
 }
 
