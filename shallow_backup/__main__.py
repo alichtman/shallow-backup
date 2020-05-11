@@ -4,7 +4,7 @@ from .prompts import *
 from .reinstall import *
 from .git_wrapper import *
 from .utils import (mkdir_warn_overwrite, destroy_backup_dir,
-                    expand_to_abs_path, new_dir_is_valid)
+					expand_to_abs_path, check_if_path_is_valid_dir)
 from .config import *
 from .upgrade import upgrade_from_pre_v3
 
@@ -28,13 +28,14 @@ from .upgrade import upgrade_from_pre_v3
 @click.option('-reinstall_fonts', is_flag=True, default=False, help="Reinstall fonts.")
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
-@click.option('-separate_dotfiles_repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
+@click.option('-separate_dotfiles_repo', is_flag=True, default=False,
+			  help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
 def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
-        no_splash, old_path, packages, reinstall_all, reinstall_configs,
-        reinstall_dots, reinstall_fonts, reinstall_packages, remote,
-        separate_dotfiles_repo, show, version):
+		no_splash, old_path, packages, reinstall_all, reinstall_configs,
+		reinstall_dots, reinstall_fonts, reinstall_packages, remote,
+		separate_dotfiles_repo, show, version):
 	"""
 	\b
 	Easily back up installed packages, dotfiles, and more.
@@ -47,10 +48,11 @@ def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, 
 	# Process CLI args
 	admin_action = any([add_dot, delete_config, destroy_backup, show, version])
 	has_cli_arg = any([old_path, full_backup, dotfiles, packages, fonts, configs,
-	                   reinstall_dots, reinstall_fonts, reinstall_all,
-	                   reinstall_configs, reinstall_packages])
-	skip_prompt = any([full_backup, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
-	                   reinstall_fonts])
+					   reinstall_dots, reinstall_fonts, reinstall_all,
+					   reinstall_configs, reinstall_packages])
+	skip_prompt = any(
+		[full_backup, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
+		 reinstall_fonts])
 
 	safe_create_config()
 	backup_config = get_config()
@@ -79,7 +81,7 @@ def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, 
 	if new_path:
 		abs_path = os.path.abspath(new_path)
 
-		if not new_dir_is_valid(abs_path):
+		if not check_if_path_is_valid_dir(abs_path):
 			sys.exit(1)
 
 		print_path_blue("\nUpdating shallow-backup path to:", abs_path)

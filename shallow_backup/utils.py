@@ -36,7 +36,8 @@ def run_cmd_write_stdout(command, filepath):
 		return 1
 
 
-def new_dir_is_valid(abs_path):
+def check_if_path_is_valid_dir(abs_path):
+	"""Returns False is the path leads to a file, True otherwise."""
 	if os.path.isfile(abs_path):
 		print_path_red('New path is a file:', abs_path)
 		print_red_bold('Please enter a directory.\n')
@@ -45,9 +46,7 @@ def new_dir_is_valid(abs_path):
 
 
 def safe_mkdir(directory):
-	"""
-	Makes directory if it doesn't already exist.
-	"""
+	"""Makes directory if it doesn't already exist."""
 	if not os.path.isdir(directory):
 		os.makedirs(directory)
 
@@ -114,15 +113,14 @@ def overwrite_dir_prompt_if_needed(path, needed):
 
 
 def empty_backup_dir_check(backup_path, backup_type):
+	"""Exit if the backup_path is not a directory or contains no files."""
 	if not os.path.isdir(backup_path) or not os.listdir(backup_path):
 		print_red_bold('No {} backup found.'.format(backup_type))
 		sys.exit(1)
 
 
 def destroy_backup_dir(backup_path):
-	"""
-	Deletes the backup directory and its content
-	"""
+	"""Deletes the backup directory and its content"""
 	try:
 		print_path_red("Deleting backup directory:", backup_path)
 		rmtree(backup_path)
@@ -183,5 +181,5 @@ def expand_to_abs_path(path):
 
 
 def create_dir_if_doesnt_exist(path):
-	"""Create directory at path"""
+	"""Create directory at path if it doesn't exist already"""
 	os.makedirs(path, exist_ok=True)

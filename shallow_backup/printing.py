@@ -89,6 +89,7 @@ def print_pkg_mgr_reinstall(mgr):
 												  mgr, Fore.BLUE, Style.NORMAL, Style.RESET_ALL))
 
 
+# TODO: BUG: Why does moving this to prompts.py cause circular imports?
 def prompt_yes_no(message, color, invert=False):
 	"""
 	Print question and return True or False depending on user selection from list.
@@ -104,3 +105,5 @@ def prompt_yes_no(message, color, invert=False):
 		return answers.get('choice').strip().lower() == 'yes'
 	else:
 		sys.exit(1)
+
+
