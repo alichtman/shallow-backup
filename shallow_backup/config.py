@@ -55,14 +55,12 @@ def get_default_config():
 			".pypirc",
 			f"{get_config_path()}",
 			".tmux.conf",
+			".ssh",
+			".vim"
 			".vimrc",
 			".zlogin",
 			".zprofile",
-			".zshrc"
-		],
-		"dotfolders": [
-			".ssh",
-			".vim"
+			".zshrc",
 		],
 		"root-gitignore": [
 			"dotfiles/.ssh",
@@ -106,10 +104,9 @@ def delete_config_file():
 
 def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 	"""
-	Add a path to the config under the correct heading (dotfiles / dotfolders).
-	Exits if the filepath parameter is invalid.
+	Add a path to the config under the dots key. Exits if the file_path parameter is invalid.
 	:backup_config: dict representing current config
-	:add:           str  relative or absolute path of file to add to config
+	:file_path:     str  relative or absolute path of file to add to config
 	:return new backup config
 	"""
 	def strip_home(full_path):
@@ -122,10 +119,8 @@ def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 	if not path.exists(abs_path):
 		print_path_red("Invalid file path:", abs_path)
 		sys.exit(1)
-	elif path.isdir(abs_path):
-		backup_config["dotfolders"] += [strip_home(abs_path)]
-	else:  # Otherwise it's a dotfile
-		backup_config["dotfiles"] += [strip_home(abs_path)]
+	else:
+		backup_config["dots"] += [strip_home(abs_path)]
 	return backup_config
 
 
@@ -142,7 +137,8 @@ def show_config():
 			print_red_bold("\nConfigs:")
 			for path, dest in contents.items():
 				print("    {} -> {}".format(path, dest))
-		# Print section header and intent contents. (Dotfiles/folders)
+		# Print section header and intent contents. (Dotfiles)
+		# TODO: Update
 		else:
 			print_red_bold("\n{}: ".format(section.replace("-", " ").capitalize()))
 			for item in contents:
