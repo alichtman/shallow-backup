@@ -31,11 +31,11 @@ def reinstall_dots_sb(dots_path, home_path=os.path.expanduser("~")):
 		else:
 			destination = home_path
 		try:
-		    copy(file, destination)
+			copy(file, destination)
 		except PermissionError as err:
-		    print_red_bold(f"ERROR: {err}")
+			print_red_bold(f"ERROR: {err}")
 		except FileNotFoundError as err:
-		    print_red_bold(f"ERROR: {err}")
+			print_red_bold(f"ERROR: {err}")
 	print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
 
 
@@ -129,7 +129,7 @@ def reinstall_packages_sb(packages_path):
 			print_red_bold("WARNING: Gem reinstallation is not supported.")
 		elif pm == "cargo":
 			print_red_bold("WARNING: Cargo reinstallation is not possible at the moment.\
-			               \n -> https://github.com/rust-lang/cargo/issues/5593")
+						   \n -> https://github.com/rust-lang/cargo/issues/5593")
 
 	print_section_header("PACKAGE REINSTALLATION COMPLETED", Fore.BLUE)
 
