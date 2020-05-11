@@ -46,7 +46,7 @@ def check_if_path_is_valid_dir(abs_path):
 
 
 def safe_mkdir(directory):
-	"""Makes directory if it doesn't already exist."""
+	"""Makes directory if it doesn't already exist, creating all intermediate directories."""
 	if not os.path.isdir(directory):
 		os.makedirs(directory)
 
@@ -128,9 +128,8 @@ def destroy_backup_dir(backup_path):
 		print_red_bold("Error: {} - {}".format(e.filename, e.strerror))
 
 
-def get_abs_path_subfiles(directory):
-	"""
-	Returns list of absolute paths of files and folders contained in a directory,
+def get_abs_path_subfiles(directory: str) -> list:
+	"""Returns list of absolute paths of files and folders contained in a directory,
 	excluding the .git directory, .gitignore, img/ and README.md in the root dir.
 	"""
 	file_paths = []

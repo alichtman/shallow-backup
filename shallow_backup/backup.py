@@ -14,7 +14,7 @@ def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=Fa
 	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
 	Assumes that dotfiles are stored in the home directory.
 	:param skip: Boolean flag to skip prompting for overwrite. Used for scripting.
-	:param backup_dest_path: Destination path for dotfiles. Like, ~/shallow-backup/dotfiles
+	:param backup_dest_path: Destination path for dotfiles. Like, ~/shallow-backup/dotfiles. Used in tests.
 	:param home_path: Path where dotfiles will be found. $HOME by default.
 	"""
 	print_section_header("DOTFILES", Fore.BLUE)

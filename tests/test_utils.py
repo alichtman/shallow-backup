@@ -29,16 +29,10 @@ FAKE_HOME_DIR = os.environ.get("SHALLOW_BACKUP_TEST_SOURCE_DIR")
 DIRS = [BACKUP_DEST_DIR, FAKE_HOME_DIR]
 
 DOTFILES = [
-	os.path.join(FAKE_HOME_DIR, ".bashrc"),
-	os.path.join(FAKE_HOME_DIR, ".bash_profile"),
-	os.path.join(FAKE_HOME_DIR, ".gitconfig"),
-	os.path.join(FAKE_HOME_DIR, ".profile"),
-	os.path.join(FAKE_HOME_DIR, ".pypirc"),
-	os.path.join(FAKE_HOME_DIR, ".vimrc"),
-	os.path.join(FAKE_HOME_DIR, ".zshrc")
-]
-
-DOTFOLDERS = [
 	os.path.join(FAKE_HOME_DIR, ".ssh"),
-	os.path.join(FAKE_HOME_DIR, ".vim")
+	os.path.join(FAKE_HOME_DIR, ".config/git"),
+	os.path.join(FAKE_HOME_DIR, ".zshenv"),
+	os.path.join(FAKE_HOME_DIR, ".pypirc"),
+	os.path.join(FAKE_HOME_DIR, ".config/nvim/init.vim"),
+	os.path.join(FAKE_HOME_DIR, ".config/zsh/.zshrc")
 ]

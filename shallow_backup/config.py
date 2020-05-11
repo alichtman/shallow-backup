@@ -48,19 +48,18 @@ def get_default_config():
 	return {
 		"backup_path": "~/shallow-backup",
 		"dotfiles": [
-			".bashrc",
 			".bash_profile",
-			".gitconfig",
+			".bashrc",
+			".config/git",
+			".config/nvim/init.vim",
+			".config/tmux",
+			".config/zsh",
 			".profile",
 			".pypirc",
-			f"{get_config_path()}",
-			".tmux.conf",
+			".pypirc",
 			".ssh",
-			".vim"
-			".vimrc",
-			".zlogin",
-			".zprofile",
-			".zshrc",
+			".zshenv",
+			f"{get_config_path()}",
 		],
 		"root-gitignore": [
 			"dotfiles/.ssh",

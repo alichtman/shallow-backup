@@ -36,7 +36,6 @@ class TestReinstallDotfiles:
             create_file(git_objects, "obj1")
             return git_dir
 
-
         setup_env_vars()
         create_config_for_test()
         for directory in DIRS:
@@ -57,8 +56,8 @@ class TestReinstallDotfiles:
         testfolder = create_dir(DOTFILES_PATH, "testfolder1/")
         testfolder2 = create_dir(testfolder, "testfolder2/")
 
-        git_dir_should_not_reinstall = create_git_dir(DOTFILES_PATH)
-        git_dir_should_reinstall = create_git_dir(testfolder2)
+        create_git_dir(DOTFILES_PATH)  # Should NOT reinstall DOTFILES_PATH/.git
+        create_git_dir(testfolder2)    # Should reinstall DOTFILES_PATH/testfolder2/.git
 
         # Dotfiles / folders to not reinstall
         img_dir_should_not_reinstall = create_dir(DOTFILES_PATH, "img")
