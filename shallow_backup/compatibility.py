@@ -32,7 +32,7 @@ def get_config_paths():
 			atom_path: "atom",
 			terminal_path: "terminal_plist"
 		}
-	else:
+	else:  # Linux paths
 		sublime2_path = "/.config/sublime-text-2"
 		sublime3_path = "/.config/sublime-text-3"
 		vscode_path_1 = "/.config/Code/User/settings.json"
@@ -56,7 +56,7 @@ def get_fonts_dir():
 	if os_name == "darwin":
 		return os.path.join(get_home(), "Library/Fonts")
 	elif os_name == "linux":
-		return os.path.join(get_home(), ".fonts")
+		return os.path.join("/usr/local/share/fonts")
 
 
 def get_applications_dir():
