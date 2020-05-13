@@ -40,6 +40,8 @@ And is incredibly fault tolerant and user-protective.
 ### Installation
 ---
 
+**Do not install this as `root`.**
+
 1. Install with [`pip3`](https://pypi.org/project/shallow-backup/)
     + `$ pip3 install shallow-backup`
     + `$ shallow-backup`
