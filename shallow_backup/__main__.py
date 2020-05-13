@@ -6,7 +6,7 @@ from .git_wrapper import *
 from .utils import (mkdir_warn_overwrite, destroy_backup_dir,
 					expand_to_abs_path, check_if_path_is_valid_dir)
 from .config import *
-from .upgrade import upgrade_from_pre_v3
+from .upgrade import check_if_config_upgrade_needed
 
 
 # custom help options
@@ -43,18 +43,18 @@ def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, 
 
 	Written by Aaron Lichtman (@alichtman).
 	"""
-	upgrade_from_pre_v3()
+	safe_create_config()
+	check_if_config_upgrade_needed()
 
 	# Process CLI args
 	admin_action = any([add_dot, delete_config, destroy_backup, show, version])
 	has_cli_arg = any([old_path, full_backup, dotfiles, packages, fonts, configs,
 					   reinstall_dots, reinstall_fonts, reinstall_all,
 					   reinstall_configs, reinstall_packages])
-	skip_prompt = any(
-		[full_backup, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
-		 reinstall_fonts])
+	skip_prompt = any([full_backup, dotfiles, configs, packages, fonts,
+					   reinstall_packages, reinstall_configs, reinstall_dots,
+					   reinstall_fonts])
 
-	safe_create_config()
 	backup_config = get_config()
 
 	# Perform administrative action and exit.

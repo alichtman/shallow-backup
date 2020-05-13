@@ -4,13 +4,18 @@ from os import path, environ
 from .printing import *
 from .compatibility import *
 from .utils import safe_mkdir
+from .constants import ProjInfo
 
 
 def get_xdg_config_path():
 	return environ.get('XDG_CONFIG_HOME') or path.join(path.expanduser('~'), '.config')
 
 
-def get_config_path():
+def get_config_path() -> str:
+	"""
+	Detects if in testing or prod env, and returns the right config path.
+	:return: Path to config.
+	"""
 	test_config_path = environ.get('SHALLOW_BACKUP_TEST_CONFIG_PATH', None)
 	if test_config_path:
 		return test_config_path
@@ -18,10 +23,9 @@ def get_config_path():
 		return path.join(get_xdg_config_path(), "shallow-backup.conf")
 
 
-def get_config():
+def get_config() -> dict:
 	"""
-	Returns the config.
-	:return: dictionary for config
+	:return Config.
 	"""
 	config_path = get_config_path()
 	with open(config_path) as file:
@@ -42,25 +46,55 @@ def write_config(config):
 
 
 def get_default_config():
-	"""
-	Returns a default, platform specific config.
-	"""
+	"""Returns a default, platform specific config."""
 	return {
 		"backup_path": "~/shallow-backup",
-		"dotfiles": [
-			".bash_profile",
-			".bashrc",
-			".config/git",
-			".config/nvim/init.vim",
-			".config/tmux",
-			".config/zsh",
-			".profile",
-			".pypirc",
-			".pypirc",
-			".ssh",
-			".zshenv",
-			f"{get_config_path()}",
-		],
+		"dotfiles": {
+			".bash_profile": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".bashrc": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".config/git": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".config/nvim/init.vim": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".config/tmux": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".config/zsh": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".profile": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".pypirc": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".ssh": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			".zshenv": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+			f"{get_config_path()}": {
+				"reinstall_condition": "",
+				"backup_condition": "",
+			},
+		},
 		"root-gitignore": [
 			"dotfiles/.ssh",
 			"dotfiles/.pypirc",
@@ -71,7 +105,8 @@ def get_default_config():
 			".pypirc",
 			".DS_Store",
 		],
-		"config_mapping": get_config_paths()
+		"config_mapping": get_config_paths(),
+		"lowest_supported_version": ProjInfo.VERSION
 	}
 
 
@@ -103,11 +138,13 @@ def delete_config_file():
 
 def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 	"""
-	Add a path to the config under the dots key. Exits if the file_path parameter is invalid.
+	Add dotfile to config with default reinstall and backup conditions.
+	Exit if the file_path parameter is invalid.
 	:backup_config: dict representing current config
 	:file_path:     str  relative or absolute path of file to add to config
 	:return new backup config
 	"""
+
 	def strip_home(full_path):
 		"""
 		Removes the path to $HOME from the front of the absolute path.
@@ -119,7 +156,7 @@ def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 		print_path_red("Invalid file path:", abs_path)
 		sys.exit(1)
 	else:
-		backup_config["dots"] += [strip_home(abs_path)]
+		backup_config["dotfiles"][strip_home(abs_path)] = {"reinstall_condition": "", "backup_condition": ""}
 	return backup_config
 
 
@@ -135,10 +172,23 @@ def show_config():
 		elif section == "config_mapping":
 			print_red_bold("\nConfigs:")
 			for path, dest in contents.items():
-				print("    {} -> {}".format(path, dest))
-		# Print section header and intent contents. (Dotfiles)
-		# TODO: Update
+				print(f"    {path} -> {dest}")
+		# Print section header and contents. (Dotfiles)
+		elif section == "dotfiles":
+			print_path_red("\nDotfiles:", "(Backup and Reinstall conditions will be shown if they exist)")
+			for dotfile, options in contents.items():
+
+				backup_condition = options['backup_condition']
+				reinstall_condition = options['reinstall_condition']
+				if backup_condition or reinstall_condition:
+					print(f"    {dotfile} ->")
+					print(f"\t\tbackup_condition: \"{backup_condition}\"")
+					print(f"\t\treinstall_condition: \"{reinstall_condition}\"")
+				else:
+					print(f"    {dotfile}")
+		elif section == "lowest_supported_version":
+			print_path_red(f"{section.replace('_', ' ').capitalize()}:", contents)
 		else:
-			print_red_bold("\n{}: ".format(section.replace("-", " ").capitalize()))
+			print_red_bold(f"\n{section.replace('-', ' ').capitalize()}: ")
 			for item in contents:
-				print("    {}".format(item))
+				print(f"    {item}")

@@ -1,9 +1,10 @@
 import os
 import sys
-import shutil
-from .test_utils import FAKE_HOME_DIR, DIRS, setup_env_vars, create_config_for_test
+from .testing_utility_functions import FAKE_HOME_DIR, setup_dirs_and_env_vars_and_create_config, clean_up_dirs_and_env_vars
+
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.reinstall import reinstall_dots_sb
+from shallow_backup.config import get_config, write_config
 
 TEST_TEXT_CONTENT = 'THIS IS TEST CONTENT FOR THE DOTFILES'
 DOTFILES_PATH = os.path.join(FAKE_HOME_DIR, "dotfiles/")
@@ -17,10 +18,11 @@ class TestReinstallDotfiles:
     @staticmethod
     def setup_method():
 
-        def create_dir(parent, name):
+        def create_nested_dir(parent, name):
             new_dir = os.path.join(parent, name)
             print(f"Creating {new_dir}")
-            os.mkdir(new_dir)
+            if not os.path.isdir(new_dir):
+                os.makedirs(new_dir)
             return new_dir
 
         def create_file(parent, name):
@@ -30,69 +32,63 @@ class TestReinstallDotfiles:
                 f.write(TEST_TEXT_CONTENT)
 
         def create_git_dir(parent):
-            git_dir = create_dir(parent, ".git/")
-            git_objects = create_dir(git_dir, "objects/")
+            git_dir = create_nested_dir(parent, ".git/")
+            git_objects = create_nested_dir(git_dir, "objects/")
             create_file(git_dir, "config")
             create_file(git_objects, "obj1")
             return git_dir
 
-        setup_env_vars()
-        create_config_for_test()
-        for directory in DIRS:
-            try:
-                os.mkdir(directory)
-            except FileExistsError:
-                shutil.rmtree(directory)
-                os.mkdir(directory)
+        setup_dirs_and_env_vars_and_create_config()
 
-        # SAMPLE DOTFILES FOLDER PATH
-        try:
-            os.mkdir(DOTFILES_PATH)
-        except FileExistsError:
-            shutil.rmtree(DOTFILES_PATH)
-            os.mkdir(DOTFILES_PATH)
+        # NOTE that these tests use the default included config. I remove the config
+        #      from the backup list because otherwise it tries to reinstall it at the
+        #      same path, which causes an error.
 
-        # SAMPLE SUBFOLDER IN DOTFILES PATH
-        testfolder = create_dir(DOTFILES_PATH, "testfolder1/")
-        testfolder2 = create_dir(testfolder, "testfolder2/")
+        config = get_config()
+        config["dotfiles"][os.environ["SHALLOW_BACKUP_TEST_CONFIG_PATH"]]["reinstall_condition"] = "false"
+        write_config(config)
 
+        # Dotfiles / dirs to NOT reinstall
         create_git_dir(DOTFILES_PATH)  # Should NOT reinstall DOTFILES_PATH/.git
-        create_git_dir(testfolder2)    # Should reinstall DOTFILES_PATH/testfolder2/.git
-
-        # Dotfiles / folders to not reinstall
-        img_dir_should_not_reinstall = create_dir(DOTFILES_PATH, "img")
+        img_dir_should_not_reinstall = create_nested_dir(DOTFILES_PATH, "img")
         create_file(img_dir_should_not_reinstall, "test.png")
         create_file(DOTFILES_PATH, "README.md")
-
-        # SAMPLE DOTFILES TO REINSTALL
-        create_file(testfolder2, ".testsubfolder_rc1")
-        create_file(testfolder2, ".gitignore")
         create_file(DOTFILES_PATH, ".gitignore")
-        create_file(testfolder2, ".testsubfolder_rc2")
-        create_file(DOTFILES_PATH, ".testrc")
+
+        # Dotfiles / dirs to reinstall
+        testfolder = create_nested_dir(DOTFILES_PATH, ".config/tmux/")
+        testfolder2 = create_nested_dir(testfolder, "testfolder2/")
+        create_file(testfolder2, "test.sh")
+        create_git_dir(testfolder2)
+        git_config = create_nested_dir(DOTFILES_PATH, ".config/git")
+        create_file(git_config, "test")
+        create_file(testfolder2, ".gitignore")
+        create_file(DOTFILES_PATH, ".zshenv")
 
     @staticmethod
     def teardown_method():
-        for directory in DIRS:
-            shutil.rmtree(directory)
+        clean_up_dirs_and_env_vars()
 
     def test_reinstall_dotfiles(self):
         """
-        Test resintalling dotfiles to fake home dir
+        Test reinstalling dotfiles to fake home dir
         """
-        reinstall_dots_sb(DOTFILES_PATH, home_path=FAKE_HOME_DIR)
-        assert os.path.isfile(os.path.join(FAKE_HOME_DIR, '.testrc'))
-        testfolder2 = os.path.join(os.path.join(FAKE_HOME_DIR, 'testfolder1'), 'testfolder2')
+        reinstall_dots_sb(dots_path=DOTFILES_PATH, home_path=FAKE_HOME_DIR)
+        assert os.path.isfile(os.path.join(FAKE_HOME_DIR, '.zshenv'))
+        testfolder2 = os.path.join(os.path.join(FAKE_HOME_DIR, '.config/tmux/'), 'testfolder2')
         assert os.path.isdir(testfolder2)
-        assert os.path.isfile(os.path.join(testfolder2, '.testsubfolder_rc1'))
-        assert os.path.isfile(os.path.join(testfolder2, '.testsubfolder_rc2'))
+        assert os.path.isfile(os.path.join(testfolder2, 'test.sh'))
+        assert os.path.isdir(os.path.join(FAKE_HOME_DIR, '.config/git/'))
+
+        # Do reinstall other git files
+        assert os.path.isdir(os.path.join(testfolder2, ".git"))
+        assert os.path.isfile(os.path.join(testfolder2, ".gitignore"))
 
         # Don't reinstall root-level git files
         assert not os.path.isdir(os.path.join(FAKE_HOME_DIR, ".git"))
         assert not os.path.isfile(os.path.join(FAKE_HOME_DIR, ".gitignore"))
+
         # Don't reinstall img or README.md
         assert not os.path.isdir(os.path.join(FAKE_HOME_DIR, "img"))
         assert not os.path.isfile(os.path.join(FAKE_HOME_DIR, "README.md"))
-        # Do reinstall all other git files
-        assert os.path.isdir(os.path.join(testfolder2, ".git"))
-        assert os.path.isfile(os.path.join(testfolder2, ".gitignore"))
+

@@ -1,11 +1,10 @@
 import os
-import sys
 import subprocess as sp
 from shutil import rmtree, copytree
 from .printing import *
 
 
-def run_cmd(command):
+def run_cmd(command: str):
 	"""
 	Wrapper on subprocess.run to handle shell commands as either a list of args
 	or a single string.
@@ -21,9 +20,10 @@ def run_cmd(command):
 		return None
 
 
-def run_cmd_write_stdout(command, filepath):
+def run_cmd_write_stdout(command, filepath) -> int:
 	"""
-	Runs a command and then writes its stdout to a file
+	Runs a command and then writes its stdout to a file.
+	Returns the returncode if the return value is not 0.
 	:param: command str representing command to run
 	:param: filepath str file to write command's stdout to
 	"""
@@ -31,9 +31,37 @@ def run_cmd_write_stdout(command, filepath):
 	if process and process.returncode == 0:
 		with open(filepath, "w+") as f:
 			f.write(process.stdout.decode('utf-8'))
+	elif process:
+		print_path_red("An error occurred while running: $", command)
+		return process.returncode
 	else:
 		print_path_red("An error occurred while running: $", command)
-		return 1
+		return -1
+
+
+def run_cmd_return_bool(command: str) -> bool:
+	"""Run a bash command and return True if the exit code is 0, False otherwise"""
+	return os.system(command) == 0
+
+
+def evaluate_condition(condition: str, backup_or_reinstall: str, dotfile_path: str) -> bool:
+	"""Evaluates the condition, if it exists, in bash and returns True or False, while providing output
+	detailing what is going on.
+	:param condition: A string that will be evaluated by bash.
+	:param backup_or_reinstall: The only valid inputs are: "backup" or "reinstall"
+	:param dotfile_path: Path to dotfile (relative to $HOME, or absolute) for which the condition is being evaluated
+	"""
+	if condition:
+		print_blue(f"\n{backup_or_reinstall.capitalize()} condition detected for {dotfile_path}.")
+		condition_success = run_cmd_return_bool(condition)
+		if not condition_success:
+			print_blue(f"SKIPPING {backup_or_reinstall.lower()} based on <{condition}>")
+			return False
+		else:
+			print_blue(f"NOT skipping {backup_or_reinstall.lower()} based on <{condition}>")
+			return True
+	else:
+		return True
 
 
 def check_if_path_is_valid_dir(abs_path):
@@ -48,7 +76,7 @@ def check_if_path_is_valid_dir(abs_path):
 def safe_mkdir(directory):
 	"""Makes directory if it doesn't already exist, creating all intermediate directories."""
 	if not os.path.isdir(directory):
-		os.makedirs(directory)
+		os.makedirs(directory, exist_ok=True)
 
 
 def mkdir_overwrite(path):
@@ -99,20 +127,20 @@ def mkdir_warn_overwrite(path):
 		print_path_blue("Created directory:", path)
 
 
-def overwrite_dir_prompt_if_needed(path, needed):
+def overwrite_dir_prompt_if_needed(path: str, no_prompt: bool):
 	"""
 	Prompts the user before deleting the directory if needed.
 	This function lets the CLI args silence the prompts.
 	:param path: absolute path
-	:param needed: boolean
+	:param no_prompt: Flag that determines if prompting the user is needed.
 	"""
-	if not needed:
+	if not no_prompt:
 		mkdir_warn_overwrite(path)
 	else:
 		mkdir_overwrite(path)
 
 
-def empty_backup_dir_check(backup_path, backup_type):
+def exit_if_dir_is_empty(backup_path: str, backup_type: str):
 	"""Exit if the backup_path is not a directory or contains no files."""
 	if not os.path.isdir(backup_path) or not os.listdir(backup_path):
 		print_red_bold('No {} backup found.'.format(backup_type))
@@ -131,6 +159,7 @@ def destroy_backup_dir(backup_path):
 def get_abs_path_subfiles(directory: str) -> list:
 	"""Returns list of absolute paths of files and folders contained in a directory,
 	excluding the .git directory, .gitignore, img/ and README.md in the root dir.
+	:param directory: Absolute path to directory to search
 	"""
 	file_paths = []
 	for path, _, files in os.walk(directory):
@@ -149,7 +178,7 @@ def get_abs_path_subfiles(directory: str) -> list:
 
 def copy_dir_if_valid(source_dir, backup_path):
 	"""
-	Copy dotfolder from $HOME, excluding invalid directories.
+	Copy dotfolder from source_dir to backup_path, excluding invalid directories.
 	"""
 	invalid = {".Trash", ".npm", ".cache", ".rvm"}
 	if invalid.intersection(set(source_dir.split("/"))) != set():
@@ -178,7 +207,3 @@ def expand_to_abs_path(path):
 	expanded_path = os.path.expandvars(expanded_path)
 	return os.path.abspath(expanded_path)
 
-
-def create_dir_if_doesnt_exist(path):
-	"""Create directory at path if it doesn't exist already"""
-	os.makedirs(path, exist_ok=True)

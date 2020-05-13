@@ -1,38 +1,40 @@
-import os
 import sys
+from .testing_utility_functions import setup_env_vars, unset_env_vars
 sys.path.insert(0, "../shallow_backup")
-from shallow_backup.config import safe_create_config
+from shallow_backup.utils import run_cmd_return_bool
 
 
-def setup_env_vars():
-	os.environ["SHALLOW_BACKUP_TEST_DEST_DIR"] = "/tmp/shallow-backup-test-dest-dir"
-	os.environ["SHALLOW_BACKUP_TEST_SOURCE_DIR"] = "/tmp/shallow-backup-test-source-dir"
-	os.environ["SHALLOW_BACKUP_TEST_CONFIG_PATH"] = "/tmp/shallow-backup.conf"
+class TestUtilMethods:
+	"""
+	Test the functionality of utils
+	"""
+
+	@staticmethod
+	def setup_method():
+		setup_env_vars()
+
+	@staticmethod
+	def teardown_method():
+		unset_env_vars()
+
+	def test_run_cmd_return_bool(self):
+		"""Test that evaluating bash commands to get booleans works as expected"""
+
+		# Basic bash conditionals with command substitution
+		should_fail = "[[ -z $(uname -s) ]]"
+		assert run_cmd_return_bool(should_fail) is False
+
+		should_pass = "[[ -n $(uname -s) ]]"
+		assert run_cmd_return_bool(should_pass) is True
+
+		# Using env vars
+		should_pass = "[[ -n \"$SHALLOW_BACKUP_TEST_BACKUP_DIR\" ]]"
+		assert run_cmd_return_bool(should_pass) is True
+
+		should_pass = "[[ -n $SHALLOW_BACKUP_TEST_BACKUP_DIR ]]"
+		assert run_cmd_return_bool(should_pass) is True
 
 
-def unset_env_vars():
-	del os.environ["SHALLOW_BACKUP_TEST_DEST_DIR"]
-	del os.environ["SHALLOW_BACKUP_TEST_SOURCE_DIR"]
-	del os.environ["SHALLOW_BACKUP_TEST_CONFIG_PATH"]
 
 
-def create_config_for_test():
-	config_file = os.environ["SHALLOW_BACKUP_TEST_CONFIG_PATH"]
-	if os.path.isfile(config_file):
-		os.remove(config_file)
-	safe_create_config()
 
-
-setup_env_vars()
-BACKUP_DEST_DIR = os.environ.get("SHALLOW_BACKUP_TEST_DEST_DIR")
-FAKE_HOME_DIR = os.environ.get("SHALLOW_BACKUP_TEST_SOURCE_DIR")
-DIRS = [BACKUP_DEST_DIR, FAKE_HOME_DIR]
-
-DOTFILES = [
-	os.path.join(FAKE_HOME_DIR, ".ssh"),
-	os.path.join(FAKE_HOME_DIR, ".config/git"),
-	os.path.join(FAKE_HOME_DIR, ".zshenv"),
-	os.path.join(FAKE_HOME_DIR, ".pypirc"),
-	os.path.join(FAKE_HOME_DIR, ".config/nvim/init.vim"),
-	os.path.join(FAKE_HOME_DIR, ".config/zsh/.zshrc")
-]

@@ -5,7 +5,7 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1719da4d7df5455d8dbb4340c428f851)](https://www.codacy.com/app/alichtman/shallow-backup?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alichtman/shallow-backup&amp;utm_campaign=Badge_Grade)
 <!-- [![Coverage Status](https://coveralls.io/repos/github/alichtman/shallow-backup/badge.svg?branch=master)](https://coveralls.io/github/alichtman/shallow-backup?branch=master) -->
 
-`shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles, and automatically push them to a remote Git repository.
+`shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles, and automatically push them to a remote Git repository. It is the **only** backup tool that lets you back up dotfiles _from where they live on the system_ and reinstall them from the backup directory idempotently. It also lets you backup and reinstall files conditionally, so that you can easily manage dotfiles across multiple systems.
 
 ![Shallow Backup GIF Demo](img/shallow-backup-demo.gif)
 
@@ -16,7 +16,7 @@ Contents
  * [Usage](#usage)
  * [Git Integration](#git-integration)
  * [What can I back up?](#what-can-i-back-up)
- * [Backup Customization](#backup-customization)
+ * [Configuration](#configuration)
  * [Output Structure](#output-structure)
  * [Reinstalling Dotfiles](#reinstalling-dotfiles)
  * [Inspiration](#inspiration)
@@ -36,10 +36,10 @@ Contents
 
 To start the interactive program, simply run `$ shallow-backup`.
 
-`shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line args.
+`shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line arguments.
 
 ```shell
-Usage: shallow-backup [OPTIONS]
+Usage: __main__.py [OPTIONS]
 
   Easily back up installed packages, dotfiles, and more.
   You can edit which files are backed up in ~/.shallow-backup.
@@ -47,13 +47,13 @@ Usage: shallow-backup [OPTIONS]
   Written by Aaron Lichtman (@alichtman).
 
 Options:
-  --add_dot                Add a dotfile or dotfolder to config by path.
+  --add_dot TEXT           Add a dotfile or dotfolder to config by path.
+  -full_backup             Full back up.
   -configs                 Back up app config files.
   -delete_config           Delete config file.
   -destroy_backup          Delete backup directory.
   -dotfiles                Back up dotfiles.
   -fonts                   Back up installed fonts.
-  -full_backup             Full back up.
   --new_path TEXT          Input a new back up directory path.
   -no_splash               Don't display splash screen.
   -old_path                Skip setting new back up directory path prompt.
@@ -66,9 +66,10 @@ Options:
   --remote TEXT            Set remote URL for the git repo.
   -separate_dotfiles_repo  Use if you are trying to maintain a separate
                            dotfiles repo and running into issue #229.
+
   -show                    Display config file.
   -v, --version            Display version and author info.
-  -help, -h, --help        Show this message and exit.
+  -h, -help, --help        Show this message and exit.
 ```
 
 ### Git Integration
@@ -119,7 +120,7 @@ backup-dots () {
 
 By default, `shallow-backup` backs these up.
 
-1. `dotfiles` and `dotfolders`.
+1. Dotfiles and dotfolders
     * `.bashrc`
     * `.bash_profile`
     * `.gitconfig`
@@ -150,12 +151,151 @@ By default, `shallow-backup` backs these up.
 
 4. User installed `fonts`.
 
-### Backup Customization
+### Configuration
 
-If you'd like to modify which files are backed up, you have to edit the `~/.config/shallow-backup.conf` file. There are two recommended ways of doing this.
+If you'd like to modify which files are backed up, you have to edit the `JSON` config file, located at `~/.config/shallow-backup.conf`. There are two ways to do this.
 
 1. Select the appropriate option in the CLI and follow the prompts.
 2. Open the file in a text editor and make your changes.
+
+Editing the file in a text editor will give you much more control and be faster.
+
+My config (as of `v5.0.0a`) looks like this, and is used to back up my [dotfiles](https://www.github.com/alichtman/dotfiles):
+
+```json
+{
+	"backup_path": "~/shallow-backup",
+	"lowest_supported_version": "5.0.0a",
+	"dotfiles": {
+		".config/agignore": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/crontab": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/fzf-notes": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/git/config": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/git/gitignore_global": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/jrnl/jrnl.yaml": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/kitty": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/nvim": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/pycodestyle": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/pylintrc": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/python": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/radare2/radare2rc": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/ranger": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/shallow-backup.conf": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/starship.toml": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/tmux": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/tuir/tuir.cfg": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/zathura/zathurarc": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/zsh": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".ctags": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".ghc/ghci.conf": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".pypirc": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".ssh": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".zshenv": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		}
+	},
+	"root-gitignore": [
+		".DS_Store",
+		"dotfiles/.config/nvim/.netrwhist",
+		"dotfiles/.config/nvim/spell/en.utf-8.add",
+		"dotfiles/.config/ranger/plugins/ranger_devicons",
+		"dotfiles/.config/zsh/.zcompdump*",
+		"dotfiles/.pypirc",
+		"dotfiles/.ssh"
+	],
+	"dotfiles-gitignore": [
+		".DS_Store",
+		".config/nvim/.netrwhist",
+		".config/nvim/spell/en.utf-8.add*",
+		".config/ranger/plugins/*",
+		".config/zsh/.zcompdump*",
+		".config/zsh/.zinit",
+		".config/tmux/plugins",
+		".config/tmux/resurrect",
+		".pypirc",
+		".ssh/*"
+	],
+	"config_mapping": {
+		"/Users/alichtman/Library/Application Support/Sublime Text 2": "sublime2",
+		"/Users/alichtman/Library/Application Support/Sublime Text 3": "sublime3",
+		"/Users/alichtman/Library/Application Support/Code/User/settings.json": "vscode/settings",
+		"/Users/alichtman/Library/Application Support/Code/User/Snippets": "vscode/Snippets",
+		"/Users/alichtman/Library/Application Support/Code/User/keybindings.json": "vscode/keybindings",
+		"/Users/alichtman/.atom": "atom",
+		"/Users/alichtman/Library/Preferences/com.apple.Terminal.plist": "terminal_plist"
+	}
+}
+```
 
 #### .gitignore
 
@@ -210,7 +350,6 @@ backup_dir/
 ### Reinstalling Dotfiles
 
 To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.conf` or `$XDG_CONFIG_HOME/.shallow_backup.conf`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall_dots`.
-
 
 When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and `README.md` files / directories are ignored.
 

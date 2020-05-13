@@ -2,7 +2,7 @@ import os
 from shlex import quote
 from colorama import Fore
 import multiprocessing as mp
-from shutil import copytree, copyfile
+from shutil import copyfile
 from .utils import *
 from .printing import *
 from .compatibility import *
@@ -21,12 +21,19 @@ def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=Fa
 	overwrite_dir_prompt_if_needed(backup_dest_path, skip)
 
 	# get dotfolders and dotfiles
-	dots = get_config()["dotfiles"]
+	config = get_config()["dotfiles"]
 
 	# Aggregate pairs of [(Installed dotfile path, backup dest path)] in a list to be sorted into
 	# dotfiles and dotfolders later
 	dot_path_pairs = []
-	for dotfile_path_from_config in dots:
+	for dotfile_path_from_config, options in config.items():
+		# Evaluate condition, if specified. Skip if the command doesn't return true.
+		condition_success = evaluate_condition(condition=options["backup_condition"],
+											   backup_or_reinstall="backup",
+											   dotfile_path=dotfile_path_from_config)
+		if not condition_success:
+			continue
+
 		# If a file path in the config starts with /, it's a full path like /etc/ssh/
 		if dotfile_path_from_config.startswith("/"):
 			installed_dotfile_path = dotfile_path_from_config
@@ -52,7 +59,7 @@ def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=Fa
 	# Fix https://github.com/alichtman/shallow-backup/issues/230
 	for dest_path in [path_pair[1] for path_pair in dotfiles_mp_in + dotfolders_mp_in]:
 		print(f"Creating: {os.path.split(dest_path)[0]}")
-		create_dir_if_doesnt_exist(os.path.split(dest_path)[0])
+		safe_mkdir(os.path.split(dest_path)[0])
 
 	with mp.Pool(mp.cpu_count()):
 		print_blue_bold("Backing up dotfolders...")
@@ -136,7 +143,8 @@ def backup_packages(backup_path, skip=False):
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
-	if not run_cmd_write_stdout(command, temp_file_path):
+	# If command is successful, go to the next parsing step.
+	if run_cmd_write_stdout(command, temp_file_path) == 0:
 		npm_dest_file = "{0}/npm_list.txt".format(backup_path)
 		# Parse npm output
 		with open(temp_file_path, mode="r+") as temp_file:
@@ -183,7 +191,7 @@ def backup_fonts(backup_path, skip=False):
 	fonts_path = get_fonts_dir()
 	if os.path.isdir(fonts_path):
 		fonts = [quote(os.path.join(fonts_path, font)) for font in os.listdir(fonts_path) if
-		         font.endswith(".otf") or font.endswith(".ttf")]
+				 font.endswith(".otf") or font.endswith(".ttf")]
 
 		for font in fonts:
 			if os.path.exists(font):

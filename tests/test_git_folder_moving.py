@@ -1,7 +1,6 @@
 import os
 import sys
-import shutil
-from .test_utils import BACKUP_DEST_DIR, FAKE_HOME_DIR, DIRS, setup_env_vars, create_config_for_test
+from .testing_utility_functions import BACKUP_DEST_DIR, FAKE_HOME_DIR, clean_up_dirs_and_env_vars, setup_dirs_and_env_vars_and_create_config
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.git_wrapper import move_git_repo, safe_git_init, create_gitignore
 
@@ -13,19 +12,11 @@ class TestGitFolderCopying:
 
     @staticmethod
     def setup_method():
-        setup_env_vars()
-        create_config_for_test()
-        for directory in DIRS:
-            try:
-                os.mkdir(directory)
-            except FileExistsError:
-                shutil.rmtree(directory)
-                os.mkdir(directory)
+        setup_dirs_and_env_vars_and_create_config()
 
     @staticmethod
     def teardown_method():
-        for directory in DIRS:
-            shutil.rmtree(directory)
+        clean_up_dirs_and_env_vars()
 
     def test_copy_git_folder(self):
         """
