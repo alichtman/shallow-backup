@@ -11,30 +11,30 @@ from .upgrade import check_if_config_upgrade_needed
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
-@click.option('--add_dot', default=None, help="Add a dotfile or dotfolder to config by path.")
-@click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
-@click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
-@click.option('-destroy_backup', is_flag=True, default=False, help="Delete backup directory.")
-@click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
-@click.option('-dry_run', is_flag=True, default=False, help="Don't backup or reinstall any files, just give verbose output.")
-@click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
-@click.option('-full_backup', is_flag=True, default=False, help="Full back up.")
-@click.option('--new_path', default=None, help="Input a new back up directory path.")
-@click.option('-no_splash', is_flag=True, default=False, help="Don't display splash screen.")
-@click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path prompt.")
-@click.option('-packages', is_flag=True, default=False, help="Back up package libraries.")
-@click.option('-reinstall_all', is_flag=True, default=False, help="Full reinstallation.")
-@click.option('-reinstall_configs', is_flag=True, default=False, help="Reinstall configs.")
-@click.option('-reinstall_dots', is_flag=True, default=False, help="Reinstall dotfiles and dotfolders.")
-@click.option('-reinstall_fonts', is_flag=True, default=False, help="Reinstall fonts.")
-@click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
+@click.option('--add-dot', default=None, help="Add a dotfile or dotfolder to config by path.")
+@click.option('-backup-all', 'backup_all_flag', is_flag=True, default=False, help="Full back up.")
+@click.option('-backup-configs', 'backup_configs_flag', is_flag=True, default=False, help="Back up app config files.")
+@click.option('-backup-dots', 'backup_dots_flag', is_flag=True, default=False, help="Back up dotfiles.")
+@click.option('-backup-packages', 'backup_packages_flag', is_flag=True, default=False, help="Back up package libraries.")
+@click.option('-delete-config', is_flag=True, default=False, help="Delete config file.")
+@click.option('-destroy-backup', is_flag=True, default=False, help="Delete backup directory.")
+@click.option('-dry-run', is_flag=True, default=False, help="Don't backup or reinstall any files, just give verbose output.")
+@click.option('-backup-fonts', 'backup_fonts_flag', is_flag=True, default=False, help="Back up installed fonts.")
+@click.option('--new-path', default=None, help="Input a new back up directory path.")
+@click.option('-no-new-backup-path-prompt', is_flag=True, default=False, help="Skip setting new back up directory path prompt.")
+@click.option('-no-splash', is_flag=True, default=False, help="Don't display splash screen.")
+@click.option('-reinstall-all', is_flag=True, default=False, help="Full reinstallation.")
+@click.option('-reinstall-configs', is_flag=True, default=False, help="Reinstall configs.")
+@click.option('-reinstall-dots', is_flag=True, default=False, help="Reinstall dotfiles and dotfolders.")
+@click.option('-reinstall-fonts', is_flag=True, default=False, help="Reinstall fonts.")
+@click.option('-reinstall-packages', is_flag=True, default=False, help="Reinstall packages.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
-@click.option('-separate_dotfiles_repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
+@click.option('-separate-dotfiles-repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
-def cli(add_dot, configs, delete_config, destroy_backup, dotfiles, dry_run, fonts, full_backup, new_path,
-		no_splash, old_path, packages, reinstall_all, reinstall_configs,
-		reinstall_dots, reinstall_fonts, reinstall_packages, remote,
+def cli(add_dot, backup_configs_flag, delete_config, destroy_backup, backup_dots_flag, dry_run,
+		backup_fonts_flag, backup_all_flag, new_path, no_splash, no_new_backup_path_prompt, backup_packages_flag,
+		reinstall_all, reinstall_configs, reinstall_dots, reinstall_fonts, reinstall_packages, remote,
 		separate_dotfiles_repo, show, version):
 	"""
 	\b
@@ -48,12 +48,13 @@ def cli(add_dot, configs, delete_config, destroy_backup, dotfiles, dry_run, font
 
 	# Process CLI args
 	admin_action = any([add_dot, delete_config, destroy_backup, show, version])
-	has_cli_arg = any([old_path, full_backup, dotfiles, packages, fonts, configs,
-					   reinstall_dots, reinstall_fonts, reinstall_all,
-					   reinstall_configs, reinstall_packages])
-	skip_prompt = any([full_backup, dotfiles, configs, packages, fonts,
-					   reinstall_packages, reinstall_configs, reinstall_dots,
-					   reinstall_fonts])
+	has_cli_arg = any([no_new_backup_path_prompt, backup_all_flag, backup_dots_flag,
+					   backup_packages_flag, backup_fonts_flag, backup_configs_flag,
+					   reinstall_dots, reinstall_fonts, reinstall_all, reinstall_configs,
+					   reinstall_packages])
+	skip_prompt = any([backup_all_flag, backup_dots_flag, backup_configs_flag,
+					   backup_packages_flag, backup_fonts_flag, reinstall_packages,
+					   reinstall_configs, reinstall_dots, reinstall_fonts])
 
 	backup_config = get_config()
 
@@ -125,23 +126,23 @@ def cli(add_dot, configs, delete_config, destroy_backup, dotfiles, dry_run, font
 			reinstall_dots_sb(dotfiles_path, dry_run=dry_run)
 		elif reinstall_all:
 			reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path, dry_run=dry_run)
-		elif full_backup:
+		elif backup_all_flag:
 			backup_all(dotfiles_path, packages_path, fonts_path, configs_path, dry_run=dry_run, skip=True)
 			if not dry_run:
 				git_add_all_commit_push(repo, "full_backup")
-		elif dotfiles:
+		elif backup_dots_flag:
 			backup_dotfiles(dotfiles_path, dry_run=dry_run, skip=True)
 			if not dry_run:
 				git_add_all_commit_push(repo, "dotfiles", separate_dotfiles_repo)
-		elif configs:
+		elif backup_configs_flag:
 			backup_configs(configs_path, dry_run=dry_run, skip=True)
 			if not dry_run:
 				git_add_all_commit_push(repo, "configs")
-		elif packages:
+		elif backup_packages_flag:
 			backup_packages(packages_path, dry_run=dry_run, skip=True)
 			if not dry_run:
 				git_add_all_commit_push(repo, "packages")
-		elif fonts:
+		elif backup_fonts_flag:
 			backup_fonts(fonts_path, dry_run=dry_run, skip=True)
 			if not dry_run:
 				git_add_all_commit_push(repo, "fonts")

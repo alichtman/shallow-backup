@@ -64,32 +64,32 @@ Usage: shallow-backup [OPTIONS]
   Written by Aaron Lichtman (@alichtman).
 
 Options:
-  --add_dot TEXT           Add a dotfile or dotfolder to config by path.
-  -configs                 Back up app config files.
-  -delete_config           Delete config file.
-  -destroy_backup          Delete backup directory.
-  -dotfiles                Back up dotfiles.
-  -dry_run                 Don't backup or reinstall any files, just give
-                           verbose output.
+  --add-dot TEXT              Add a dotfile or dotfolder to config by path.
+  -backup-all                 Full back up.
+  -backup-configs             Back up app config files.
+  -backup-dots                Back up dotfiles.
+  -backup-packages            Back up package libraries.
+  -delete-config              Delete config file.
+  -destroy-backup             Delete backup directory.
+  -dry-run                    Don't backup or reinstall any files, just give
+                              verbose output.
 
-  -fonts                   Back up installed fonts.
-  -full_backup             Full back up.
-  --new_path TEXT          Input a new back up directory path.
-  -no_splash               Don't display splash screen.
-  -old_path                Skip setting new back up directory path prompt.
-  -packages                Back up package libraries.
-  -reinstall_all           Full reinstallation.
-  -reinstall_configs       Reinstall configs.
-  -reinstall_dots          Reinstall dotfiles and dotfolders.
-  -reinstall_fonts         Reinstall fonts.
-  -reinstall_packages      Reinstall packages.
-  --remote TEXT            Set remote URL for the git repo.
-  -separate_dotfiles_repo  Use if you are trying to maintain a separate
-                           dotfiles repo and running into issue #229.
+  -backup-fonts               Back up installed fonts.
+  --new-path TEXT             Input a new back up directory path.
+  -no-new-backup-path-prompt  Skip setting new back up directory path prompt.
+  -no-splash                  Don't display splash screen.
+  -reinstall-all              Full reinstallation.
+  -reinstall-configs          Reinstall configs.
+  -reinstall-dots             Reinstall dotfiles and dotfolders.
+  -reinstall-fonts            Reinstall fonts.
+  -reinstall-packages         Reinstall packages.
+  --remote TEXT               Set remote URL for the git repo.
+  -separate-dotfiles-repo     Use if you are trying to maintain a separate
+                              dotfiles repo and running into issue #229.
 
-  -show                    Display config file.
-  -v, --version            Display version and author info.
-  -help, -h, --help        Show this message and exit.
+  -show                       Display config file.
+  -v, --version               Display version and author info.
+  -h, -help, --help           Show this message and exit.
 ```
 
 ### Git Integration
@@ -113,7 +113,7 @@ backup-dots () {
     echo "Backing up..."
     crontab -l > ~/.config/crontab
     (
-            shallow-backup -no_splash -dotfiles -separate_dotfiles_repo
+            shallow-backup -no-splash -backup-dots -separate-dotfiles-repo
             cd "$HOME/shallow-backup/dotfiles/" || exit
             git add .
             commit_msg="$1"
