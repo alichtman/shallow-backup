@@ -4,20 +4,20 @@ from .prompts import *
 from .reinstall import *
 from .git_wrapper import *
 from .utils import (mkdir_warn_overwrite, destroy_backup_dir,
-                    expand_to_abs_path, new_dir_is_valid)
+					expand_to_abs_path, check_if_path_is_valid_dir)
 from .config import *
-from .upgrade import upgrade_from_pre_v3
+from .upgrade import check_if_config_upgrade_needed
 
 
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('--add_dot', default=None, help="Add a dotfile or dotfolder to config by path.")
-@click.option('-full_backup', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
 @click.option('-destroy_backup', is_flag=True, default=False, help='Delete backup directory.')
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
+@click.option('-full_backup', is_flag=True, default=False, help="Full back up.")
 @click.option('--new_path', default=None, help="Input a new back up directory path.")
 @click.option('-no_splash', is_flag=True, default=False, help="Don't display splash screen.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path prompt.")
@@ -32,9 +32,9 @@ from .upgrade import upgrade_from_pre_v3
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
 def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
-        no_splash, old_path, packages, reinstall_all, reinstall_configs,
-        reinstall_dots, reinstall_fonts, reinstall_packages, remote,
-        separate_dotfiles_repo, show, version):
+		no_splash, old_path, packages, reinstall_all, reinstall_configs,
+		reinstall_dots, reinstall_fonts, reinstall_packages, remote,
+		separate_dotfiles_repo, show, version):
 	"""
 	\b
 	Easily back up installed packages, dotfiles, and more.
@@ -42,17 +42,18 @@ def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, 
 
 	Written by Aaron Lichtman (@alichtman).
 	"""
-	upgrade_from_pre_v3()
+	safe_create_config()
+	check_if_config_upgrade_needed()
 
 	# Process CLI args
 	admin_action = any([add_dot, delete_config, destroy_backup, show, version])
 	has_cli_arg = any([old_path, full_backup, dotfiles, packages, fonts, configs,
-	                   reinstall_dots, reinstall_fonts, reinstall_all,
-	                   reinstall_configs, reinstall_packages])
-	skip_prompt = any([full_backup, dotfiles, configs, packages, fonts, reinstall_packages, reinstall_configs, reinstall_dots,
-	                   reinstall_fonts])
+					   reinstall_dots, reinstall_fonts, reinstall_all,
+					   reinstall_configs, reinstall_packages])
+	skip_prompt = any([full_backup, dotfiles, configs, packages, fonts,
+					   reinstall_packages, reinstall_configs, reinstall_dots,
+					   reinstall_fonts])
 
-	safe_create_config()
 	backup_config = get_config()
 
 	# Perform administrative action and exit.
@@ -79,7 +80,7 @@ def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, 
 	if new_path:
 		abs_path = os.path.abspath(new_path)
 
-		if not new_dir_is_valid(abs_path):
+		if not check_if_path_is_valid_dir(abs_path):
 			sys.exit(1)
 
 		print_path_blue("\nUpdating shallow-backup path to:", abs_path)

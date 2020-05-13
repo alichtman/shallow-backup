@@ -2,7 +2,7 @@ import os
 from shlex import quote
 from colorama import Fore
 import multiprocessing as mp
-from shutil import copytree, copyfile
+from shutil import copyfile
 from .utils import *
 from .printing import *
 from .compatibility import *
@@ -14,32 +14,52 @@ def backup_dotfiles(backup_dest_path, home_path=os.path.expanduser("~"), skip=Fa
 	Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
 	Assumes that dotfiles are stored in the home directory.
 	:param skip: Boolean flag to skip prompting for overwrite. Used for scripting.
-	:param backup_dest_path: Destination path for dotfiles. Like, ~/shallow-backup/dotfiles
+	:param backup_dest_path: Destination path for dotfiles. Like, ~/shallow-backup/dotfiles. Used in tests.
 	:param home_path: Path where dotfiles will be found. $HOME by default.
 	"""
 	print_section_header("DOTFILES", Fore.BLUE)
 	overwrite_dir_prompt_if_needed(backup_dest_path, skip)
 
 	# get dotfolders and dotfiles
-	config = get_config()
+	config = get_config()["dotfiles"]
 
-	# dotfiles/folders multiprocessing format: [(full_dotfile_path, full_dest_path), ...]
+	# Aggregate pairs of [(Installed dotfile path, backup dest path)] in a list to be sorted into
+	# dotfiles and dotfolders later
+	dot_path_pairs = []
+	for dotfile_path_from_config, options in config.items():
+		# Evaluate condition, if specified. Skip if the command doesn't return true.
+		condition_success = evaluate_condition(condition=options["backup_condition"],
+											   backup_or_reinstall="backup",
+											   dotfile_path=dotfile_path_from_config)
+		if not condition_success:
+			continue
+
+		# If a file path in the config starts with /, it's a full path like /etc/ssh/
+		if dotfile_path_from_config.startswith("/"):
+			installed_dotfile_path = dotfile_path_from_config
+			installed_dotfile_path = quote(':' + installed_dotfile_path[1:])
+			backup_dotfile_path = quote(os.path.join(backup_dest_path, installed_dotfile_path))
+			dot_path_pairs.append((dotfile_path_from_config, backup_dotfile_path))
+
+		else:  # Dotfile living in $HOME
+			installed_dotfile_path = quote(os.path.join(home_path, dotfile_path_from_config))
+			backup_dotfile_path = quote(os.path.join(backup_dest_path, dotfile_path_from_config))
+			dot_path_pairs.append((installed_dotfile_path, backup_dotfile_path))
+
+	# Separate dotfiles and dotfolders
 	dotfolders_mp_in = []
-	for dotfolder in [os.path.join(home_path, folder) for folder in config["dotfolders"]]:
-		if os.path.isdir(dotfolder):
-			dest_path_nested_dir = os.path.join(backup_dest_path, dotfolder.replace(home_path + "/", ""))
-			dotfolders_mp_in.append((quote(dotfolder), quote(dest_path_nested_dir)))
-
 	dotfiles_mp_in = []
-	for dotfile in config["dotfiles"]:
-		full_dotfile_path = os.path.join(home_path, dotfile)
-		if os.path.isfile(full_dotfile_path):
-			dest_path = quote(os.path.join(backup_dest_path, dotfile))
-			dotfiles_mp_in.append((quote(full_dotfile_path), dest_path))
+	for path_pair in dot_path_pairs:
+		installed_path = path_pair[0]
+		if os.path.isdir(installed_path):
+			dotfolders_mp_in.append(path_pair)
+		else:
+			dotfiles_mp_in.append(path_pair)
 
 	# Fix https://github.com/alichtman/shallow-backup/issues/230
 	for dest_path in [path_pair[1] for path_pair in dotfiles_mp_in + dotfolders_mp_in]:
-		create_dir_if_doesnt_exist(os.path.split(dest_path)[0])
+		print(f"Creating: {os.path.split(dest_path)[0]}")
+		safe_mkdir(os.path.split(dest_path)[0])
 
 	with mp.Pool(mp.cpu_count()):
 		print_blue_bold("Backing up dotfolders...")
@@ -123,7 +143,8 @@ def backup_packages(backup_path, skip=False):
 	print_pkg_mgr_backup("npm")
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = "{}/npm_temp_list.txt".format(backup_path)
-	if not run_cmd_write_stdout(command, temp_file_path):
+	# If command is successful, go to the next parsing step.
+	if run_cmd_write_stdout(command, temp_file_path) == 0:
 		npm_dest_file = "{0}/npm_list.txt".format(backup_path)
 		# Parse npm output
 		with open(temp_file_path, mode="r+") as temp_file:
@@ -170,7 +191,7 @@ def backup_fonts(backup_path, skip=False):
 	fonts_path = get_fonts_dir()
 	if os.path.isdir(fonts_path):
 		fonts = [quote(os.path.join(fonts_path, font)) for font in os.listdir(fonts_path) if
-		         font.endswith(".otf") or font.endswith(".ttf")]
+				 font.endswith(".otf") or font.endswith(".ttf")]
 
 		for font in fonts:
 			if os.path.exists(font):

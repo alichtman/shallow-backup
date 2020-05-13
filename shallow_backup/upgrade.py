@@ -1,47 +1,20 @@
-import os
 import sys
-from shutil import move
-from colorama import Fore
-from .config import get_config_path, get_xdg_config_path
-from .printing import prompt_yes_no, print_green_bold, print_red_bold
-from .utils import home_prefix, safe_mkdir
+from .config import get_config
+from .printing import print_red_bold, print_red
+from .constants import ProjInfo
 
 
-def upgrade_from_pre_v3():
-	"""Before v3.0, the config file was stored at ~/.shallow-backup. In v3.0,
-	the XDG Base Directory specification was adopted and the new config is
-	stored in either $XDG_CONFIG_HOME/shallow-backup/shallow-backup.conf or
-	~/.config/shallow-backup.conf. This method upgrades from
-	v < 3.0 to v3.0 or v3.1 if required.
-	"""
-	old_config_names = [".shallow-backup", ".config/shallow-backup/shallow-backup.conf"]
-	for old_config_path, old_config_name in [(home_prefix(old_config_name), old_config_name) for old_config_name in old_config_names]:
-		if os.path.isfile(old_config_path):
-			if prompt_yes_no("Config file from a version before v3.1 detected. Would you like to upgrade?", Fore.GREEN):
-				new_config_path = get_config_path()
-				print_green_bold(f"Moving {old_config_path} to {new_config_path}")
-				if os.path.exists(new_config_path):
-					print_red_bold(f"ERROR: {new_config_path} already exists. Manual intervention is required.")
-					sys.exit(1)
+def check_if_config_upgrade_needed():
+	"""Checks if a config is supported by the current version of shallow-backup"""
+	config = get_config()
+	# If this key is not in the config, that means the config was installed pre-v5.0.0a
+	if "lowest_supported_version" not in config:
+		print_red_bold(f"ERROR: Config version detected as incompatible with current shallow-backup version ({ProjInfo.VERSION}).")
+		print_red("There are two possible fixes.")
+		print_red("1. Backup your config file to another location and remove the original config.")
+		print_red("\tshallow-backup will recreate a compatible config on the next run.")
+		print_red("\tYou can then add in your custom backup paths manually.")
+		print_red("2. Manually upgrade the config.")
+		print_red_bold("Please downgrade to a version of shallow-backup before v5.0.0a if you do not want to upgrade your config.")
+		sys.exit()
 
-				safe_mkdir(os.path.split(new_config_path)[0])
-				move(old_config_path, new_config_path)
-
-				print_green_bold("Replacing old shallow-backup config path with new config path in config file.")
-				with open(new_config_path, "r") as f:
-					contents = f.read()
-					contents = contents.replace(old_config_name,
-												new_config_path.replace(os.path.expanduser('~') + "/", ""))
-
-				with open(new_config_path, "w") as f:
-					f.write(contents)
-
-				print_green_bold("Successful upgrade.")
-			else:
-				print_red_bold("Please downgrade to a version of shallow-backup before v3.0 if you do not want to upgrade your config.")
-				sys.exit()
-
-	# Clean up ~/.config/shallow-backup
-	incorrect_config_dir = os.path.join(get_xdg_config_path(), "shallow-backup")
-	if os.path.isdir(incorrect_config_dir):
-		os.rmdir(incorrect_config_dir)

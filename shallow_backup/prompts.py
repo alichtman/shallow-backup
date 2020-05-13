@@ -1,12 +1,11 @@
 import os
 import sys
 import inquirer
-from colorama import Fore, Style
 from .utils import *
 from .printing import *
 from .config import *
 from .git_wrapper import git_set_remote, move_git_repo
-from .utils import new_dir_is_valid
+from .utils import check_if_path_is_valid_dir
 
 
 def path_update_prompt(config):
@@ -21,7 +20,7 @@ def path_update_prompt(config):
 			print_green_bold("Enter relative or absolute path:")
 			abs_path = expand_to_abs_path(input())
 
-			if not new_dir_is_valid(abs_path):
+			if not check_if_path_is_valid_dir(abs_path):
 				continue
 
 			print_path_blue("\nUpdating shallow-backup path to:", abs_path)

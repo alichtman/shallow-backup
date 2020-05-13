@@ -12,18 +12,35 @@
 Contents
 ========
 
+ * [Why?](#why)
  * [Installation](#installation)
  * [Usage](#usage)
  * [Git Integration](#git-integration)
  * [What can I back up?](#what-can-i-back-up)
- * [Backup Customization](#backup-customization)
+ * [Configuration](#configuration)
  * [Output Structure](#output-structure)
  * [Reinstalling Dotfiles](#reinstalling-dotfiles)
- * [Inspiration](#inspiration)
  * [Want to contribute?](#want-to-contribute)
+
+### Why?
+
+I wanted a tool that allows you to:
+
++ Back up dotfiles _from where they live on the system_.
++ Back up files from _any_ path on the system, not just `$HOME`.
++ Reinstall them from the backup directory idempotently.
++ Backup and reinstall files conditionally, so you can easily manage dotfiles across multiple systems.
++ Copy files on installation and backup, as opposed to symlinking them.
++ Backup package installations in a highly compressed manner
+
+And is incredibly fault tolerant and user-protective.
+
+`shallow-backup` is the only tool that checks all of those boxes.
 
 ### Installation
 ---
+
+**Do not install this as `root`.**
 
 1. Install with [`pip3`](https://pypi.org/project/shallow-backup/)
     + `$ pip3 install shallow-backup`
@@ -36,7 +53,7 @@ Contents
 
 To start the interactive program, simply run `$ shallow-backup`.
 
-`shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line args.
+`shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line arguments.
 
 ```shell
 Usage: shallow-backup [OPTIONS]
@@ -47,7 +64,7 @@ Usage: shallow-backup [OPTIONS]
   Written by Aaron Lichtman (@alichtman).
 
 Options:
-  --add_dot                Add a dotfile or dotfolder to config by path.
+  --add_dot TEXT           Add a dotfile or dotfolder to config by path.
   -configs                 Back up app config files.
   -delete_config           Delete config file.
   -destroy_backup          Delete backup directory.
@@ -66,9 +83,10 @@ Options:
   --remote TEXT            Set remote URL for the git repo.
   -separate_dotfiles_repo  Use if you are trying to maintain a separate
                            dotfiles repo and running into issue #229.
+
   -show                    Display config file.
   -v, --version            Display version and author info.
-  -help, -h, --help        Show this message and exit.
+  -h, -help, --help        Show this message and exit.
 ```
 
 ### Git Integration
@@ -119,7 +137,7 @@ backup-dots () {
 
 By default, `shallow-backup` backs these up.
 
-1. `dotfiles` and `dotfolders`.
+1. Dotfiles and dotfolders
     * `.bashrc`
     * `.bash_profile`
     * `.gitconfig`
@@ -150,12 +168,166 @@ By default, `shallow-backup` backs these up.
 
 4. User installed `fonts`.
 
-### Backup Customization
+### Configuration
 
-If you'd like to modify which files are backed up, you have to edit the `~/.config/shallow-backup.conf` file. There are two recommended ways of doing this.
+If you'd like to modify which files are backed up, you have to edit the `JSON` config file, located at `~/.config/shallow-backup.conf`. There are two ways to do this.
 
 1. Select the appropriate option in the CLI and follow the prompts.
 2. Open the file in a text editor and make your changes.
+
+Editing the file in a text editor will give you more control and be faster.
+
+#### Conditional Backup and Reinstallation
+
+Every dotfile has two subkeys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated in `bash`. An empty string (`""`) is the default value, and is considered to be `True`. If the return value of the expression is `0`, this is considered `True`. Otherwise, it is `False`. This lets you do simple things like preventing backup with:
+
+```javascript
+// Because `$ false` returns 1
+"backup_condition": "false"
+```
+
+And also more complicated things like only backing up certain files if an environment variable is set:
+
+```javascript
+"backup_condition": "[[ -n \"$ENV_VAR\" ]]"
+```
+
+My config (as of `v5.0.0a`) looks like this, and is used to back up my [dotfiles](https://www.github.com/alichtman/dotfiles):
+
+```json
+{
+	"backup_path": "~/shallow-backup",
+	"lowest_supported_version": "5.0.0a",
+	"dotfiles": {
+		".config/agignore": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/crontab": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/fzf-notes": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/git/config": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/git/gitignore_global": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/jrnl/jrnl.yaml": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/kitty": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/nvim": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/pycodestyle": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/pylintrc": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/python": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/radare2/radare2rc": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/ranger": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/shallow-backup.conf": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/starship.toml": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/tmux": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/tuir/tuir.cfg": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/zathura/zathurarc": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".config/zsh": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".ctags": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".ghc/ghci.conf": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".pypirc": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".ssh": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		},
+		".zshenv": {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		}
+	},
+	"root-gitignore": [
+		".DS_Store",
+		"dotfiles/.config/nvim/.netrwhist",
+		"dotfiles/.config/nvim/spell/en.utf-8.add",
+		"dotfiles/.config/ranger/plugins/ranger_devicons",
+		"dotfiles/.config/zsh/.zcompdump*",
+		"dotfiles/.pypirc",
+		"dotfiles/.ssh"
+	],
+	"dotfiles-gitignore": [
+		".DS_Store",
+		".config/nvim/.netrwhist",
+		".config/nvim/spell/en.utf-8.add*",
+		".config/ranger/plugins/*",
+		".config/zsh/.zcompdump*",
+		".config/zsh/.zinit",
+		".config/tmux/plugins",
+		".config/tmux/resurrect",
+		".pypirc",
+		".ssh/*"
+	],
+	"config_mapping": {
+		"/Users/alichtman/Library/Application Support/Sublime Text 2": "sublime2",
+		"/Users/alichtman/Library/Application Support/Sublime Text 3": "sublime3",
+		"/Users/alichtman/Library/Application Support/Code/User/settings.json": "vscode/settings",
+		"/Users/alichtman/Library/Application Support/Code/User/Snippets": "vscode/Snippets",
+		"/Users/alichtman/Library/Application Support/Code/User/keybindings.json": "vscode/keybindings",
+		"/Users/alichtman/.atom": "atom",
+		"/Users/alichtman/Library/Preferences/com.apple.Terminal.plist": "terminal_plist"
+	}
+}
+```
 
 #### .gitignore
 
@@ -211,19 +383,7 @@ backup_dir/
 
 To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.conf` or `$XDG_CONFIG_HOME/.shallow_backup.conf`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall_dots`.
 
-
 When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and `README.md` files / directories are ignored.
-
-### Inspiration
----
-
-I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at what was actually being backed up. I saw that my `brew`, `npm`, and `pip` libraries took up a ton more space than I imagined.
-
-*And that's totally unnecessary.* When you back something up, you do it with the intention of being able to get back to that exact state at some point in the future. The minimum you need in order to recreate those package libraries later is just a list of the packages that are installed with each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example.
-
-I cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` libraries with simple text files. I also cut down the back up time significantly since many fewer files were being copied.
-
-Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
 
 ### Want to Contribute?
 ---
