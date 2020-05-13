@@ -4,7 +4,6 @@ from .testing_utility_functions import FAKE_HOME_DIR, setup_dirs_and_env_vars_an
 
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.reinstall import reinstall_dots_sb
-from shallow_backup.config import get_config, write_config
 
 TEST_TEXT_CONTENT = 'THIS IS TEST CONTENT FOR THE DOTFILES'
 DOTFILES_PATH = os.path.join(FAKE_HOME_DIR, "dotfiles/")
@@ -39,14 +38,6 @@ class TestReinstallDotfiles:
             return git_dir
 
         setup_dirs_and_env_vars_and_create_config()
-
-        # NOTE that these tests use the default included config. I remove the config
-        #      from the backup list because otherwise it tries to reinstall it at the
-        #      same path, which causes an error.
-
-        config = get_config()
-        config["dotfiles"][os.environ["SHALLOW_BACKUP_TEST_CONFIG_PATH"]]["reinstall_condition"] = "false"
-        write_config(config)
 
         # Dotfiles / dirs to NOT reinstall
         create_git_dir(DOTFILES_PATH)  # Should NOT reinstall DOTFILES_PATH/.git

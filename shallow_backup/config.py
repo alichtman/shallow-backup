@@ -147,9 +147,14 @@ def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 	abs_path = path.abspath(file_path)
 	if not path.exists(abs_path):
 		print_path_red("Invalid file path:", abs_path)
-		sys.exit(1)
+		return backup_config
 	else:
-		backup_config["dotfiles"][strip_home(abs_path)] = {"reinstall_condition": "", "backup_condition": ""}
+		stripped_home_path = strip_home(abs_path)
+		print_path_blue("Added:", stripped_home_path)
+		backup_config["dotfiles"][stripped_home_path] = {
+			"reinstall_condition": "",
+			"backup_condition": ""
+		}
 	return backup_config
 
 

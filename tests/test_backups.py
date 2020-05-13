@@ -32,10 +32,6 @@ class TestBackupMethods:
 					with open(os.path.join(directory, file_2), "w+") as f:
 						f.write(TEST_TEXT_CONTENT)
 
-		config = get_config()
-		config["dotfiles"][os.environ["SHALLOW_BACKUP_TEST_CONFIG_PATH"]]["backup_condition"] = "false"
-		write_config(config)
-
 	@staticmethod
 	def teardown_method():
 		clean_up_dirs_and_env_vars()
