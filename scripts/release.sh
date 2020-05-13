@@ -1,7 +1,18 @@
 #!/bin/bash
 # Release script for shallow-backup
 
-# Must be run from project root directory
+# NOTE: Must be run from project root directory
+
+# Check if on master
+BRANCH=$(git rev-parse --abbrev-ref HEAD)
+if [[ "$BRANCH" != "master" ]]; then
+  echo 'Must be on master branch to cut a release!';
+  exit 1;
+fi
+
+# Check if master is dirty
+[[ -z $(git status -s) ]] || echo 'Master branch dirty! Aborting.' && exit 1
+
 SB_VERSION="v$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
 SB_VERSION_NO_V="$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
 
