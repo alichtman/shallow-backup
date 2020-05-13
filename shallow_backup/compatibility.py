@@ -2,19 +2,19 @@ import os
 import platform
 
 
-def get_os_name():
+def get_os_name() -> str:
 	"""Returns name of OS"""
 	return platform.system().lower()
 
 
-def get_home():
+def get_home() -> str:
 	"""Returns path to ~"""
 	return os.path.expanduser('~')
 
 
 def get_config_paths():
 	"""Returns a dict of config paths for the correct OS."""
-	if "darwin" == get_os_name():
+	if get_os_name() == "darwin":
 		sublime2_path = os.path.join(get_home(), "Library/Application Support/Sublime Text 2")
 		sublime3_path = os.path.join(get_home(), "Library/Application Support/Sublime Text 3")
 		vscode_path_1 = os.path.join(get_home(), "Library/Application Support/Code/User/settings.json")
@@ -50,16 +50,16 @@ def get_config_paths():
 		}
 
 
-def get_fonts_dir():
+def get_fonts_dir() -> str:
 	"""Returns default path to fonts on the current platform"""
 	os_name = get_os_name()
 	if os_name == "darwin":
 		return os.path.join(get_home(), "Library/Fonts")
 	elif os_name == "linux":
-		return os.path.join("/usr/local/share/fonts")
+		return "/usr/local/share/fonts"
 
 
-def get_applications_dir():
+def get_applications_dir() -> str:
 	"""Returns default path to applications directory"""
 	os_name = get_os_name()
 	if os_name == "darwin":

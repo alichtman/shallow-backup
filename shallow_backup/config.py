@@ -1,5 +1,6 @@
 import sys
 import json
+import os
 from os import path, environ
 from .printing import *
 from .compatibility import *
@@ -7,7 +8,8 @@ from .utils import safe_mkdir
 from .constants import ProjInfo
 
 
-def get_xdg_config_path():
+def get_xdg_config_path() -> str:
+	"""Returns path to $XDG_CONFIG_HOME, or ~/.config, if it doesn't exist."""
 	return environ.get('XDG_CONFIG_HOME') or path.join(path.expanduser('~'), '.config')
 
 
@@ -37,7 +39,7 @@ def get_config() -> dict:
 	return config
 
 
-def write_config(config):
+def write_config(config) -> None:
 	"""
 	Write to config file
 	"""
@@ -45,7 +47,7 @@ def write_config(config):
 		json.dump(config, file, indent=4)
 
 
-def get_default_config():
+def get_default_config() -> dict:
 	"""Returns a default, platform specific config."""
 	return {
 		"backup_path": "~/shallow-backup",
@@ -110,7 +112,7 @@ def get_default_config():
 	}
 
 
-def safe_create_config():
+def safe_create_config() -> None:
 	"""
 	Creates config file if it doesn't exist already. Prompts to update
 	it if an outdated version is detected.
@@ -124,10 +126,8 @@ def safe_create_config():
 		write_config(backup_config)
 
 
-def delete_config_file():
-	"""
-	Deletes config file.
-	"""
+def delete_config_file() -> None:
+	"""Delete config file."""
 	config_path = get_config_path()
 	if os.path.isfile(config_path):
 		print_red_bold("Deleting config file.")
@@ -141,15 +141,19 @@ def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 	Add dotfile to config with default reinstall and backup conditions.
 	Exit if the file_path parameter is invalid.
 	:backup_config: dict representing current config
-	:file_path:     str  relative or absolute path of file to add to config
+	:file_path:		str  relative or absolute path of file to add to config
 	:return new backup config
 	"""
 
 	def strip_home(full_path):
 		"""
-		Removes the path to $HOME from the front of the absolute path.
+		Removes the path to $HOME from the front of the absolute path, if it's there
 		"""
-		return full_path[len(os.path.expanduser("~")) + 1:]
+		home_path = os.path.expanduser("~")
+		if full_path.startswith(home_path):
+			return full_path.replace(home_path + "/", "")
+		else:
+			return full_path
 
 	abs_path = path.abspath(file_path)
 	if not path.exists(abs_path):
@@ -172,7 +176,7 @@ def show_config():
 		elif section == "config_mapping":
 			print_red_bold("\nConfigs:")
 			for path, dest in contents.items():
-				print(f"    {path} -> {dest}")
+				print(f"	{path} -> {dest}")
 		# Print section header and contents. (Dotfiles)
 		elif section == "dotfiles":
 			print_path_red("\nDotfiles:", "(Backup and Reinstall conditions will be shown if they exist)")
@@ -181,14 +185,14 @@ def show_config():
 				backup_condition = options['backup_condition']
 				reinstall_condition = options['reinstall_condition']
 				if backup_condition or reinstall_condition:
-					print(f"    {dotfile} ->")
+					print(f"	{dotfile} ->")
 					print(f"\t\tbackup_condition: \"{backup_condition}\"")
 					print(f"\t\treinstall_condition: \"{reinstall_condition}\"")
 				else:
-					print(f"    {dotfile}")
+					print(f"	{dotfile}")
 		elif section == "lowest_supported_version":
 			print_path_red(f"{section.replace('_', ' ').capitalize()}:", contents)
 		else:
 			print_red_bold(f"\n{section.replace('-', ' ').capitalize()}: ")
 			for item in contents:
-				print(f"    {item}")
+				print(f"	{item}")

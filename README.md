@@ -39,7 +39,7 @@ To start the interactive program, simply run `$ shallow-backup`.
 `shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line arguments.
 
 ```shell
-Usage: __main__.py [OPTIONS]
+Usage: shallow-backup [OPTIONS]
 
   Easily back up installed packages, dotfiles, and more.
   You can edit which files are backed up in ~/.shallow-backup.
@@ -48,12 +48,12 @@ Usage: __main__.py [OPTIONS]
 
 Options:
   --add_dot TEXT           Add a dotfile or dotfolder to config by path.
-  -full_backup             Full back up.
   -configs                 Back up app config files.
   -delete_config           Delete config file.
   -destroy_backup          Delete backup directory.
   -dotfiles                Back up dotfiles.
   -fonts                   Back up installed fonts.
+  -full_backup             Full back up.
   --new_path TEXT          Input a new back up directory path.
   -no_splash               Don't display splash screen.
   -old_path                Skip setting new back up directory path prompt.

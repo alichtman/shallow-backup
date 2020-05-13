@@ -12,12 +12,12 @@ from .upgrade import check_if_config_upgrade_needed
 # custom help options
 @click.command(context_settings=dict(help_option_names=['-h', '-help', '--help']))
 @click.option('--add_dot', default=None, help="Add a dotfile or dotfolder to config by path.")
-@click.option('-full_backup', is_flag=True, default=False, help="Full back up.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
 @click.option('-destroy_backup', is_flag=True, default=False, help='Delete backup directory.')
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
+@click.option('-full_backup', is_flag=True, default=False, help="Full back up.")
 @click.option('--new_path', default=None, help="Input a new back up directory path.")
 @click.option('-no_splash', is_flag=True, default=False, help="Don't display splash screen.")
 @click.option('-old_path', is_flag=True, default=False, help="Skip setting new back up directory path prompt.")
@@ -28,8 +28,7 @@ from .upgrade import check_if_config_upgrade_needed
 @click.option('-reinstall_fonts', is_flag=True, default=False, help="Reinstall fonts.")
 @click.option('-reinstall_packages', is_flag=True, default=False, help="Reinstall packages.")
 @click.option('--remote', default=None, help="Set remote URL for the git repo.")
-@click.option('-separate_dotfiles_repo', is_flag=True, default=False,
-			  help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
+@click.option('-separate_dotfiles_repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
 def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
