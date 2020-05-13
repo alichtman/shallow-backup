@@ -14,8 +14,9 @@ from .upgrade import check_if_config_upgrade_needed
 @click.option('--add_dot', default=None, help="Add a dotfile or dotfolder to config by path.")
 @click.option('-configs', is_flag=True, default=False, help="Back up app config files.")
 @click.option('-delete_config', is_flag=True, default=False, help="Delete config file.")
-@click.option('-destroy_backup', is_flag=True, default=False, help='Delete backup directory.')
+@click.option('-destroy_backup', is_flag=True, default=False, help="Delete backup directory.")
 @click.option('-dotfiles', is_flag=True, default=False, help="Back up dotfiles.")
+@click.option('-dry_run', is_flag=True, default=False, help="Don't backup or reinstall any files, just give verbose output.")
 @click.option('-fonts', is_flag=True, default=False, help="Back up installed fonts.")
 @click.option('-full_backup', is_flag=True, default=False, help="Full back up.")
 @click.option('--new_path', default=None, help="Input a new back up directory path.")
@@ -31,7 +32,7 @@ from .upgrade import check_if_config_upgrade_needed
 @click.option('-separate_dotfiles_repo', is_flag=True, default=False, help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.")
 @click.option('-show', is_flag=True, default=False, help="Display config file.")
 @click.option('--version', '-v', is_flag=True, default=False, help='Display version and author info.')
-def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, fonts, new_path,
+def cli(add_dot, configs, delete_config, destroy_backup, dotfiles, dry_run, fonts, full_backup, new_path,
 		no_splash, old_path, packages, reinstall_all, reinstall_configs,
 		reinstall_dots, reinstall_fonts, reinstall_packages, remote,
 		separate_dotfiles_repo, show, version):
@@ -115,30 +116,35 @@ def cli(add_dot, full_backup, configs, delete_config, destroy_backup, dotfiles, 
 	# Command line options
 	if skip_prompt:
 		if reinstall_packages:
-			reinstall_packages_sb(packages_path)
+			reinstall_packages_sb(packages_path, dry_run=dry_run)
 		elif reinstall_configs:
-			reinstall_configs_sb(configs_path)
+			reinstall_configs_sb(configs_path, dry_run=dry_run)
 		elif reinstall_fonts:
-			reinstall_fonts_sb(fonts_path)
+			reinstall_fonts_sb(fonts_path, dry_run=dry_run)
 		elif reinstall_dots:
-			reinstall_dots_sb(dotfiles_path)
+			reinstall_dots_sb(dotfiles_path, dry_run=dry_run)
 		elif reinstall_all:
-			reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
+			reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path, dry_run=dry_run)
 		elif full_backup:
-			backup_all(dotfiles_path, packages_path, fonts_path, configs_path, skip=True)
-			git_add_all_commit_push(repo, "full_backup")
+			backup_all(dotfiles_path, packages_path, fonts_path, configs_path, dry_run=dry_run, skip=True)
+			if not dry_run:
+				git_add_all_commit_push(repo, "full_backup")
 		elif dotfiles:
-			backup_dotfiles(dotfiles_path, skip=True)
-			git_add_all_commit_push(repo, "dotfiles", separate_dotfiles_repo)
+			backup_dotfiles(dotfiles_path, dry_run=dry_run, skip=True)
+			if not dry_run:
+				git_add_all_commit_push(repo, "dotfiles", separate_dotfiles_repo)
 		elif configs:
-			backup_configs(configs_path, skip=True)
-			git_add_all_commit_push(repo, "configs")
+			backup_configs(configs_path, dry_run=dry_run, skip=True)
+			if not dry_run:
+				git_add_all_commit_push(repo, "configs")
 		elif packages:
-			backup_packages(packages_path, skip=True)
-			git_add_all_commit_push(repo, "packages")
+			backup_packages(packages_path, dry_run=dry_run, skip=True)
+			if not dry_run:
+				git_add_all_commit_push(repo, "packages")
 		elif fonts:
-			backup_fonts(fonts_path, skip=True)
-			git_add_all_commit_push(repo, "fonts")
+			backup_fonts(fonts_path, dry_run=dry_run, skip=True)
+			if not dry_run:
+				git_add_all_commit_push(repo, "fonts")
 	# No CL options, show action menu and process selected option.
 	else:
 		selection = main_menu_prompt().lower().strip()

@@ -69,6 +69,9 @@ Options:
   -delete_config           Delete config file.
   -destroy_backup          Delete backup directory.
   -dotfiles                Back up dotfiles.
+  -dry_run                 Don't backup or reinstall any files, just give
+                           verbose output.
+
   -fonts                   Back up installed fonts.
   -full_backup             Full back up.
   --new_path TEXT          Input a new back up directory path.
@@ -86,7 +89,7 @@ Options:
 
   -show                    Display config file.
   -v, --version            Display version and author info.
-  -h, -help, --help        Show this message and exit.
+  -help, -h, --help        Show this message and exit.
 ```
 
 ### Git Integration
