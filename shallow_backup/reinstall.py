@@ -45,7 +45,6 @@ def reinstall_dots_sb(dots_path: str, home_path: str = os.path.expanduser("~")):
 	# Format: [(source, dest), ... ]
 	full_path_dotfiles_to_reinstall = []
 	for dot in dotfiles_to_reinstall:
-		# print(f"\nFiguring out map for {dot}.")
 		source = os.path.join(dots_path, dot)
 		# If it's an absolute path, dest is the corrected path
 		if dot.startswith(":"):
