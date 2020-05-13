@@ -98,6 +98,7 @@ def backup_configs(backup_path, dry_run: bool = False, skip=False):
 	path relative to the configs/ directory.
 	"""
 	print_section_header("CONFIGS", Fore.BLUE)
+	# Don't clear any directories if this is a dry run
 	if not dry_run:
 		overwrite_dir_prompt_if_needed(backup_path, skip)
 	config = get_config()
