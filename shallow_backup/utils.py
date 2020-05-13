@@ -178,10 +178,11 @@ def get_abs_path_subfiles(directory: str) -> list:
 
 def copy_dir_if_valid(source_dir, backup_path):
 	"""
-	Copy dotfolder from source_dir to backup_path, excluding invalid directories.
+	Copy dir from source_dir to backup_path. Skips copying if any of the
+	'invalid' directories appear anywhere in the source_dir path.
 	"""
 	invalid = {".Trash", ".npm", ".cache", ".rvm"}
-	if invalid.intersection(set(source_dir.split("/"))) != set():
+	if invalid.intersection(set(os.path.split(source_dir))) != set():
 		return
 	copytree(source_dir, backup_path, symlinks=False)
 
