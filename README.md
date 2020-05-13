@@ -21,7 +21,7 @@ Contents
  * [Output Structure](#output-structure)
  * [Reinstalling Dotfiles](#reinstalling-dotfiles)
  * [Want to contribute?](#want-to-contribute)
- 
+
 ### Why?
 
 I wanted a tool that allows you to:
@@ -177,9 +177,10 @@ Editing the file in a text editor will give you more control and be faster.
 
 #### Conditional Backup and Reinstallation
 
-Every dotfile has two associated keys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated in `bash`. This lets you do pretty simple things like preventing backup with:
+Every dotfile has two subkeys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated in `bash`. An empty string (`""`) is the default value, and is considered to be `True`. If the return value of the expression is `0`, this is considered `True`. Otherwise, it is `False`. This lets you do simple things like preventing backup with:
 
 ```javascript
+// Because `$ false` returns 1
 "backup_condition": "false"
 ```
 
@@ -187,7 +188,7 @@ And also more complicated things like only backing up certain files if an enviro
 
 ```javascript
 "backup_condition": "[[ -n \"$ENV_VAR\" ]]"
-``` 
+```
 
 My config (as of `v5.0.0a`) looks like this, and is used to back up my [dotfiles](https://www.github.com/alichtman/dotfiles):
 
