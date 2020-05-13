@@ -74,9 +74,8 @@ def check_if_path_is_valid_dir(abs_path):
 
 
 def safe_mkdir(directory):
-	"""Makes directory if it doesn't already exist, creating all intermediate directories."""
-	if not os.path.isdir(directory):
-		os.makedirs(directory, exist_ok=True)
+	"""Makes dir if it doesn't already exist, creating all intermediate directories."""
+	os.makedirs(directory, exist_ok=True)
 
 
 def mkdir_overwrite(path):
@@ -87,8 +86,8 @@ def mkdir_overwrite(path):
 	if os.path.isdir(path):
 		dirs = []
 		files = []
-		for f in os.listdir(path):
-			full_path = os.path.join(path, f)
+		for file in os.listdir(path):
+			full_path = os.path.join(path, file)
 			# Allow dotfiles to be a sub-repo, and protect img folder.
 			if full_path.endswith(".git") or \
 				full_path.endswith(".gitignore") or \
@@ -127,17 +126,17 @@ def mkdir_warn_overwrite(path):
 		print_path_blue("Created directory:", path)
 
 
-def overwrite_dir_prompt_if_needed(path: str, no_prompt: bool):
+def overwrite_dir_prompt_if_needed(path: str, no_confirm: bool):
 	"""
 	Prompts the user before deleting the directory if needed.
 	This function lets the CLI args silence the prompts.
 	:param path: absolute path
-	:param no_prompt: Flag that determines if prompting the user is needed.
+	:param no_confirm: Flag that determines if user confirmation is needed.
 	"""
-	if not no_prompt:
-		mkdir_warn_overwrite(path)
-	else:
+	if no_confirm:
 		mkdir_overwrite(path)
+	else:
+		mkdir_warn_overwrite(path)
 
 
 def exit_if_dir_is_empty(backup_path: str, backup_type: str):
@@ -161,18 +160,19 @@ def get_abs_path_subfiles(directory: str) -> list:
 	excluding the .git directory, .gitignore, img/ and README.md in the root dir.
 	:param directory: Absolute path to directory to search
 	"""
+	invalid = []
+	for x in [".git", ".gitignore", "img", "README.md"]:
+		invalid.append(os.path.join(directory, x))
+
 	file_paths = []
 	for path, _, files in os.walk(directory):
 		for name in files:
-			joined = os.path.join(path, name)
-			root_git_dir = os.path.join(directory, ".git")
-			root_gitignore = os.path.join(directory, ".gitignore")
-			img = os.path.join(directory, "img")
-			readme = os.path.join(directory, "README.md")
-			if not any(x in joined for x in [root_git_dir, root_gitignore, img, readme]):
-				file_paths.append(joined)
+			full_path = os.path.join(path, name)
+
+			if full_path in invalid:
+				print_path_red("Excluded:", full_path)
 			else:
-				print_path_red("Excluded:", joined)
+				file_paths.append(full_path)
 	return file_paths
 
 
@@ -206,4 +206,3 @@ def expand_to_abs_path(path):
 	expanded_path = os.path.expanduser(path)
 	expanded_path = os.path.expandvars(expanded_path)
 	return os.path.abspath(expanded_path)
-
