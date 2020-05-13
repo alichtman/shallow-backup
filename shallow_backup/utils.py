@@ -41,7 +41,7 @@ def run_cmd_write_stdout(command, filepath) -> int:
 
 def run_cmd_return_bool(command: str) -> bool:
 	"""Run a bash command and return True if the exit code is 0, False otherwise"""
-	return os.system(command) == 0
+	return os.system(f"/bin/bash -c '{command}'") == 0
 
 
 def evaluate_condition(condition: str, backup_or_reinstall: str, dotfile_path: str) -> bool:
