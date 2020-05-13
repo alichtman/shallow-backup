@@ -107,7 +107,6 @@ def backup_configs(backup_path, dry_run: bool = False, skip=False):
 
 	# backup config files + dirs in backup_path/<target>/
 	for config_path, target in config["config_mapping"].items():
-
 		dest = os.path.join(backup_path, target)
 
 		if dry_run:
