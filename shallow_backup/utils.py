@@ -206,3 +206,12 @@ def expand_to_abs_path(path):
 	expanded_path = os.path.expanduser(path)
 	expanded_path = os.path.expandvars(expanded_path)
 	return os.path.abspath(expanded_path)
+
+
+def strip_home(full_path):
+	"""Removes the path to $HOME from the front of the absolute path, if it's there"""
+	home_path = os.path.expanduser("~")
+	if full_path.startswith(home_path):
+		return full_path.replace(home_path + "/", "")
+	else:
+		return full_path

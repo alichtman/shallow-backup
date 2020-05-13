@@ -4,7 +4,7 @@ import os
 from os import path, environ
 from .printing import *
 from .compatibility import *
-from .utils import safe_mkdir
+from .utils import safe_mkdir, strip_home
 from .constants import ProjInfo
 
 
@@ -92,7 +92,7 @@ def get_default_config() -> dict:
 				"backup_condition": "",
 				"reinstall_condition": "",
 			},
-			f"{get_config_path()}": {
+			f"{strip_home(get_config_path())}": {
 				"backup_condition": "",
 				"reinstall_condition": "",
 			},
@@ -144,17 +144,6 @@ def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 	:file_path:		str  relative or absolute path of file to add to config
 	:return new backup config
 	"""
-
-	def strip_home(full_path):
-		"""
-		Removes the path to $HOME from the front of the absolute path, if it's there
-		"""
-		home_path = os.path.expanduser("~")
-		if full_path.startswith(home_path):
-			return full_path.replace(home_path + "/", "")
-		else:
-			return full_path
-
 	abs_path = path.abspath(file_path)
 	if not path.exists(abs_path):
 		print_path_red("Invalid file path:", abs_path)
