@@ -1,3 +1,4 @@
+import os
 import sys
 import inquirer
 from colorama import Fore, Style
@@ -50,6 +51,40 @@ def print_path_yellow(text, path):
 
 def print_path_green(text, path):
 	print(Fore.GREEN + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
+
+
+def print_dry_run_copy_info(source, dest):
+	"""Show source -> dest copy. Replaces expanded ~ with ~ if it's at the beginning of paths.
+	source and dest are trimmed in the middle if needed. Removed characters will be replaced by ...
+	:param source: Can be of type str or Path
+	:param dest: Can be of type str or Path
+	"""
+	def shorten_home(path):
+		expanded_home = os.path.expanduser("~")
+		path = str(path)
+		if path.startswith(expanded_home):
+			return path.replace(expanded_home, "~")
+		return path
+
+	def truncate_middle(path: str, acceptable_len: int):
+		"""Middle truncate a string
+		https://www.xormedia.com/string-truncate-middle-with-ellipsis/
+		"""
+		if len(path) <= acceptable_len:
+			return path
+		# half of the size, minus the 3 .'s
+		n_2 = int(acceptable_len / 2 - 3)
+		# whatever's left
+		n_1 = int(acceptable_len - n_2 - 3)
+		return f"{path[:n_1]}...{path[-n_2:]}"
+
+	trimmed_source = shorten_home(source)
+	trimmed_dest = shorten_home(dest)
+	longest_allowed_path_len = 87
+	if len(trimmed_source) + len(trimmed_dest) > longest_allowed_path_len:
+		trimmed_source = truncate_middle(trimmed_source, longest_allowed_path_len)
+		trimmed_dest = truncate_middle(trimmed_dest, longest_allowed_path_len)
+	print(Fore.YELLOW + Style.BRIGHT + trimmed_source + Style.NORMAL, "->", Style.BRIGHT + trimmed_dest + Style.RESET_ALL)
 
 
 def print_version_info(cli=True):

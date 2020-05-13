@@ -39,7 +39,7 @@ class TestBackupMethods:
 	def test_backup_dotfiles(self):
 		"""Test backing up dotfiles and dotfolders."""
 		backup_dest_path = os.path.join(BACKUP_DEST_DIR, "dotfiles")
-		backup_dotfiles(backup_dest_path, home_path=FAKE_HOME_DIR, skip=True)
+		backup_dotfiles(backup_dest_path, dry_run=False, home_path=FAKE_HOME_DIR, skip=True)
 		assert os.path.isdir(backup_dest_path)
 		for path in DOTFILES:
 			print(f"\nBACKUP DESTINATION DIRECTORY: ({backup_dest_path}) CONTENTS:", os.listdir(backup_dest_path), "")
@@ -58,7 +58,7 @@ class TestBackupMethods:
 		write_config(config)
 
 		backup_dest_path = os.path.join(BACKUP_DEST_DIR, "dotfiles")
-		backup_dotfiles(backup_dest_path, home_path=FAKE_HOME_DIR, skip=True)
+		backup_dotfiles(backup_dest_path, dry_run=False, home_path=FAKE_HOME_DIR, skip=True)
 		assert os.path.isdir(backup_dest_path)
 		for path in DOTFILES:
 			print(f"\nBACKUP DESTINATION DIRECTORY: ({backup_dest_path}) CONTENTS:", os.listdir(backup_dest_path), "")

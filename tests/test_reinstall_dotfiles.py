@@ -64,7 +64,7 @@ class TestReinstallDotfiles:
         """
         Test reinstalling dotfiles to fake home dir
         """
-        reinstall_dots_sb(dots_path=DOTFILES_PATH, home_path=FAKE_HOME_DIR)
+        reinstall_dots_sb(dots_path=DOTFILES_PATH, home_path=FAKE_HOME_DIR, dry_run=False)
         assert os.path.isfile(os.path.join(FAKE_HOME_DIR, '.zshenv'))
         testfolder2 = os.path.join(os.path.join(FAKE_HOME_DIR, '.config/tmux/'), 'testfolder2')
         assert os.path.isdir(testfolder2)
