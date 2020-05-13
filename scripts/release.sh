@@ -11,7 +11,10 @@ if [[ "$BRANCH" != "master" ]]; then
 fi
 
 # Check if master is dirty
-[[ -z $(git status -s) ]] || echo 'Master branch dirty! Aborting.' && exit 1
+if [[ ! -z $(git status -s) ]]; then
+    echo 'Master branch dirty! Aborting.';
+    exit 1;
+fi
 
 SB_VERSION="v$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
 SB_VERSION_NO_V="$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
