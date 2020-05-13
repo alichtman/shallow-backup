@@ -1,5 +1,30 @@
 # Change Log
 
+## [v5.0.0a](https://github.com/alichtman/shallow-backup/tree/v5.0.0a) (2020-05-13)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.4...v5.0.0a)
+
+**Fixed bugs:**
+
+- Setting backup path to ~/.shallow\_backup breaks subsequent runs [\#265](https://github.com/alichtman/shallow-backup/issues/265)
+- shutil.SameFileError shallow-backup.conf [\#260](https://github.com/alichtman/shallow-backup/issues/260)
+
+**Closed issues:**
+
+- Add `--dry\_run` key to not actually copy any files on backup or reinstall [\#274](https://github.com/alichtman/shallow-backup/issues/274)
+- Cannot interactively set backup path to existing backup repo [\#266](https://github.com/alichtman/shallow-backup/issues/266)
+- Add tests for adding paths to config [\#249](https://github.com/alichtman/shallow-backup/issues/249)
+- Run Travis on both Mac and Linux [\#197](https://github.com/alichtman/shallow-backup/issues/197)
+
+**Merged pull requests:**
+
+- Standardize flags [\#276](https://github.com/alichtman/shallow-backup/pull/276) ([alichtman](https://github.com/alichtman))
+- Add -dry\_run flag [\#275](https://github.com/alichtman/shallow-backup/pull/275) ([alichtman](https://github.com/alichtman))
+- Add conditional backup and reinstallation [\#272](https://github.com/alichtman/shallow-backup/pull/272) ([alichtman](https://github.com/alichtman))
+- Refactor [\#271](https://github.com/alichtman/shallow-backup/pull/271) ([alichtman](https://github.com/alichtman))
+- Be clear that changing backup path moves the folder [\#268](https://github.com/alichtman/shallow-backup/pull/268) ([ThatsJustCheesy](https://github.com/ThatsJustCheesy))
+- Allow setting backup path to ~/.shallow-backup [\#267](https://github.com/alichtman/shallow-backup/pull/267) ([ThatsJustCheesy](https://github.com/ThatsJustCheesy))
+- Follow symlinks and avoid PermissionError when reinstalling .git repos [\#256](https://github.com/alichtman/shallow-backup/pull/256) ([alichtman](https://github.com/alichtman))
+
 ## [v4.0.4](https://github.com/alichtman/shallow-backup/tree/v4.0.4) (2020-03-29)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.3...v4.0.4)
 
@@ -17,10 +42,6 @@
 
 ## [v4.0.2](https://github.com/alichtman/shallow-backup/tree/v4.0.2) (2020-03-25)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.1...v4.0.2)
-
-**Merged pull requests:**
-
-- Follow symlinks and avoid PermissionError when reinstalling .git repos [\#256](https://github.com/alichtman/shallow-backup/pull/256) ([alichtman](https://github.com/alichtman))
 
 ## [v4.0.1](https://github.com/alichtman/shallow-backup/tree/v4.0.1) (2020-03-25)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0...v4.0.1)
@@ -60,6 +81,7 @@
 
 **Merged pull requests:**
 
+- Refactor --add option and bump to v3.3 [\#250](https://github.com/alichtman/shallow-backup/pull/250) ([alichtman](https://github.com/alichtman))
 - Add CLI option for adding paths to config [\#248](https://github.com/alichtman/shallow-backup/pull/248) ([alichtman](https://github.com/alichtman))
 - Fix IsADirectory error upon reinstallation [\#246](https://github.com/alichtman/shallow-backup/pull/246) ([alichtman](https://github.com/alichtman))
 
@@ -106,7 +128,7 @@
 
 **Fixed bugs:**
 
-- Can't back up dotfiles that live outside of the $HOME directory [\#230](https://github.com/alichtman/shallow-backup/issues/230)
+- Can't back up dotfiles that don't live directly inside $HOME [\#230](https://github.com/alichtman/shallow-backup/issues/230)
 - Double check git commit logic [\#227](https://github.com/alichtman/shallow-backup/issues/227)
 
 **Closed issues:**
@@ -183,7 +205,6 @@
 
 **Merged pull requests:**
 
-- Refactor --add option and bump to v3.3 [\#250](https://github.com/alichtman/shallow-backup/pull/250) ([alichtman](https://github.com/alichtman))
 - Remove Sublime \[2/3\] packages backup [\#203](https://github.com/alichtman/shallow-backup/pull/203) ([alichtman](https://github.com/alichtman))
 - \#200 added gitpython to setup.py [\#201](https://github.com/alichtman/shallow-backup/pull/201) ([AlexanderProd](https://github.com/AlexanderProd))
 
