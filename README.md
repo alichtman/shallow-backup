@@ -5,13 +5,14 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1719da4d7df5455d8dbb4340c428f851)](https://www.codacy.com/app/alichtman/shallow-backup?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alichtman/shallow-backup&amp;utm_campaign=Badge_Grade)
 <!-- [![Coverage Status](https://coveralls.io/repos/github/alichtman/shallow-backup/badge.svg?branch=master)](https://coveralls.io/github/alichtman/shallow-backup?branch=master) -->
 
-`shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles, and automatically push them to a remote Git repository. It is the **only** backup tool that lets you back up dotfiles _from where they live on the system_ and reinstall them from the backup directory idempotently. It also lets you backup and reinstall files conditionally, so that you can easily manage dotfiles across multiple systems.
+`shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles, and automatically push them to a remote Git repository.
 
 ![Shallow Backup GIF Demo](img/shallow-backup-demo.gif)
 
 Contents
 ========
 
+ * [Why?](#why)
  * [Installation](#installation)
  * [Usage](#usage)
  * [Git Integration](#git-integration)
@@ -19,8 +20,22 @@ Contents
  * [Configuration](#configuration)
  * [Output Structure](#output-structure)
  * [Reinstalling Dotfiles](#reinstalling-dotfiles)
- * [Inspiration](#inspiration)
  * [Want to contribute?](#want-to-contribute)
+ 
+### Why?
+
+I wanted a tool that allows you to:
+
++ Back up dotfiles _from where they live on the system_.
++ Back up files from _any_ path on the system, not just `$HOME`.
++ Reinstall them from the backup directory idempotently.
++ Backup and reinstall files conditionally, so you can easily manage dotfiles across multiple systems.
++ Copy files on installation and backup, as opposed to symlinking them.
++ Backup package installations in a highly compressed manner
+
+And is incredibly fault tolerant and user-protective.
+
+`shallow-backup` is the only tool that checks all of those boxes.
 
 ### Installation
 ---
@@ -158,7 +173,21 @@ If you'd like to modify which files are backed up, you have to edit the `JSON` c
 1. Select the appropriate option in the CLI and follow the prompts.
 2. Open the file in a text editor and make your changes.
 
-Editing the file in a text editor will give you much more control and be faster.
+Editing the file in a text editor will give you more control and be faster.
+
+#### Conditional Backup and Reinstallation
+
+Every dotfile has two associated keys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated in `bash`. This lets you do pretty simple things like preventing backup with:
+
+```javascript
+"backup_condition": "false"
+```
+
+And also more complicated things like only backing up certain files if an environment variable is set:
+
+```javascript
+"backup_condition": "[[ -n \"$ENV_VAR\" ]]"
+``` 
 
 My config (as of `v5.0.0a`) looks like this, and is used to back up my [dotfiles](https://www.github.com/alichtman/dotfiles):
 
@@ -352,17 +381,6 @@ backup_dir/
 To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.conf` or `$XDG_CONFIG_HOME/.shallow_backup.conf`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall_dots`.
 
 When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and `README.md` files / directories are ignored.
-
-### Inspiration
----
-
-I back up system images of my MacBook Pro to an external SSD multiple times every week, and it always takes way too long. I wanted to speed this up, so I took a look at what was actually being backed up. I saw that my `brew`, `npm`, and `pip` libraries took up a ton more space than I imagined.
-
-*And that's totally unnecessary.* When you back something up, you do it with the intention of being able to get back to that exact state at some point in the future. The minimum you need in order to recreate those package libraries later is just a list of the packages that are installed with each package manager. If you have these lists, restoring your system package installs is easy: `$ pip install -r pip_list.txt`, for example.
-
-I cut down my backup size by almost `10GB` by replacing my `pip`, `brew`, `brew cask` and `npm` libraries with simple text files. I also cut down the back up time significantly since many fewer files were being copied.
-
-Once I'd built that functionality, I wanted to have a single backup utility for files and folders often used by developers, so I added the ability to backup `dotfiles` and `fonts`. (Note: Because just having a list of installed fonts or a list of dotfiles that exist isn't very useful, `shallow-backup` creates copies of all dotfiles and user installed fonts.)
 
 ### Want to Contribute?
 ---
