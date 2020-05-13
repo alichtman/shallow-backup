@@ -17,7 +17,7 @@ def backup_dotfiles(backup_dest_path, dry_run=False, home_path=os.path.expanduse
 	:param skip: Boolean flag to skip prompting for overwrite. Used for scripting.
 	:param backup_dest_path: Destination path for dotfiles. Like, ~/shallow-backup/dotfiles. Used in tests.
 	:param home_path: Path where dotfiles will be found. $HOME by default.
-	:param dry_run: Flag for determining if debug info should be shown, or copying should occur.
+	:param dry_run: Flag for determining if debug info should be shown or copying should occur.
 	"""
 	print_section_header("DOTFILES", Fore.BLUE)
 	if not dry_run:
