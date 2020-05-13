@@ -53,48 +53,48 @@ def get_default_config() -> dict:
 		"backup_path": "~/shallow-backup",
 		"dotfiles": {
 			".bash_profile": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".bashrc": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".config/git": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".config/nvim/init.vim": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".config/tmux": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".config/zsh": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".profile": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".pypirc": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".ssh": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			".zshenv": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 			f"{get_config_path()}": {
-				"reinstall_condition": "",
 				"backup_condition": "",
+				"reinstall_condition": "",
 			},
 		},
 		"root-gitignore": [
