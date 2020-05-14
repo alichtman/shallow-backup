@@ -1,5 +1,12 @@
 # Change Log
 
+## [v5.0.1](https://github.com/alichtman/shallow-backup/tree/v5.0.1) (2020-05-14)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v5.0.0a...v5.0.1)
+
+**Merged pull requests:**
+
+- Bump version to 5.0.1 [\#278](https://github.com/alichtman/shallow-backup/pull/278) ([alichtman](https://github.com/alichtman))
+
 ## [v5.0.0a](https://github.com/alichtman/shallow-backup/tree/v5.0.0a) (2020-05-13)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.4...v5.0.0a)
 
@@ -23,7 +30,7 @@
 - Refactor [\#271](https://github.com/alichtman/shallow-backup/pull/271) ([alichtman](https://github.com/alichtman))
 - Be clear that changing backup path moves the folder [\#268](https://github.com/alichtman/shallow-backup/pull/268) ([ThatsJustCheesy](https://github.com/ThatsJustCheesy))
 - Allow setting backup path to ~/.shallow-backup [\#267](https://github.com/alichtman/shallow-backup/pull/267) ([ThatsJustCheesy](https://github.com/ThatsJustCheesy))
-- Follow symlinks and avoid PermissionError when reinstalling .git repos [\#256](https://github.com/alichtman/shallow-backup/pull/256) ([alichtman](https://github.com/alichtman))
+- Fix default config creation [\#258](https://github.com/alichtman/shallow-backup/pull/258) ([alichtman](https://github.com/alichtman))
 
 ## [v4.0.4](https://github.com/alichtman/shallow-backup/tree/v4.0.4) (2020-03-29)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.3...v4.0.4)
@@ -35,13 +42,16 @@
 **Merged pull requests:**
 
 - Create dotfiles dir before creating .gitignore [\#259](https://github.com/alichtman/shallow-backup/pull/259) ([alichtman](https://github.com/alichtman))
-- Fix default config creation [\#258](https://github.com/alichtman/shallow-backup/pull/258) ([alichtman](https://github.com/alichtman))
 
 ## [v4.0.3](https://github.com/alichtman/shallow-backup/tree/v4.0.3) (2020-03-26)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.2...v4.0.3)
 
 ## [v4.0.2](https://github.com/alichtman/shallow-backup/tree/v4.0.2) (2020-03-25)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0.1...v4.0.2)
+
+**Merged pull requests:**
+
+- Follow symlinks and avoid PermissionError when reinstalling .git repos [\#256](https://github.com/alichtman/shallow-backup/pull/256) ([alichtman](https://github.com/alichtman))
 
 ## [v4.0.1](https://github.com/alichtman/shallow-backup/tree/v4.0.1) (2020-03-25)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v4.0...v4.0.1)
@@ -139,6 +149,7 @@
 
 - Patch failing commit behavior when submodules are present [\#232](https://github.com/alichtman/shallow-backup/pull/232) ([alichtman](https://github.com/alichtman))
 - Allow backing up dotfiles outside of $HOME [\#231](https://github.com/alichtman/shallow-backup/pull/231) ([alichtman](https://github.com/alichtman))
+- Better reinstallation options and better scripting support [\#147](https://github.com/alichtman/shallow-backup/pull/147) ([alichtman](https://github.com/alichtman))
 
 ## [v2.4](https://github.com/alichtman/shallow-backup/tree/v2.4) (2019-05-12)
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v2.3...v2.4)
@@ -313,7 +324,6 @@
 - Prettify CLI help menu [\#153](https://github.com/alichtman/shallow-backup/pull/153) ([alichtman](https://github.com/alichtman))
 - Fix font reinstallation [\#151](https://github.com/alichtman/shallow-backup/pull/151) ([alichtman](https://github.com/alichtman))
 - Pkg mgr printing [\#149](https://github.com/alichtman/shallow-backup/pull/149) ([alichtman](https://github.com/alichtman))
-- Better reinstallation options and better scripting support [\#147](https://github.com/alichtman/shallow-backup/pull/147) ([alichtman](https://github.com/alichtman))
 - Fix travis [\#143](https://github.com/alichtman/shallow-backup/pull/143) ([alichtman](https://github.com/alichtman))
 - Refactoring and Reorganization [\#139](https://github.com/alichtman/shallow-backup/pull/139) ([alichtman](https://github.com/alichtman))
 - Readme [\#134](https://github.com/alichtman/shallow-backup/pull/134) ([alichtman](https://github.com/alichtman))
