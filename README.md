@@ -105,35 +105,7 @@ _If you choose to back up to a public repository, look at every file you're back
 
 `shallow-backup` makes this easy! After making your first backup, `cd` into the `dotfiles/` directory and run `$ git init`. Create a `.gitignore` and a new repo on your favorite version control platform. This repo will be maintained independently (manually) of the base `shallow-backup` repo. Note that you may need to use the `-separate_dotfiles_repo` flag to get this to work, and it may [break some other functionality of the tool](https://github.com/alichtman/shallow-backup/issues/229). It's ok for my use case, though.
 
-Here's a `bash` script that I wrote to automate my dotfile backup workflow. You can use this by placing it in your `~/.zshrc` or `~/.bashrc`, sourcing the file, and then running `$ backup-dots`.
-
-```bash
-# Usage: backup-dots [COMMIT MESSAGE]
-backup-dots () {
-    echo "Backing up..."
-    crontab -l > ~/.config/crontab
-    (
-            shallow-backup -no-splash -backup-dots -separate-dotfiles-repo
-            cd "$HOME/shallow-backup/dotfiles/" || exit
-            git add .
-            commit_msg="$1"
-            if [ -z "$commit_msg" ]
-            then
-                    git commit --verbose
-            else
-                    git commit -m "$commit_msg"
-            fi
-            git pull
-            if [ "$?" -ne 0 ]
-            then
-                    echo "Merge conflict detected. Fix manually in subshell and Ctrl-D when done."
-                    git status
-                    $SHELL
-            fi
-            git push
-    )
-}
-```
+Here's a `bash` script that I wrote to [automate my dotfile backup workflow](https://github.com/alichtman/scripts/blob/master/backup-and-update-dotfiles.sh). You can use this by placing it in your `$PATH`, making it executable, and running it.
 
 ### What can I back up?
 ---
