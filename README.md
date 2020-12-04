@@ -42,11 +42,17 @@ And is incredibly fault tolerant and user-protective.
 
 **Do not install this as `root`.**
 
-1. Install with [`pip3`](https://pypi.org/project/shallow-backup/)
-    + `$ pip3 install shallow-backup`
-    + `$ shallow-backup`
+Select one of the following methods:
 
-2. Download the `shallow-backup` binary from Releases tab.
+#### Method 1:   [`pip3`](https://pypi.org/project/shallow-backup/)
+
+```shell
+pip3 install shallow-backup
+```
+
+#### Method 2: binary install
+
+Download the `shallow-backup` binary from [Releases](https://github.com/alichtman/shallow-backup/releases) tab.
 
 ### Usage
 ---
