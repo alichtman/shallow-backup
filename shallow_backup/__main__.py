@@ -148,43 +148,43 @@ def cli(add_dot, backup_configs_flag, delete_config, destroy_backup, backup_dots
 				git_add_all_commit_push(repo, "fonts")
 	# No CL options, show action menu and process selected option.
 	else:
-		selection = main_menu_prompt().lower().strip()
-		selection_words = selection.split()
-		if selection.startswith("back up"):
-			if selection_words[-1] == "full_backup":
+		selection = main_menu_prompt()
+		action, _, target = selection.rpartition(" ")
+		if action == "back up":
+			if target == "all":
 				backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
-				git_add_all_commit_push(repo, selection_words[-1])
-			elif selection_words[-1] == "dotfiles":
+				git_add_all_commit_push(repo, target)
+			elif target == "dotfiles":
 				backup_dotfiles(dotfiles_path)
-				git_add_all_commit_push(repo, selection_words[-1], separate_dotfiles_repo)
-			elif selection_words[-1] == "configs":
+				git_add_all_commit_push(repo, target, separate_dotfiles_repo)
+			elif target == "configs":
 				backup_configs(configs_path)
-				git_add_all_commit_push(repo, selection_words[-1])
-			elif selection_words[-1] == "packages":
+				git_add_all_commit_push(repo, target)
+			elif target == "packages":
 				backup_packages(packages_path)
-				git_add_all_commit_push(repo, selection_words[-1])
-			elif selection_words[-1] == "fonts":
+				git_add_all_commit_push(repo, target)
+			elif target == "fonts":
 				backup_fonts(fonts_path)
-				git_add_all_commit_push(repo, selection_words[-1])
-		elif selection.startswith("reinstall"):
-			if selection_words[-1] == "packages":
+				git_add_all_commit_push(repo, target)
+		elif action == "reinstall":
+			if target == "packages":
 				reinstall_packages_sb(packages_path)
-			elif selection_words[-1] == "configs":
+			elif target == "configs":
 				reinstall_configs_sb(configs_path)
-			elif selection_words[-1] == "fonts":
+			elif target == "fonts":
 				reinstall_fonts_sb(fonts_path)
-			elif selection_words[-1] == "dotfiles":
+			elif target == "dotfiles":
 				reinstall_dots_sb(dotfiles_path)
-			elif selection_words[-1] == "full_backup":
+			elif target == "all":
 				reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
-		elif selection.endswith("config"):
-			if selection == "show config":
+		elif target == "config":
+			if action.startswith("show"):
 				show_config()
-			elif selection == "add path to config":
+			elif action.startswith("add"):
 				add_to_config_prompt()
-			elif selection == "remove path from config":
+			elif action.startswith("remove"):
 				remove_from_config_prompt()
-		elif selection == "destroy backup":
+		elif action == "destroy":
 			if prompt_yes_no("Erase backup directory: {}?".format(backup_home_path), Fore.RED):
 				destroy_backup_dir(backup_home_path)
 			else:
