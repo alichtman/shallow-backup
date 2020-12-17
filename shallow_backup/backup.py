@@ -168,7 +168,7 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 	command = "npm ls --global --parseable=true --depth=0"
 	temp_file_path = f"{backup_path}/npm_temp_list.txt"
 	# If command is successful, go to the next parsing step.
-	npm_backup_cmd_success = run_cmd_if_no_dry_run(command, dest, dry_run) == 0
+	npm_backup_cmd_success = run_cmd_if_no_dry_run(command, temp_file_path, dry_run) == 0
 	if npm_backup_cmd_success:
 		npm_dest_file = f"{backup_path}/npm_list.txt"
 		# Parse npm output
