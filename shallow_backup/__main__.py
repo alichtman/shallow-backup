@@ -144,14 +144,16 @@ def cli(add_dot, backup_configs_flag, delete_config, destroy_backup, backup_dots
 				git_add_all_commit_push(repo, "packages")
 		elif backup_fonts_flag:
 			backup_fonts(fonts_path, dry_run=dry_run, skip=True)
-			if not dry_run:
-				git_add_all_commit_push(repo, "fonts")
+			target = "fonts"
+		if not dry_run and backup_action:
+			git_add_all_commit_push(repo, target, separate_dotfiles_repo)
 	# No CL options, show action menu and process selected option.
 	else:
 		selection = main_menu_prompt()
 		action, _, target = selection.rpartition(" ")
 		if action == "back up":
 			if target == "all":
+				target = "full_backup"
 				backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
 				git_add_all_commit_push(repo, target)
 			elif target == "dotfiles":
