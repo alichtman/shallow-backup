@@ -167,8 +167,9 @@ def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
 		elif pm == "gem":
 			print_red_bold("WARNING: Gem reinstallation is not supported.")
 		elif pm == "cargo":
-			print_red_bold("WARNING: Cargo reinstallation is not possible at the moment.\
-						   \n -> https://github.com/rust-lang/cargo/issues/5593")
+			print_pkg_mgr_reinstall(pm)
+			cmd = f"cat {packages_path}/cargo_list.txt | xargs -L 1 cargo install"
+			run_cmd_if_no_dry_run(cmd, dry_run)
 
 	print_section_header("PACKAGE REINSTALLATION COMPLETED", Fore.BLUE)
 

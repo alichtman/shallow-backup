@@ -147,7 +147,7 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 
 	# cargo
 	print_pkg_mgr_backup("cargo")
-	command = "ls {}".format(home_prefix(".cargo/bin/"))
+	command = r"cargo install --list | grep '^\w.*:$' | sed -E 's/ v(.*):$/ --version \1/'"
 	dest = f"{backup_path}/cargo_list.txt"
 	run_cmd_if_no_dry_run(command, dest, dry_run)
 
