@@ -147,7 +147,7 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 
 	# ruby
 	print_pkg_mgr_backup("gem")
-	command = "gem list | tail -n+1 | sed 's/(/--version /' | sed 's/)//'"
+	command = r"gem list | tail -n+1 | sed -E 's/\((default: )?(.*)\)/--version \2/'"
 	dest = f"{backup_path}/gem_list.txt"
 	run_cmd_if_no_dry_run(command, dest, dry_run)
 
