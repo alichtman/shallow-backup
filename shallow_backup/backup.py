@@ -152,7 +152,7 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 	if not dry_run:
 		ret = run_cmd(command)
 		if not ret:
-			print_yellow("Package manager not present.")
+			print_yellow("brew package manager not found.")
 
 	# cargo
 	print_pkg_mgr_backup("cargo")
