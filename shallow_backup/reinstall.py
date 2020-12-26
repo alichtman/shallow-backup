@@ -166,7 +166,7 @@ def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
 			print_red_bold("WARNING: Macports reinstallation is not supported.")
 		elif pm == "gem":
 			print_pkg_mgr_reinstall(pm)
-			cmd = f"cat {packages_path}/gem_list.txt | xargs -L 1 sudo gem install --no-ri --no-rdoc"
+			cmd = f"cat {packages_path}/gem_list.txt | xargs -L 1 gem install --no-ri --no-rdoc"
 			run_cmd_if_no_dry_run(cmd, dry_run)
 		elif pm == "cargo":
 			print_red_bold("WARNING: Cargo reinstallation is not possible at the moment.\
