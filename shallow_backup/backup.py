@@ -149,8 +149,7 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 	command = f"brew bundle dump --file {backup_path}/brew_list.txt"
 	dest = f"{backup_path}/brew_list.txt"
 	if not dry_run:
-		ret = run_cmd(command)
-		if not ret:
+		if not run_cmd(command):
 			print_yellow("brew package manager not found.")
 
 	# cargo
