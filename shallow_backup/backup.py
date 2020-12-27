@@ -139,9 +139,9 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 		overwrite_dir_prompt_if_needed(backup_path, skip)
 
 	# ruby
-	print_pkg_mgr_backup(mgr)
-	command = f"{mgr} list"
-	dest = f"{backup_path}/{mgr.replace(' ', '-')}_list.txt"
+	print_pkg_mgr_backup("gem")
+	command = "gem list"
+	dest = f"{backup_path}/gem_list.txt"
 	run_cmd_if_no_dry_run(command, dest, dry_run)
 
 	# brew
