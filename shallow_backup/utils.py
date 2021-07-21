@@ -41,7 +41,7 @@ def run_cmd_write_stdout(command: str, filepath: str) -> int:
 
 		return process.returncode
 	else:
- 		print_path_red("An error occurred while running: $", command) 
+		print_path_red("An error occurred while running: $", command)
 		return -1
 
 
