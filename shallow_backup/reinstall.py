@@ -124,7 +124,7 @@ def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
 	package_mgrs = set()
 	for file in os.listdir(packages_path):
 		manager = file.split("_")[0].replace("-", " ")
-		if manager in ["gem", "brew-cask", "cargo", "npm", "pip", "pip3", "brew", "vscode", "apm", "macports"]:
+		if manager in ["gem", "cargo", "npm", "pip", "pip3", "brew", "vscode", "apm", "macports"]:
 			package_mgrs.add(file.split("_")[0])
 
 	print_blue_bold("Package Manager Backups Found:")
@@ -135,10 +135,9 @@ def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
 	# TODO: Multithreading for reinstallation.
 	# Construct reinstallation commands and execute them
 	for pm in package_mgrs:
-		if pm in ["brew", "brew-cask"]:
-			pm_formatted = pm.replace("-", " ")
-			print_pkg_mgr_reinstall(pm_formatted)
-			cmd = f"xargs {pm.replace('-', ' ')} install < {packages_path}/{pm_formatted}_list.txt"
+		if pm == "brew":
+			print_pkg_mgr_reinstall(pm)
+			cmd = f"brew bundle install --no-lock --file {packages_path}/brew_list.txt"
 			run_cmd_if_no_dry_run(cmd, dry_run)
 		elif pm == "npm":
 			print_pkg_mgr_reinstall(pm)
@@ -169,8 +168,9 @@ def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
 			cmd = f"cat {packages_path}/gem_list.txt | xargs -L 1 gem install"
 			run_cmd_if_no_dry_run(cmd, dry_run)
 		elif pm == "cargo":
-			print_red_bold("WARNING: Cargo reinstallation is not possible at the moment.\
-						   \n -> https://github.com/rust-lang/cargo/issues/5593")
+			print_pkg_mgr_reinstall(pm)
+			cmd = f"cat {packages_path}/cargo_list.txt | xargs -L 1 cargo install"
+			run_cmd_if_no_dry_run(cmd, dry_run)
 
 	print_section_header("PACKAGE REINSTALLATION COMPLETED", Fore.BLUE)
 
