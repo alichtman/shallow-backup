@@ -1,6 +1,7 @@
 import os
 import subprocess as sp
 from shlex import split
+import shutil
 from shutil import rmtree, copytree
 from typing import List, Union
 from .printing import *
@@ -186,7 +187,10 @@ def copy_dir_if_valid(source_dir, backup_path):
 	invalid = {".Trash", ".npm", ".cache", ".rvm"}
 	if invalid.intersection(set(os.path.split(source_dir))) != set():
 		return
-	copytree(source_dir, backup_path, symlinks=False)
+	try:
+		copytree(source_dir, backup_path, symlinks=False)
+	except shutil.Error:
+		print_path_red("Error copying:", source_dir)
 
 
 def home_prefix(path):
