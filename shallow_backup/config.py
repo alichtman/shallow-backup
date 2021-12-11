@@ -56,46 +56,16 @@ def get_default_config() -> dict:
 				"backup_condition": "",
 				"reinstall_condition": "",
 			},
-			".bashrc": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			".config/git": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			".config/nvim/init.vim": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			".config/tmux": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			".config/zsh": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			".profile": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			".pypirc": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			".ssh": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			".zshenv": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
-			f"{strip_home(get_config_path())}": {
-				"backup_condition": "",
-				"reinstall_condition": "",
-			},
+			".bashrc": {},
+			".config/git": {},
+			".config/nvim/init.vim": {},
+			".config/tmux": {},
+			".config/zsh": {},
+			".profile": {},
+			".pypirc": {},
+			".ssh": {},
+			".zshenv": {},
+			f"{strip_home(get_config_path())}": {},
 		},
 		"root-gitignore": [
 			"dotfiles/.ssh",
@@ -151,10 +121,7 @@ def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
 	else:
 		stripped_home_path = strip_home(abs_path)
 		print_path_blue("Added:", stripped_home_path)
-		backup_config["dotfiles"][stripped_home_path] = {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		}
+		backup_config["dotfiles"][stripped_home_path] = {}
 	return backup_config
 
 
@@ -169,15 +136,15 @@ def show_config():
 			print_path_red("Backup Path:", contents)
 		elif section == "config_mapping":
 			print_red_bold("\nConfigs:")
-			for path, dest in contents.items():
-				print(f"	{path} -> {dest}")
+			for config_path, dest in contents.items():
+				print(f"	{config_path} -> {dest}")
 		# Print section header and contents. (Dotfiles)
 		elif section == "dotfiles":
 			print_path_red("\nDotfiles:", "(Backup and Reinstall conditions will be shown if they exist)")
 			for dotfile, options in contents.items():
 
-				backup_condition = options['backup_condition']
-				reinstall_condition = options['reinstall_condition']
+				backup_condition = options.get('backup_condition', "")
+				reinstall_condition = options.get('reinstall_condition', "")
 				if backup_condition or reinstall_condition:
 					print(f"	{dotfile} ->")
 					print(f"\t\tbackup_condition: \"{backup_condition}\"")
