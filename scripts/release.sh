@@ -11,7 +11,7 @@ if [[ "$BRANCH" != "master" ]]; then
 fi
 
 # Check if master is dirty
-if [[ ! -z $(git status -s) ]]; then
+if [[ -n $(git status -s) ]]; then
     echo 'Master branch dirty! Aborting.';
     exit 1;
 fi
@@ -34,6 +34,9 @@ git checkout master && git pull
 git tag -a "$SB_VERSION" -m "shallow-backup $SB_VERSION" && git push
 github_changelog_generator --user alichtman --project shallow-backup
 git add CHANGELOG.md && git commit -m "Add CHANGELOG for $SB_VERSION" && git push
+echo "Generating distribution files..."
 rm -rf dist/* && python3 setup.py sdist
+echo "Creating GH release..."
 hub release create "$SB_VERSION" --file "dist/shallow-backup-$SB_VERSION_NO_V.tar.gz" -m "shallow-backup $SB_VERSION"
-python3 setup.py sdist; twine upload --repository pypi dist/*
+echo "Uploading to pypi..."
+twine upload --repository pypi dist/*
