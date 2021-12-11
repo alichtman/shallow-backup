@@ -27,21 +27,17 @@ def run_cmd(command: Union[str, List]):
 def run_cmd_write_stdout(command: str, filepath: str) -> int:
 	"""
 	Runs a command and then writes its stdout to a file.
-	Returns the returncode if the return value is not 0.
+	Returns 0 on success, and -1 on failure.
 	:param: command str representing command to run
 	:param: filepath str file to write command's stdout to
 	"""
 	process = run_cmd(command)
-	if process:
-		if process.returncode == 0:
-			with open(filepath, "w+") as f:
-				f.write(process.stdout.decode('utf-8'))
-		else:
-			print_path_red("An error occurred while running: $", command)
-
-		return process.returncode
+	if process and process.returncode == 0:
+		with open(filepath, "w+") as f:
+			f.write(process.stdout.decode('utf-8'))
+		return 0
 	else:
-		print_yellow("Package manager not present.")
+		print_path_red("An error occurred while running: $", command)
 		return -1
 
 
