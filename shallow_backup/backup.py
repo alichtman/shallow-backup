@@ -30,9 +30,8 @@ def backup_dotfiles(backup_dest_path, dry_run=False, home_path=os.path.expanduse
 	# dotfiles and dotfolders later
 	dot_path_pairs = []
 	for dotfile_path_from_config, options in config.items():
-		backup_condition = options.get("backup_condition", "")
 		# Evaluate condition, if specified. Skip if the command doesn't return true.
-		condition_success = evaluate_condition(condition=backup_condition,
+		condition_success = evaluate_condition(condition=options.get("backup_condition", ""),
 											   backup_or_reinstall="backup",
 											   dotfile_path=dotfile_path_from_config)
 		if not condition_success:

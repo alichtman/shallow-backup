@@ -24,10 +24,8 @@ def reinstall_dots_sb(dots_path: str, home_path: str = os.path.expanduser("~"), 
 
 	dotfiles_to_reinstall = []
 	for dotfile_path_from_config, options in config.items():
-		reinstall_condition = options.get("reinstall_condition", "")
-
 		# Evaluate condition, if specified. Skip if the command doesn't return true.
-		condition_success = evaluate_condition(condition=reinstall_condition,
+		condition_success = evaluate_condition(condition=options.get("reinstall_condition", ""),
 											   backup_or_reinstall="reinstall",
 											   dotfile_path=dotfile_path_from_config)
 		if not condition_success:
