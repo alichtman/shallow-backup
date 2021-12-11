@@ -1,29 +1,33 @@
 import os
 import subprocess as sp
+from shlex import split
 from shutil import rmtree, copytree
+from typing import List, Union
 from .printing import *
 
 
-def run_cmd(command: str):
+def run_cmd(command: Union[str, List]):
 	"""
 	Wrapper on subprocess.run to handle shell commands as either a list of args
 	or a single string.
 	"""
+	if not isinstance(command, list):
+		command = split(command)
+	output = None
 	try:
-		if not isinstance(command, list):
-			process = sp.run(command.split(), stdout=sp.PIPE, stderr=sp.DEVNULL)
-			return process
-		else:
-			process = sp.run(command, stdout=sp.PIPE, stderr=sp.DEVNULL)
-			return process
+		while "|" in command:
+			index = command.index("|")
+			first_command, command = command[:index], command[index + 1:]
+			output = sp.Popen(first_command, stdin=output.stdout if output else None, stdout=sp.PIPE, stderr=sp.DEVNULL)
+		return sp.run(command, stdout=sp.PIPE, stdin=output.stdout if output else None, stderr=sp.DEVNULL)
 	except FileNotFoundError:  # If package manager is missing
 		return None
 
 
-def run_cmd_write_stdout(command, filepath) -> int:
+def run_cmd_write_stdout(command: str, filepath: str) -> int:
 	"""
 	Runs a command and then writes its stdout to a file.
-	Returns the returncode if the return value is not 0.
+	Returns 0 on success, and -1 on failure.
 	:param: command str representing command to run
 	:param: filepath str file to write command's stdout to
 	"""
@@ -31,9 +35,7 @@ def run_cmd_write_stdout(command, filepath) -> int:
 	if process and process.returncode == 0:
 		with open(filepath, "w+") as f:
 			f.write(process.stdout.decode('utf-8'))
-	elif process:
-		print_path_red("An error occurred while running: $", command)
-		return process.returncode
+		return 0
 	else:
 		print_path_red("An error occurred while running: $", command)
 		return -1
