@@ -217,7 +217,6 @@ Here's an example config based on my [dotfiles](https://www.github.com/alichtman
 		"/Users/alichtman/Library/Preferences/com.apple.Terminal.plist": "terminal_plist"
 	}
 }
-
 ```
 
 #### .gitignore
