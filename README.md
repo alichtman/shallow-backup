@@ -154,7 +154,7 @@ Editing the file in a text editor will give you more control and be faster.
 
 #### Conditional Backup and Reinstallation
 
-Every dotfile has two subkeys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated in `bash`. An empty string (`""`) is the default value, and is considered to be `True`. If the return value of the expression is `0`, this is considered `True`. Otherwise, it is `False`. This lets you do simple things like preventing backup with:
+Every dotfile has two (optional) subkeys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated in `bash`. An empty string (`""`) is the default value, and is considered to be `True`. If the return value of the expression is `0`, this is considered `True`. Otherwise, it is `False`. This lets you do simple things like preventing backup with:
 
 ```javascript
 // Because `$ false` returns 1
@@ -167,7 +167,7 @@ And also more complicated things like only backing up certain files if an enviro
 "backup_condition": "[[ -n \"$ENV_VAR\" ]]"
 ```
 
-My config (as of `v5.0.0a`) looks like this, and is used to back up my [dotfiles](https://www.github.com/alichtman/dotfiles):
+Here's an example config based on my [dotfiles](https://www.github.com/alichtman/dotfiles):
 
 ```json
 {
@@ -175,101 +175,16 @@ My config (as of `v5.0.0a`) looks like this, and is used to back up my [dotfiles
 	"lowest_supported_version": "5.0.0a",
 	"dotfiles": {
 		".config/agignore": {
-			"reinstall_condition": "",
-			"backup_condition": ""
+			"backup_condition": "uname -a | grep Darwin",
+			"reinstall_conditon": "uname -a | grep Darwin" 
 		},
-		".config/crontab": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/fzf-notes": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/git/config": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/git/gitignore_global": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/jrnl/jrnl.yaml": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/kitty": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/nvim": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/pycodestyle": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/pylintrc": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/python": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/radare2/radare2rc": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/ranger": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/shallow-backup.conf": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/starship.toml": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/tmux": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/tuir/tuir.cfg": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/zathura/zathurarc": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".config/zsh": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".ctags": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".ghc/ghci.conf": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".pypirc": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".ssh": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		},
-		".zshenv": {
-			"reinstall_condition": "",
-			"backup_condition": ""
-		}
+		".config/git/gitignore_global": { },
+		".config/jrnl/jrnl.yaml": { },
+		".config/kitty": { },
+		".config/nvim": { },
+		".config/pycodestyle": { },
+		...
+		".zshenv": { }
 	},
 	"root-gitignore": [
 		".DS_Store",

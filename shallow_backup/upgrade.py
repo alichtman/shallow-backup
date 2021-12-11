@@ -17,4 +17,3 @@ def check_if_config_upgrade_needed():
 		print_red("2. Manually upgrade the config.")
 		print_red_bold("Please downgrade to a version of shallow-backup before v5.0.0a if you do not want to upgrade your config.")
 		sys.exit()
-
