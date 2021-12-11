@@ -85,7 +85,7 @@ def backup_dotfiles(backup_dest_path, dry_run=False, home_path=os.path.expanduse
 
 		print_blue_bold("Backing up dotfiles...")
 		for x in dotfiles_mp_in:
-			p = mp.Process(target=copyfile, args=(x[0], x[1],))
+			p = mp.Process(target=copyfile_with_exception_handler, args=(x[0], x[1],))
 			p.start()
 			p.join()
 

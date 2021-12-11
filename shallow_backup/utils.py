@@ -2,7 +2,7 @@ import os
 import subprocess as sp
 from shlex import split
 import shutil
-from shutil import rmtree, copytree
+from shutil import rmtree, copytree, copyfile
 from typing import List, Union
 from .printing import *
 
@@ -177,6 +177,14 @@ def get_abs_path_subfiles(directory: str) -> list:
 			else:
 				file_paths.append(full_path)
 	return file_paths
+
+
+def copyfile_with_exception_handler(src, dst):
+	try:
+		copyfile(src, dst)
+	except Exception as e:
+		print_path_red('Error copying:', src)
+		print_red(" -> This may mean you have an error in your config.")
 
 
 def copy_dir_if_valid(source_dir, backup_path):
