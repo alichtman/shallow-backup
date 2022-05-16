@@ -105,7 +105,7 @@ def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
 		print_yellow_bold("Successful commit.")
 
 		if "origin" in [remote.name for remote in repo.remotes]:
-			print_path_yellow("Pushing to remote:", "{}...".format(repo.remotes.origin.url))
+			print_path_yellow("Pushing to remote:", f"{repo.remotes.origin.url}[origin/{repo.active_branch.name}]...")
 
 			repo.git.fetch()
 			repo.git.push("--set-upstream", "origin", "HEAD")
