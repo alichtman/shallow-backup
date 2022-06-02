@@ -40,7 +40,7 @@ And is incredibly fault tolerant and user-protective.
 ### Installation
 ---
 
-**Do not install this as `root`.**
+**Be careful running this with elevated privileges. Code execution can be achieved with write permissions on the config file.**
 
 Select one of the following methods:
 
