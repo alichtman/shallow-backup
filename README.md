@@ -40,7 +40,8 @@ And is incredibly fault tolerant and user-protective.
 ### Installation
 ---
 
-**Be careful running this with elevated privileges. Code execution can be achieved with write permissions on the config file.**
+> **Warning**
+> Be careful running this with elevated privileges. Code execution can be achieved with write permissions on the config file.
 
 #### Method 1: [`pip3`](https://pypi.org/project/shallow-backup/)
 
@@ -163,7 +164,8 @@ Editing the file in a text editor will give you more control and be faster.
 
 #### Conditional Backup and Reinstallation
 
-> **Warning: This feature allows code execution (by design).** If untrusted users can write to your config, they can achieve code execution next time you invoke `shallow-backup` _backup_ or _reinstall_ functions. Starting in `v5.2`, the config file will have default permissions of `644`, and a warning will be printed if others can write to the config.
+> **Warning**
+> This feature allows code execution (by design). If untrusted users can write to your config, they can achieve code execution next time you invoke `shallow-backup` _backup_ or _reinstall_ functions. Starting in `v5.2`, the config file will have default permissions of `644`, and a warning will be printed if others can write to the config.
 
 Every key under dotfiles has two optional subkeys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated with `bash`. An empty string (`""`) is the default value, and is considered to be `True`. If the return value of the expression is `0`, this is considered `True`. Otherwise, it is `False`. This lets you do simple things like preventing backup with:
 

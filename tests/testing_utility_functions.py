@@ -1,7 +1,6 @@
 import os
 import shutil
 import sys
-import tempfile
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.config import safe_create_config
 
