@@ -1,7 +1,8 @@
+import os
 import sys
 import json
-import os
-from os import path, environ
+import stat
+from os import path, environ, chmod
 from .printing import *
 from .compatibility import *
 from .utils import safe_mkdir, strip_home
@@ -84,7 +85,7 @@ def get_default_config() -> dict:
 
 def safe_create_config() -> None:
 	"""
-	Creates config file if it doesn't exist already. Prompts to update
+	Creates config file (with 644 permissions) if it doesn't exist already. Prompts to update
 	it if an outdated version is detected.
 	"""
 	backup_config_path = get_config_path()
@@ -94,6 +95,20 @@ def safe_create_config() -> None:
 		backup_config = get_default_config()
 		safe_mkdir(os.path.split(backup_config_path)[0])
 		write_config(backup_config)
+		# $ chmod 644 config_file
+		chmod(get_config_path(), stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH)
+
+
+def check_insecure_config_permissions() -> bool:
+	"""Checks to see if group/others can write to config file.
+	Returns: True if they can, False otherwise."""
+	config_path = get_config_path()
+	mode = os.stat(config_path).st_mode
+	if mode & stat.S_IWOTH or mode & stat.S_IWGRP:
+		print_red_bold(f"WARNING: {config_path} is writable by group/others and vulnerable to attack. To resolve, run: \n\t$ chmod 644 {config_path}")
+		return True
+	else:
+		return False
 
 
 def delete_config_file() -> None:

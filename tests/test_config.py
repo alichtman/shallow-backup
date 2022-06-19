@@ -2,7 +2,7 @@ import os
 import sys
 from .testing_utility_functions import setup_dirs_and_env_vars_and_create_config, clean_up_dirs_and_env_vars, FAKE_HOME_DIR
 sys.path.insert(0, "../shallow_backup")
-from shallow_backup.config import get_config, add_dot_path_to_config
+from shallow_backup.config import get_config, get_config_path, add_dot_path_to_config, check_insecure_config_permissions
 from shallow_backup.utils import strip_home
 
 
@@ -34,3 +34,12 @@ class TestConfigMethods:
 		stripped_home_path = strip_home(path_to_add)
 		assert stripped_home_path in new_config["dotfiles"]
 		assert isinstance(new_config["dotfiles"][stripped_home_path], dict)
+
+	def test_detect_insecure_config_permissions(self):
+		print(f"Testing config path: {get_config_path()}")
+		os.chmod(get_config_path(), 0o777)
+		assert check_insecure_config_permissions() == True
+
+	def test_secure_config_created_by_default(self):
+		print(f"Testing config path: {get_config_path()}")
+		assert check_insecure_config_permissions() == False

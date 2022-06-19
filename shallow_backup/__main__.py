@@ -45,6 +45,7 @@ def cli(add_dot, backup_configs_flag, delete_config, destroy_backup, backup_dots
 	"""
 	safe_create_config()
 	check_if_config_upgrade_needed()
+	check_insecure_config_permissions()
 
 	# Process CLI args
 	admin_action = any([add_dot, delete_config, destroy_backup, show, version])

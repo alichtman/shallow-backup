@@ -42,17 +42,19 @@ And is incredibly fault tolerant and user-protective.
 
 **Be careful running this with elevated privileges. Code execution can be achieved with write permissions on the config file.**
 
-Select one of the following methods:
+#### Method 1: [`pip3`](https://pypi.org/project/shallow-backup/)
 
-#### Method 1:   [`pip3`](https://pypi.org/project/shallow-backup/)
-
-```shell
-pip3 install shallow-backup
+```bash
+$ pip3 install shallow-backup
 ```
 
-#### Method 2: binary install
+#### Method 2: Install From Source
 
-Download the `shallow-backup` binary from [Releases](https://github.com/alichtman/shallow-backup/releases) tab.
+```bash
+$ git clone https://www.github.com/alichtman/shallow-backup.git
+$ cd shallow-backup
+$ pip3 install .
+```
 
 ### Usage
 ---
@@ -97,6 +99,7 @@ Options:
   -v, --version               Display version and author info.
   -h, -help, --help           Show this message and exit.
 ```
+
 
 ### Git Integration
 ---
@@ -160,7 +163,9 @@ Editing the file in a text editor will give you more control and be faster.
 
 #### Conditional Backup and Reinstallation
 
-Every dotfile has two (optional) subkeys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated in `bash`. An empty string (`""`) is the default value, and is considered to be `True`. If the return value of the expression is `0`, this is considered `True`. Otherwise, it is `False`. This lets you do simple things like preventing backup with:
+> **Warning: This feature allows code execution (by design).** If untrusted users can write to your config, they can achieve code execution next time you invoke `shallow-backup` _backup_ or _reinstall_ functions. Starting in `v5.2`, the config file will have default permissions of `644`, and a warning will be printed if others can write to the config.
+
+Every key under dotfiles has two optional subkeys: `backup_condition` and `reinstall_condition`. Both of these accept expressions that will be evaluated with `bash`. An empty string (`""`) is the default value, and is considered to be `True`. If the return value of the expression is `0`, this is considered `True`. Otherwise, it is `False`. This lets you do simple things like preventing backup with:
 
 ```javascript
 // Because `$ false` returns 1
@@ -182,7 +187,7 @@ Here's an example config based on my [dotfiles](https://www.github.com/alichtman
 	"dotfiles": {
 		".config/agignore": {
 			"backup_condition": "uname -a | grep Darwin",
-			"reinstall_conditon": "uname -a | grep Darwin" 
+			"reinstall_conditon": "uname -a | grep Darwin"
 		},
 		".config/git/gitignore_global": { },
 		".config/jrnl/jrnl.yaml": { },
@@ -255,11 +260,7 @@ backup_dir/
 ├── fonts
 │   ├── AllerDisplay.ttf
 │   ├── Aller_Bd.ttf
-│   ├── Aller_BdIt.ttf
-│   ├── Aller_It.ttf
 │   ├── ...
-│   ├── Ubuntu Mono derivative Powerline Bold Italic.ttf
-│   ├── Ubuntu Mono derivative Powerline Bold.ttf
 │   ├── Ubuntu Mono derivative Powerline Italic.ttf
 │   └── Ubuntu Mono derivative Powerline.ttf
 └── packages
@@ -276,6 +277,7 @@ backup_dir/
 ```
 
 ### Reinstalling Dotfiles
+----
 
 To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.conf` or `$XDG_CONFIG_HOME/.shallow_backup.conf`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall-dots`.
 
