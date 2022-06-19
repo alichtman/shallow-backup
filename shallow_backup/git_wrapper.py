@@ -1,6 +1,7 @@
 import os
 import sys
 import git
+from git import GitCommandError
 from shutil import move
 from .printing import *
 from .config import get_config
@@ -67,8 +68,12 @@ def safe_git_init(dir_path):
 	"""
 	if not os.path.isdir(os.path.join(dir_path, ".git")):
 		print_yellow_bold("Initializing new git repo...")
-		repo = git.Repo.init(dir_path)
-		return repo, True
+		try:
+			repo = git.Repo.init(dir_path)
+			return repo, True
+		except GitCommandError:
+			print_red_bold("ERROR: We ran into some trouble creating the git repo. Double check that you have write permissions.")
+			sys.exit(1)
 	else:
 		print_yellow_bold("Detected git repo.")
 		repo = git.Repo(dir_path)
