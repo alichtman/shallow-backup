@@ -4,10 +4,10 @@ from colorama import Fore
 import multiprocessing as mp
 from pathlib import Path
 from shutil import copyfile
-from .utils import *
-from .printing import *
-from .compatibility import *
-from .config import get_config
+from shallow_backup.utils import *
+from shallow_backup.printing import *
+from shallow_backup.compatibility import *
+from shallow_backup.config import get_config
 
 
 def backup_dotfiles(backup_dest_path, dry_run=False, home_path=os.path.expanduser("~"), skip=False):
@@ -140,7 +140,7 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 
 	# brew
 	print_pkg_mgr_backup("brew")
-	command = f"brew bundle dump --file {backup_path}/brew_list.txt"
+	command = f"brew bundle dump --all --file {backup_path}/brew_list.txt"
 	dest = f"{backup_path}/brew_list.txt"
 	if not dry_run:
 		if not run_cmd(command):
