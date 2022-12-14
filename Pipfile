@@ -12,6 +12,7 @@ inquirer = ">=2.6.3"
 [dev-packages]
 pytest = ">=5.4.1"
 pytest-cov = ">=2.8.1"
+twine = "*"
 
 [requires]
 python_version = "3.10"

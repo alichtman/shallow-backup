@@ -3,6 +3,8 @@
 
 # NOTE: Must be run from project root directory
 
+set -e
+
 # Check if on master
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 if [[ "$BRANCH" != "master" ]]; then
