@@ -1,6 +1,6 @@
 Click==7.0
 colorama==0.4.3
-GitPython==3.1.0
+GitPython==3.1.29
 inquirer==2.6.3
 pytest==5.4.1
 pytest-cov==2.8.1
