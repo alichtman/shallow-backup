@@ -114,12 +114,13 @@ def backup_configs(backup_path, dry_run: bool = False, skip=False):
 			continue
 
 		quoted_dest = quote(dest)
-		if os.path.isdir(config_path):
-			copytree(config_path, quoted_dest, symlinks=True)
-		elif os.path.isfile(config_path):
+		expanded_path = os.path.expandvars(os.path.expanduser(config_path))
+		if os.path.isdir(expanded_path):
+			copytree(expanded_path, quoted_dest, symlinks=True)
+		elif os.path.isfile(expanded_path):
 			parent_dir = Path(dest).parent
 			safe_mkdir(parent_dir)
-			copyfile(config_path, quoted_dest)
+			copyfile(expanded_path, quoted_dest)
 
 
 def backup_packages(backup_path, dry_run: bool = False, skip=False):
