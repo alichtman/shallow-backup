@@ -114,7 +114,7 @@ def backup_configs(backup_path, dry_run: bool = False, skip=False):
 			continue
 
 		quoted_dest = quote(dest)
-		expanded_path = os.path.expandvars(os.path.expanduser(config_path))
+		expanded_path = expand_to_abs_path(config_path)
 		if os.path.isdir(expanded_path):
 			copytree(expanded_path, quoted_dest, symlinks=True)
 		elif os.path.isfile(expanded_path):
