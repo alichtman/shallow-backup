@@ -11,11 +11,12 @@ from .utils import safe_mkdir
 #########
 
 COMMIT_MSG = {
-	"fonts": "Back up fonts.",
-	"packages": "Back up packages.",
+	"all": "Back up everything.",
 	"configs": "Back up configs.",
+	"dotfiles": "Back up dotfiles.",
+	"fonts": "Back up fonts.",
 	"full_backup": "Full back up.",
-	"dotfiles": "Back up dotfiles."
+	"packages": "Back up packages.",
 }
 
 ###########
