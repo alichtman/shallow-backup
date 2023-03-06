@@ -180,10 +180,10 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 	if npm_backup_cmd_success:
 		npm_dest_file = f"{backup_path}/npm_list.txt"
 		with open(temp_file_path, 'r') as temp_file:
-			tmp_dict = json.load(temp_file)
-		with open(npm_dest_file, 'w') as dest:
-			for package in tmp_dict.get('dependencies').keys():
-				dest.write(package+'\n')
+			npm_packages = json.load(temp_file).get('dependencies').keys()
+			if len(npm_packages) >= 1:
+				with open(npm_dest_file, 'w') as dest:
+					[dest.write(f"{package}\n") for package in npm_packages]
 		os.remove(temp_file_path)
 
 	# atom package manager
@@ -241,3 +241,5 @@ def backup_all(dotfiles_path, packages_path, fonts_path, configs_path, dry_run=F
 	backup_packages(packages_path, dry_run=dry_run, skip=skip)
 	backup_fonts(fonts_path, dry_run=dry_run, skip=skip)
 	backup_configs(configs_path, dry_run=dry_run, skip=skip)
+
+# vim: autoindent noexpandtab tabstop=4 shiftwidth=4
