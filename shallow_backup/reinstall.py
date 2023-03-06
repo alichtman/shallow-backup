@@ -124,7 +124,7 @@ def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
 	package_mgrs = set()
 	for file in os.listdir(packages_path):
 		manager = file.split("_")[0].replace("-", " ")
-		if manager in ["gem", "cargo", "npm", "pip", "pip3", "brew", "vscode", "apm", "macports"]:
+		if manager in ["gem", "cargo", "npm", "pip", "pip3", "brew", "vscode", "macports"]:
 			package_mgrs.add(file.split("_")[0])
 
 	print_blue_bold("Package Manager Backups Found:")
@@ -157,10 +157,6 @@ def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
 				for package in file:
 					cmd = f"code --install-extension {package}"
 					run_cmd_if_no_dry_run(cmd, dry_run)
-		elif pm == "apm":
-			print_pkg_mgr_reinstall(pm)
-			cmd = f"apm install --packages-file {packages_path}/apm_list.txt"
-			run_cmd_if_no_dry_run(cmd, dry_run)
 		elif pm == "macports":
 			print_red_bold("WARNING: Macports reinstallation is not supported.")
 		elif pm == "gem":

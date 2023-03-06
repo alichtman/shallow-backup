@@ -139,7 +139,6 @@ By default, `shallow-backup` backs these up.
     * Terminal.app
 
 3. Installed Packages
-    * `apm`
     * `brew` and `cask`
     * `cargo`
     * `gem`
@@ -266,7 +265,6 @@ backup_dir/
 │   ├── Ubuntu Mono derivative Powerline Italic.ttf
 │   └── Ubuntu Mono derivative Powerline.ttf
 └── packages
-    ├── apm_list.txt
     ├── brew-cask_list.txt
     ├── brew_list.txt
     ├── cargo_list.txt
