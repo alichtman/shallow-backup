@@ -186,12 +186,6 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 					[dest.write(f"{package}\n") for package in npm_packages]
 		os.remove(temp_file_path)
 
-	# atom package manager
-	print_pkg_mgr_backup("Atom")
-	command = "apm list --installed --bare"
-	dest = f"{backup_path}/apm_list.txt"
-	run_cmd_if_no_dry_run(command, dest, dry_run)
-
 	# vscode extensions
 	print_pkg_mgr_backup("VSCode")
 	command = "code --list-extensions --show-versions"
