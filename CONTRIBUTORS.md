@@ -6,3 +6,4 @@
 - [Peter Yasi](https://github.com/pyasi)
 - [Nicole Tibay](https://github.com/neequole)
 - [Rods](https://github.com/rods-honorio)
+- [Jerome Brown](https://github.com/oWretch)
