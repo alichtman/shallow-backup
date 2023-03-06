@@ -1,4 +1,5 @@
 import os
+import json
 from shlex import quote
 from colorama import Fore
 import multiprocessing as mp
@@ -172,19 +173,17 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
 
 	# npm
 	print_pkg_mgr_backup("npm")
-	command = "npm ls --global --parseable=true --depth=0"
-	temp_file_path = f"{backup_path}/npm_temp_list.txt"
+	command = "npm ls --global --json=true --depth=0"
+	temp_file_path = f"{backup_path}/npm_temp_list.json"
 	# If command is successful, go to the next parsing step.
 	npm_backup_cmd_success = run_cmd_if_no_dry_run(command, temp_file_path, dry_run) == 0
 	if npm_backup_cmd_success:
 		npm_dest_file = f"{backup_path}/npm_list.txt"
-		# Parse npm output
-		with open(temp_file_path, mode="r+") as temp_file:
-			# Skip first line of file
-			temp_file.seek(1)
-			with open(npm_dest_file, mode="w+") as dest:
-				for line in temp_file:
-					dest.write(line.split("/")[-1])
+		with open(temp_file_path, 'r') as temp_file:
+			npm_packages = json.load(temp_file).get('dependencies').keys()
+			if len(npm_packages) >= 1:
+				with open(npm_dest_file, 'w') as dest:
+					[dest.write(f"{package}\n") for package in npm_packages]
 		os.remove(temp_file_path)
 
 	# atom package manager
@@ -242,3 +241,5 @@ def backup_all(dotfiles_path, packages_path, fonts_path, configs_path, dry_run=F
 	backup_packages(packages_path, dry_run=dry_run, skip=skip)
 	backup_fonts(fonts_path, dry_run=dry_run, skip=skip)
 	backup_configs(configs_path, dry_run=dry_run, skip=skip)
+
+# vim: autoindent noexpandtab tabstop=4 shiftwidth=4
