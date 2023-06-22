@@ -8,11 +8,13 @@ click = ">=7.0"
 colorama = ">=0.4.3"
 gitpython = ">=3.1.29"
 inquirer = ">=2.6.3"
+black = "*"
 
 [dev-packages]
 pytest = ">=5.4.1"
 pytest-cov = ">=2.8.1"
 twine = "*"
+black = "*"
 
 [requires]
 python_version = "3.10"
