@@ -1,11 +1,15 @@
 import os
 import sys
-from .testing_utility_functions import FAKE_HOME_DIR, setup_dirs_and_env_vars_and_create_config, clean_up_dirs_and_env_vars
+from .testing_utility_functions import (
+    FAKE_HOME_DIR,
+    setup_dirs_and_env_vars_and_create_config,
+    clean_up_dirs_and_env_vars,
+)
 
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.reinstall import reinstall_dots_sb
 
-TEST_TEXT_CONTENT = 'THIS IS TEST CONTENT FOR THE DOTFILES'
+TEST_TEXT_CONTENT = "THIS IS TEST CONTENT FOR THE DOTFILES"
 DOTFILES_PATH = os.path.join(FAKE_HOME_DIR, "dotfiles/")
 
 
@@ -16,7 +20,6 @@ class TestReinstallDotfiles:
 
     @staticmethod
     def setup_method():
-
         def create_nested_dir(parent, name):
             new_dir = os.path.join(parent, name)
             print(f"Creating {new_dir}")
@@ -64,12 +67,16 @@ class TestReinstallDotfiles:
         """
         Test reinstalling dotfiles to fake home dir
         """
-        reinstall_dots_sb(dots_path=DOTFILES_PATH, home_path=FAKE_HOME_DIR, dry_run=False)
-        assert os.path.isfile(os.path.join(FAKE_HOME_DIR, '.zshenv'))
-        testfolder2 = os.path.join(os.path.join(FAKE_HOME_DIR, '.config/tmux/'), 'testfolder2')
+        reinstall_dots_sb(
+            dots_path=DOTFILES_PATH, home_path=FAKE_HOME_DIR, dry_run=False
+        )
+        assert os.path.isfile(os.path.join(FAKE_HOME_DIR, ".zshenv"))
+        testfolder2 = os.path.join(
+            os.path.join(FAKE_HOME_DIR, ".config/tmux/"), "testfolder2"
+        )
         assert os.path.isdir(testfolder2)
-        assert os.path.isfile(os.path.join(testfolder2, 'test.sh'))
-        assert os.path.isdir(os.path.join(FAKE_HOME_DIR, '.config/git/'))
+        assert os.path.isfile(os.path.join(testfolder2, "test.sh"))
+        assert os.path.isdir(os.path.join(FAKE_HOME_DIR, ".config/git/"))
 
         # Do reinstall other git files
         assert os.path.isdir(os.path.join(testfolder2, ".git"))
@@ -82,4 +89,3 @@ class TestReinstallDotfiles:
         # Don't reinstall img or README.md
         assert not os.path.isdir(os.path.join(FAKE_HOME_DIR, "img"))
         assert not os.path.isfile(os.path.join(FAKE_HOME_DIR, "README.md"))
-
