@@ -36,6 +36,13 @@ from .upgrade import check_if_config_upgrade_needed
     help="Back up dotfiles.",
 )
 @click.option(
+    "-backup-fonts",
+    "backup_fonts_flag",
+    is_flag=True,
+    default=False,
+    help="Back up installed fonts.",
+)
+@click.option(
     "-backup-packages",
     "backup_packages_flag",
     is_flag=True,
@@ -51,13 +58,6 @@ from .upgrade import check_if_config_upgrade_needed
     is_flag=True,
     default=False,
     help="Don't backup or reinstall any files, just give verbose output.",
-)
-@click.option(
-    "-backup-fonts",
-    "backup_fonts_flag",
-    is_flag=True,
-    default=False,
-    help="Back up installed fonts.",
 )
 @click.option("--new-path", default=None, help="Input a new back up directory path.")
 @click.option(
