@@ -16,16 +16,10 @@ from .upgrade import check_if_config_upgrade_needed
 # custom help options
 @click.command(context_settings=dict(help_option_names=["-h", "-help", "--help"]))
 @click.option(
-    "--add-dot",
-    default=None,
-    help="Add a dotfile or dotfolder to config by path."
+    "--add-dot", default=None, help="Add a dotfile or dotfolder to config by path."
 )
 @click.option(
-    "--backup-all",
-    "backup_all_flag",
-    is_flag=True,
-    default=False,
-    help="Full back up."
+    "--backup-all", "backup_all_flag", is_flag=True, default=False, help="Full back up."
 )
 @click.option(
     "--backup-configs",
@@ -56,16 +50,10 @@ from .upgrade import check_if_config_upgrade_needed
     help="Back up package libraries.",
 )
 @click.option(
-    "--delete-config",
-    is_flag=True,
-    default=False,
-    help="Delete config file."
+    "--delete-config", is_flag=True, default=False, help="Delete config file."
 )
 @click.option(
-    "--destroy-backup",
-    is_flag=True,
-    default=False,
-    help="Delete backup directory."
+    "--destroy-backup", is_flag=True, default=False, help="Delete backup directory."
 )
 @click.option(
     "--dry-run",
@@ -73,11 +61,7 @@ from .upgrade import check_if_config_upgrade_needed
     default=False,
     help="Don't backup or reinstall any files, just give verbose output.",
 )
-@click.option(
-    "--new-path",
-    default=None,
-    help="Input a new back up directory path."
-)
+@click.option("--new-path", default=None, help="Input a new back up directory path.")
 @click.option(
     "--no-new-backup-path-prompt",
     is_flag=True,
@@ -85,22 +69,13 @@ from .upgrade import check_if_config_upgrade_needed
     help="Skip setting new back up directory path prompt.",
 )
 @click.option(
-    "--no-splash",
-    is_flag=True,
-    default=False,
-    help="Don't display splash screen."
+    "--no-splash", is_flag=True, default=False, help="Don't display splash screen."
 )
 @click.option(
-    "--reinstall-all",
-    is_flag=True,
-    default=False,
-    help="Full reinstallation."
+    "--reinstall-all", is_flag=True, default=False, help="Full reinstallation."
 )
 @click.option(
-    "--reinstall-configs",
-    is_flag=True,
-    default=False,
-    help="Reinstall configs."
+    "--reinstall-configs", is_flag=True, default=False, help="Reinstall configs."
 )
 @click.option(
     "--reinstall-dots",
@@ -108,34 +83,18 @@ from .upgrade import check_if_config_upgrade_needed
     default=False,
     help="Reinstall dotfiles and dotfolders.",
 )
+@click.option("--reinstall-fonts", is_flag=True, default=False, help="Reinstall fonts.")
 @click.option(
-    "--reinstall-fonts",
-    is_flag=True,
-    default=False,
-    help="Reinstall fonts.")
-@click.option(
-    "--reinstall-packages",
-    is_flag=True,
-    default=False,
-    help="Reinstall packages."
+    "--reinstall-packages", is_flag=True, default=False, help="Reinstall packages."
 )
-@click.option(
-    "--remote",
-    default=None,
-    help="Set remote URL for the git repo."
-)
+@click.option("--remote", default=None, help="Set remote URL for the git repo.")
 @click.option(
     "--separate-dotfiles-repo",
     is_flag=True,
     default=False,
     help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.",
 )
-@click.option(
-    "--show",
-    is_flag=True,
-    default=False,
-    help="Display config file."
-)
+@click.option("--show", is_flag=True, default=False, help="Display config file.")
 @click.option(
     "--version",
     "-v",
