@@ -1,18 +1,22 @@
 #!/bin/bash
 # Release script for shallow-backup
 
-# NOTE: Must be run from project root directory
-
 set -e
 
-# Check if on master
+# Check if .git directory exists
+if [[ ! -d ".git" ]]; then
+  echo 'Must be run from project root directory!';
+  exit 1;
+fi
+
+# Check if on main
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 if [[ "$BRANCH" != "main" ]]; then
   echo 'Must be on main branch to cut a release!';
   exit 1;
 fi
 
-# Check if master is dirty
+# Check if main is dirty
 if [[ -n $(git status -s) ]]; then
     echo 'main branch dirty! Aborting.';
     exit 1;
@@ -32,7 +36,7 @@ case "$response" in
         ;;
 esac
 
-git checkout master && git pull
+git checkout main && git pull
 git tag -a "$SB_VERSION" -m "shallow-backup $SB_VERSION" && git push
 github_changelog_generator --user alichtman --project shallow-backup
 git add CHANGELOG.md && git commit -m "Add CHANGELOG for $SB_VERSION" && git push
