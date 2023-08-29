@@ -1,10 +1,15 @@
 import os
 import sys
-from .testing_utility_functions import FAKE_HOME_DIR, clean_up_dirs_and_env_vars, setup_dirs_and_env_vars_and_create_config
+from .testing_utility_functions import (
+    FAKE_HOME_DIR,
+    clean_up_dirs_and_env_vars,
+    setup_dirs_and_env_vars_and_create_config,
+)
+
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.utils import destroy_backup_dir
 
-TEST_BACKUP_TEXT_FILE = os.path.join(FAKE_HOME_DIR, 'test-file.txt')
+TEST_BACKUP_TEXT_FILE = os.path.join(FAKE_HOME_DIR, "test-file.txt")
 
 
 class TestDeleteMethods:

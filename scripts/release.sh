@@ -3,16 +3,18 @@
 
 # NOTE: Must be run from project root directory
 
+set -e
+
 # Check if on master
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
-if [[ "$BRANCH" != "master" ]]; then
-  echo 'Must be on master branch to cut a release!';
+if [[ "$BRANCH" != "main" ]]; then
+  echo 'Must be on main branch to cut a release!';
   exit 1;
 fi
 
 # Check if master is dirty
 if [[ -n $(git status -s) ]]; then
-    echo 'Master branch dirty! Aborting.';
+    echo 'main branch dirty! Aborting.';
     exit 1;
 fi
 
