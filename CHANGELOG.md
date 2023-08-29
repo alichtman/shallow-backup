@@ -1,8 +1,49 @@
 # Changelog
 
-## [Unreleased](https://github.com/alichtman/shallow-backup/tree/HEAD)
+## [v6.0](https://github.com/alichtman/shallow-backup/tree/v6.0) (2023-08-29)
 
-[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v5.0.1...HEAD)
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v5.3...v6.0)
+
+**Closed issues:**
+
+- Convert options from `-` to `--` where it makes sense [\#328](https://github.com/alichtman/shallow-backup/issues/328)
+- `backup-fonts` is in the wrong spot in the help menu [\#325](https://github.com/alichtman/shallow-backup/issues/325)
+- KeyError: 'all' on commit procedure [\#306](https://github.com/alichtman/shallow-backup/issues/306)
+
+**Merged pull requests:**
+
+- fix: Convert options from - to -- where it makes sense [\#329](https://github.com/alichtman/shallow-backup/pull/329) ([BreakingPitt](https://github.com/BreakingPitt))
+- Move backup-fonts to the right spot in the help menu [\#327](https://github.com/alichtman/shallow-backup/pull/327) ([alichtman](https://github.com/alichtman))
+- Create black.yml [\#326](https://github.com/alichtman/shallow-backup/pull/326) ([alichtman](https://github.com/alichtman))
+-  Deprecate apm backups and restores [\#320](https://github.com/alichtman/shallow-backup/pull/320) ([alichtman](https://github.com/alichtman))
+- Bump cryptography from 38.0.4 to 39.0.1 [\#318](https://github.com/alichtman/shallow-backup/pull/318) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Bump gitpython from 3.1.29 to 3.1.30 [\#317](https://github.com/alichtman/shallow-backup/pull/317) ([dependabot[bot]](https://github.com/apps/dependabot))
+- Fix npm backup issue \#226 [\#315](https://github.com/alichtman/shallow-backup/pull/315) ([nick-The-One](https://github.com/nick-The-One))
+
+## [v5.3](https://github.com/alichtman/shallow-backup/tree/v5.3) (2022-12-14)
+
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v5.2...v5.3)
+
+## [v5.2](https://github.com/alichtman/shallow-backup/tree/v5.2) (2022-06-19)
+
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v5.1...v5.2)
+
+**Fixed bugs:**
+
+- Support default branches other than `master` [\#305](https://github.com/alichtman/shallow-backup/issues/305)
+
+**Closed issues:**
+
+- Add warning if shallow-backup.conf is writable by all [\#309](https://github.com/alichtman/shallow-backup/issues/309)
+
+**Merged pull requests:**
+
+- Add warning if config is vulnerable to exploitation [\#310](https://github.com/alichtman/shallow-backup/pull/310) ([alichtman](https://github.com/alichtman))
+- fix: push to different branch names [\#307](https://github.com/alichtman/shallow-backup/pull/307) ([jnoortheen](https://github.com/jnoortheen))
+
+## [v5.1](https://github.com/alichtman/shallow-backup/tree/v5.1) (2021-12-11)
+
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v5.0.1...v5.1)
 
 **Fixed bugs:**
 
