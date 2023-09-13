@@ -24,7 +24,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest --cov
+          pytest --exitfirst --verbose --failed-first --cov=. --cov-report html
 
       - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@v2
