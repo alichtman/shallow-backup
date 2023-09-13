@@ -73,32 +73,33 @@ Usage: shallow-backup [OPTIONS]
   Written by Aaron Lichtman (@alichtman).
 
 Options:
-  --add-dot TEXT              Add a dotfile or dotfolder to config by path.
-  -backup-all                 Full back up.
-  -backup-configs             Back up app config files.
-  -backup-dots                Back up dotfiles.
-  -backup-packages            Back up package libraries.
-  -delete-config              Delete config file.
-  -destroy-backup             Delete backup directory.
-  -dry-run                    Don't backup or reinstall any files, just give
-                              verbose output.
 
-  -backup-fonts               Back up installed fonts.
-  --new-path TEXT             Input a new back up directory path.
-  -no-new-backup-path-prompt  Skip setting new back up directory path prompt.
-  -no-splash                  Don't display splash screen.
-  -reinstall-all              Full reinstallation.
-  -reinstall-configs          Reinstall configs.
-  -reinstall-dots             Reinstall dotfiles and dotfolders.
-  -reinstall-fonts            Reinstall fonts.
-  -reinstall-packages         Reinstall packages.
-  --remote TEXT               Set remote URL for the git repo.
-  -separate-dotfiles-repo     Use if you are trying to maintain a separate
-                              dotfiles repo and running into issue #229.
+  --add-dot TEXT               Add a dotfile or dotfolder to config by path.
+  --backup-all                 Full back up.
+  --backup-configs             Back up app config files.
+  --backup-dots                Back up dotfiles.
+  --backup-fonts               Back up installed fonts.
+  --backup-packages            Back up package libraries.
+  --delete-config              Delete config file.
+  --destroy-backup             Delete backup directory.
+  --dry-run                    Don't backup or reinstall any files, just give
+                               verbose output.
 
-  -show                       Display config file.
-  -v, --version               Display version and author info.
-  -h, -help, --help           Show this message and exit.
+  --new-path TEXT              Input a new back up directory path.
+  --no-new-backup-path-prompt  Skip setting new back up directory path prompt.
+  --no-splash                  Don't display splash screen.
+  --reinstall-all              Full reinstallation.
+  --reinstall-configs          Reinstall configs.
+  --reinstall-dots             Reinstall dotfiles and dotfolders.
+  --reinstall-fonts            Reinstall fonts.
+  --reinstall-packages         Reinstall packages.
+  --remote TEXT                Set remote URL for the git repo.
+  --separate-dotfiles-repo     Use if you are trying to maintain a separate
+                               dotfiles repo and running into issue #229.
+
+  --show                       Display config file.
+  -v, --version                Display version and author info.
+  -h, -help, --help            Show this message and exit.
 ```
 
 
