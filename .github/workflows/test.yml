@@ -12,16 +12,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
       - uses: actions/setup-python@v2
         with:
           python-version: 3.6
+
       - name: Install dependencies
         run: |
           pip install pipenv
           pipenv install --dev
+
       - name: Run tests
         run: |
           pytest --cov
+
       - name: Upload coverage to Coveralls
-        uses: coveralls/coveralls-action@v1
+        uses: coverallsapp/github-action@v2
 
