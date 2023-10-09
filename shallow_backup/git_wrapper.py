@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sys
 import git
 from shutil import move
@@ -63,7 +64,7 @@ def create_gitignore(dir_path, key):
             f.write("{}\n".format(ignore))
 
 
-def safe_git_init(dir_path):
+def safe_git_init(dir_path) -> (git.Repo, bool):
     """
     If there is no git repo inside the dir_path, intialize one.
     Returns tuple of (git.Repo, bool new_git_repo_created)
@@ -78,34 +79,63 @@ def safe_git_init(dir_path):
         return repo, False
 
 
-def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
+def handle_separate_git_dir_in_dotfiles(dotfiles_path: Path, dry_run: bool = False):
+    print_yellow_bold("Checking for separate git repo in dotfiles directory...")
+    if ".git" in os.listdir(dotfiles_path):
+        dotfiles_repo = git.Repo(dotfiles_path)
+        if dotfiles_repo.is_dirty():
+            print_green_bold("Detected a nested dotfiles repo that is dirty!!")
+            print_green_bold(
+                "Do you want to create and push a commit in this repo first, before dealing with the parent?"
+            )
+            if prompt_yes_no(
+                "If you do not, the parent repo will not be able to commit the dotfile changes (due to a dirty submodule)",
+                Fore.YELLOW,
+            ):
+                print_green_bold("Okay, switching into dotfiles subrepo...")
+                git_add_all_commit_push(
+                    dotfiles_repo, message="dotfiles", dry_run=dry_run
+                )
+                print_green_bold("Switching back to parent shallow-backup repo...")
+
+
+def prompt_to_show_git_diff(repo):
+    if prompt_yes_no("Show git diff?", Fore.BLUE):
+        print(repo.git.diff(staged=True, color="always"))
+
+
+def git_add_all_and_print_status(repo):
+    print_yellow("Staging all files for commit...")
+    repo.git.add(all=True)
+    print(repo.git.status())
+    prompt_to_show_git_diff(repo)
+
+
+def git_add_all_commit_push(repo: git.Repo, message: str, dry_run: bool = False):
     """
     Stages all changed files in dir_path and its children folders for commit,
     commits them and pushes to a remote if it's configured.
 
     :param git.repo repo: The repo
     :param str message: The commit message
-    :param bool separate_dotfiles_repo: Flag for denoting a workflow where git submodules are used to maintain a separate repo for just dotfiles.
     """
-    if separate_dotfiles_repo:
-        print_yellow_bold("Skipping commit to avoid git submodule error.")
-        print_yellow_bold(
-            "Issue tracked at: https://github.com/alichtman/shallow-backup/issues/229"
-        )
-        return
-
-    if repo.index.diff(None) or repo.untracked_files:
+    if repo.is_dirty():
+        git_add_all_and_print_status(repo)
+        if not prompt_yes_no("Make a commit? Ctrl-C to exit", Fore.BLUE):
+            return
+        if dry_run:
+            print_yellow_bold("Dry run: Would have made a commit!")
+            return
         print_yellow_bold("Making new commit...")
         repo.git.add(A=True)
         try:
             repo.git.commit(m=COMMIT_MSG[message])
-            # Git submodule issue https://github.com/alichtman/shallow-backup/issues/229
         except git.exc.GitCommandError as e:
             error = e.stdout.strip()
             error = error[error.find("'") + 1 : -1]
             print_red_bold(f"ERROR on Commit: {e.command}\n{error}\n")
             print_red_bold(
-                "Issue tracked at: https://github.com/alichtman/shallow-backup/issues/229"
+                "Please open a new issue at https://github.com/alichtman/shallow-backup/issues/new"
             )
             return
 
@@ -116,7 +146,6 @@ def git_add_all_commit_push(repo, message, separate_dotfiles_repo=False):
                 "Pushing to remote:",
                 f"{repo.remotes.origin.url}[origin/{repo.active_branch.name}]...",
             )
-
             repo.git.fetch()
             repo.git.push("--set-upstream", "origin", "HEAD")
     else:
