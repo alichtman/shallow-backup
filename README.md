@@ -43,10 +43,10 @@ And is incredibly fault tolerant and user-protective.
 > **Warning**
 > Be careful running this with elevated privileges. Code execution can be achieved with write permissions on the config file.
 
-#### Method 1: [`pip3`](https://pypi.org/project/shallow-backup/)
+#### Method 1: [`pipx`](https://pypi.org/project/shallow-backup/)
 
 ```bash
-$ pip3 install shallow-backup
+$ pipx install shallow-backup
 ```
 
 #### Method 2: Install From Source
