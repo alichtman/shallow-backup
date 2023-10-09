@@ -43,9 +43,7 @@ git add CHANGELOG.md && git commit -m "Add CHANGELOG for $SB_VERSION" && git pus
 echo "Generating distribution files..."
 rm -rf dist/* && python3 setup.py sdist
 echo "Creating GH release..."
-set +x
 echo "$SB_VERSION"
-gh release create "shallow-backup $SB_VERSION" "dist/shallow-backup-$SB_VERSION_NO_V.tar.gz" --notes "shallow-backup $SB_VERSION"
-set -x
+gh release create "$SB_VERSION" dist/shallow-backup-$SB_VERSION_NO_V.tar.gz -F CHANGELOG.md
 echo "Uploading to pypi..."
 twine upload --repository pypi dist/*
