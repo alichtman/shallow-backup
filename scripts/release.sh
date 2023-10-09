@@ -22,8 +22,8 @@ if [[ -n $(git status -s) ]]; then
     exit 1;
 fi
 
-SB_VERSION="v$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
 SB_VERSION_NO_V="$(python3 -c "from shallow_backup.constants import ProjInfo; print(ProjInfo.VERSION)")"
+SB_VERSION="v$SB_VERSION_NO_V"
 
 read -r -p "Release shallow-backup $SB_VERSION? Version bump should already be committed and pushed. [y/N] " response
 case "$response" in
@@ -43,6 +43,9 @@ git add CHANGELOG.md && git commit -m "Add CHANGELOG for $SB_VERSION" && git pus
 echo "Generating distribution files..."
 rm -rf dist/* && python3 setup.py sdist
 echo "Creating GH release..."
+set +x
+echo "$SB_VERSION"
 gh release create "shallow-backup $SB_VERSION" "dist/shallow-backup-$SB_VERSION_NO_V.tar.gz" --notes "shallow-backup $SB_VERSION"
+set -x
 echo "Uploading to pypi..."
 twine upload --repository pypi dist/*
