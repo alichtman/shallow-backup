@@ -94,8 +94,6 @@ Options:
   --reinstall-fonts            Reinstall fonts.
   --reinstall-packages         Reinstall packages.
   --remote TEXT                Set remote URL for the git repo.
-  --separate-dotfiles-repo     Use if you are trying to maintain a separate
-                               dotfiles repo and running into issue #229.
 
   --show                       Display config file.
   -v, --version                Display version and author info.
@@ -112,9 +110,9 @@ This backup tool is git-integrated, meaning that you can easily store your backu
 
 _If you choose to back up to a public repository, look at every file you're backing up to make sure you want it to be public._
 
-**What if I'd like to maintain a separate repo for my dotfiles?**
+**How can I maintain a separate repo for my dotfiles?**
 
-`shallow-backup` makes this easy! After making your first backup, `cd` into the `dotfiles/` directory and run `$ git init`. Create a `.gitignore` and a new repo on your favorite version control platform. This repo will be maintained independently (manually) of the base `shallow-backup` repo. Note that you may need to use the `-separate_dotfiles_repo` flag to get this to work, and it may [break some other functionality of the tool](https://github.com/alichtman/shallow-backup/issues/229). It's ok for my use case, though.
+`shallow-backup` makes this easy! After making your first backup, `cd` into the `dotfiles/` directory and run `$ git init`. Create a `.gitignore`, and a create / set up (link the upstream remote, etc) a new repo on your favorite version control platform. With operations involving the parent `shallow-backup` repo, `shallow-backup` will prompt you interactively to update the nested submodule. After that is taken care of, `shallow-backup` will move on to updating the parent. The `dotfiles` repo will be tracked as a submodule.
 
 Here's a `bash` script that I wrote to [automate my dotfile backup workflow](https://github.com/alichtman/scripts/blob/master/backup-and-update-dotfiles.sh). You can use this by placing it in your `$PATH`, making it executable, and running it.
 

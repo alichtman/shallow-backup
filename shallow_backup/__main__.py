@@ -88,12 +88,6 @@ from .upgrade import check_if_config_upgrade_needed
     "--reinstall-packages", is_flag=True, default=False, help="Reinstall packages."
 )
 @click.option("--remote", default=None, help="Set remote URL for the git repo.")
-@click.option(
-    "--separate-dotfiles-repo",
-    is_flag=True,
-    default=False,
-    help="Use if you are trying to maintain a separate dotfiles repo and running into issue #229.",
-)
 @click.option("--show", is_flag=True, default=False, help="Display config file.")
 @click.option(
     "--version",
@@ -121,7 +115,6 @@ def cli(
     reinstall_fonts,
     reinstall_packages,
     remote,
-    separate_dotfiles_repo,
     show,
     version,
 ):
@@ -252,8 +245,10 @@ def cli(
                 git_add_all_commit_push(repo, "full_backup")
         elif backup_dots_flag:
             backup_dotfiles(dotfiles_path, dry_run=dry_run, skip=True)
+            # The reason that dotfiles/.git is special cased, and none of the others are is because maintaining a separate git repo for dotfiles is a common use case.
+            handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run)
             if not dry_run:
-                git_add_all_commit_push(repo, "dotfiles", separate_dotfiles_repo)
+                git_add_all_commit_push(repo, "dotfiles")
         elif backup_configs_flag:
             backup_configs(configs_path, dry_run=dry_run, skip=True)
             if not dry_run:
@@ -273,10 +268,12 @@ def cli(
         if action == "back up":
             if target == "all":
                 backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
+                handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run=dry_run)
                 git_add_all_commit_push(repo, target)
             elif target == "dotfiles":
                 backup_dotfiles(dotfiles_path)
-                git_add_all_commit_push(repo, target, separate_dotfiles_repo)
+                handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run)
+                git_add_all_commit_push(repo, target)
             elif target == "configs":
                 backup_configs(configs_path)
                 git_add_all_commit_push(repo, target)
