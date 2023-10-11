@@ -84,7 +84,7 @@ def backup_dotfiles(
 
     # Fix https://github.com/alichtman/shallow-backup/issues/230
     for dest_path in [path_pair[1] for path_pair in dotfiles_mp_in + dotfolders_mp_in]:
-        print(f"Creating: {os.path.split(dest_path)[0]}")
+        # print(f"Creating: {os.path.split(dest_path)[0]}")
         safe_mkdir(os.path.split(dest_path)[0])
 
     with mp.Pool(mp.cpu_count()):

@@ -1,9 +1,10 @@
 import os
 from pathlib import Path
+import subprocess
 import sys
 import git
 from git import GitCommandError
-from shutil import move
+from shutil import move, which
 from .printing import *
 from .config import get_config
 from .utils import safe_mkdir
@@ -88,7 +89,7 @@ def handle_separate_git_dir_in_dotfiles(dotfiles_path: Path, dry_run: bool = Fal
     print_yellow_bold("Checking for separate git repo in dotfiles directory...")
     if ".git" in os.listdir(dotfiles_path):
         dotfiles_repo = git.Repo(dotfiles_path)
-        if dotfiles_repo.is_dirty():
+        if dotfiles_repo.git.status("--porcelain"):
             print_green_bold("Detected a nested dotfiles repo that is dirty!!")
             print_green_bold(
                 "Do you want to create and push a commit in this repo first, before dealing with the parent?"
@@ -102,6 +103,10 @@ def handle_separate_git_dir_in_dotfiles(dotfiles_path: Path, dry_run: bool = Fal
                     dotfiles_repo, message="dotfiles", dry_run=dry_run
                 )
                 print_green_bold("Switching back to parent shallow-backup repo...")
+        else:
+            print_green_bold("Detected a nested dotfiles repo that is clean.")
+    else:
+        print_yellow_bold("No nested dotfiles repo detected.")
 
 
 def prompt_to_show_git_diff(repo):
@@ -109,11 +114,42 @@ def prompt_to_show_git_diff(repo):
         print(repo.git.diff(staged=True, color="always"))
 
 
-def git_add_all_and_print_status(repo):
+def git_add_all_and_print_status(repo: git.Repo):
     print_yellow("Staging all files for commit...")
     repo.git.add(all=True)
+    print_yellow_bold(f"Git status of {repo.working_dir}")
     print(repo.git.status())
     prompt_to_show_git_diff(repo)
+
+
+def install_trufflehog_git_hook(repo: git.Repo):
+    """
+    Make sure trufflehog and pre-commit are installed and on the PATH. Then register a pre-commit hook for the repo.
+    """
+    if not which("trufflehog"):
+        print_red_bold("trufflehog (https://github.com/trufflesecurity/trufflehog) is not installed. Please install it to continue.")
+        sys.exit()
+    if not which("pre-commit"):
+        print_red_bold("pre-commit (https://pre-commit.com/) is not installed. Please install it to continue.")
+        sys.exit()
+    
+
+    precommit_file = Path(repo.working_dir) / ".pre-commit-config.yaml"
+    if not precommit_file.exists():
+        print_yellow_bold("Adding pre-commit config file...")
+        with open(precommit_file, "w+") as f:
+            f.write("""repos:
+- repo: local
+  hooks:
+    - id: trufflehog
+      name: TruffleHog
+      description: Detect secrets in your data.
+      entry: bash -c 'trufflehog git file://.'
+      language: system
+      stages: ["commit", "push"]""")
+
+    # Safe to run every time
+    subprocess.call("pre-commit install", cwd=repo.working_dir, shell=True)
 
 
 def git_add_all_commit_push(repo: git.Repo, message: str, dry_run: bool = False):
@@ -124,21 +160,22 @@ def git_add_all_commit_push(repo: git.Repo, message: str, dry_run: bool = False)
     :param git.repo repo: The repo
     :param str message: The commit message
     """
+    install_trufflehog_git_hook(repo)
     if repo.is_dirty():
         git_add_all_and_print_status(repo)
-        if not prompt_yes_no("Make a commit? Ctrl-C to exit", Fore.BLUE):
+        if not prompt_yes_no("Make a commit (with a trufflehog pre-commit hook)? Ctrl-C to exit", Fore.YELLOW):
             return
         if dry_run:
             print_yellow_bold("Dry run: Would have made a commit!")
             return
         print_yellow_bold("Making new commit...")
-        repo.git.add(A=True)
         try:
-            repo.git.commit(m=COMMIT_MSG[message])
+            stdout = subprocess.run(["git", "commit", "-m", f"{COMMIT_MSG[message]}"], cwd=repo.working_dir).stdout
+            print(stdout)
+            if prompt_yes_no("Does the trufflehog output contain any secrets? If so, please exit and remove them.", Fore.YELLOW):
+                sys.exit()
         except git.exc.GitCommandError as e:
-            error = e.stdout.strip()
-            error = error[error.find("'") + 1 : -1]
-            print_red_bold(f"ERROR on Commit: {e.command}\n{error}\n")
+            print_red_bold(f"Error while making a commit: {e.command}\n{e}\n")
             print_red_bold(
                 "Please open a new issue at https://github.com/alichtman/shallow-backup/issues/new"
             )

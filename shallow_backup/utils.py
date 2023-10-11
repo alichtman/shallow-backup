@@ -113,6 +113,7 @@ def mkdir_overwrite(path):
                 or full_path.endswith(".gitignore")
                 or full_path.endswith("README.md")
                 or full_path.endswith("img")
+                or full_path.endswith(".pre-commit-config.yaml")
             ):
                 continue
 

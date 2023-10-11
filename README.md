@@ -57,6 +57,14 @@ $ cd shallow-backup
 $ pip3 install .
 ```
 
+### Dependencies
+---
+
+- `pre-commit`
+- `trufflehog`
+
+If you are missing the dependencies, you will be guided to install them.
+
 ### Usage
 ---
 
@@ -109,6 +117,8 @@ Options:
 This backup tool is git-integrated, meaning that you can easily store your backups remotely (on GitHub, for example.) Dotfiles and configuration files may contain sensitive information like API keys and ssh keys, and you don't want to make those public. To make sure no sensitive files are uploaded accidentally, `shallow-backup` creates a `.gitignore` file if it can't find one in the directory. It excludes `.ssh/` and `.pypirc` by default. It's safe to remove these restrictions if you're pushing to a remote private repository, or you're only backing up locally. To do this, you should clear the `.gitignore` file without deleting it.
 
 _If you choose to back up to a public repository, look at every file you're backing up to make sure you want it to be public._
+
+NOTE: As of `v6.2`, `trufflehog` is run as a required precommit hook and will detect secrets.
 
 **How can I maintain a separate repo for my dotfiles?**
 
