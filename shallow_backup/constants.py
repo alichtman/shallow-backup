@@ -1,6 +1,6 @@
 class ProjInfo:
     PROJECT_NAME = "shallow-backup"
-    VERSION = "6.1"
+    VERSION = "6.2"
     AUTHOR_GITHUB = "alichtman"
     AUTHOR_FULL_NAME = "Aaron Lichtman"
     DESCRIPTION = (
