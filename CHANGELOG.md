@@ -1,5 +1,15 @@
 # Changelog
 
+## [v6.2](https://github.com/alichtman/shallow-backup/tree/v6.2) (2023-10-11)
+
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v6.1...v6.2)
+
+**Closed issues:**
+
+- Branch support? [\#296](https://github.com/alichtman/shallow-backup/issues/296)
+- Write zsh completions for shallow-backup [\#277](https://github.com/alichtman/shallow-backup/issues/277)
+- Screen for high entropy strings before pushing to remote [\#199](https://github.com/alichtman/shallow-backup/issues/199)
+
 ## [v6.1](https://github.com/alichtman/shallow-backup/tree/v6.1) (2023-10-09)
 
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v6.0...v6.1)
