@@ -108,6 +108,9 @@ Options:
   -h, -help, --help            Show this message and exit.
 ```
 
+### `zsh` Completions
+
+Available in [`zsh-users/zsh-completions`](https://github.com/zsh-users/zsh-completions/blob/master/src/_shallow-backup). Follow the [installation instructions here](https://github.com/zsh-users/zsh-completions/tree/master#using-zsh-frameworks).
 
 ### Git Integration
 ---
