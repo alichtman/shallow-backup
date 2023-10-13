@@ -77,7 +77,9 @@ def safe_git_init(dir_path) -> (git.Repo, bool):
             repo = git.Repo.init(dir_path)
             return repo, True
         except GitCommandError:
-            print_red_bold("ERROR: We ran into some trouble creating the git repo. Double check that you have write permissions.")
+            print_red_bold(
+                "ERROR: We ran into some trouble creating the git repo. Double check that you have write permissions."
+            )
             sys.exit(1)
     else:
         print_yellow_bold("Detected git repo.")
@@ -127,18 +129,22 @@ def install_trufflehog_git_hook(repo: git.Repo):
     Make sure trufflehog and pre-commit are installed and on the PATH. Then register a pre-commit hook for the repo.
     """
     if not which("trufflehog"):
-        print_red_bold("trufflehog (https://github.com/trufflesecurity/trufflehog) is not installed. Please install it to continue.")
+        print_red_bold(
+            "trufflehog (https://github.com/trufflesecurity/trufflehog) is not installed. Please install it to continue."
+        )
         sys.exit()
     if not which("pre-commit"):
-        print_red_bold("pre-commit (https://pre-commit.com/) is not installed. Please install it to continue.")
+        print_red_bold(
+            "pre-commit (https://pre-commit.com/) is not installed. Please install it to continue."
+        )
         sys.exit()
-    
 
     precommit_file = Path(repo.working_dir) / ".pre-commit-config.yaml"
     if not precommit_file.exists():
         print_yellow_bold("Adding pre-commit config file...")
         with open(precommit_file, "w+") as f:
-            f.write("""repos:
+            f.write(
+                """repos:
 - repo: local
   hooks:
     - id: trufflehog
@@ -146,7 +152,8 @@ def install_trufflehog_git_hook(repo: git.Repo):
       description: Detect secrets in your data.
       entry: bash -c 'trufflehog git file://.'
       language: system
-      stages: ["commit", "push"]""")
+      stages: ["commit", "push"]"""
+            )
 
     # Safe to run every time
     subprocess.call("pre-commit install", cwd=repo.working_dir, shell=True)
@@ -163,16 +170,24 @@ def git_add_all_commit_push(repo: git.Repo, message: str, dry_run: bool = False)
     install_trufflehog_git_hook(repo)
     if repo.is_dirty():
         git_add_all_and_print_status(repo)
-        if not prompt_yes_no("Make a commit (with a trufflehog pre-commit hook)? Ctrl-C to exit", Fore.YELLOW):
+        if not prompt_yes_no(
+            "Make a commit (with a trufflehog pre-commit hook)? Ctrl-C to exit",
+            Fore.YELLOW,
+        ):
             return
         if dry_run:
             print_yellow_bold("Dry run: Would have made a commit!")
             return
         print_yellow_bold("Making new commit...")
         try:
-            stdout = subprocess.run(["git", "commit", "-m", f"{COMMIT_MSG[message]}"], cwd=repo.working_dir).stdout
+            stdout = subprocess.run(
+                ["git", "commit", "-m", f"{COMMIT_MSG[message]}"], cwd=repo.working_dir
+            ).stdout
             print(stdout)
-            if prompt_yes_no("Does the trufflehog output contain any secrets? If so, please exit and remove them.", Fore.YELLOW):
+            if prompt_yes_no(
+                "Does the trufflehog output contain any secrets? If so, please exit and remove them.",
+                Fore.YELLOW,
+            ):
                 sys.exit()
         except git.exc.GitCommandError as e:
             print_red_bold(f"Error while making a commit: {e.command}\n{e}\n")
