@@ -127,7 +127,9 @@ NOTE: As of `v6.2`, `trufflehog` is run as a required precommit hook and will de
 
 `shallow-backup` makes this easy! After making your first backup, `cd` into the `dotfiles/` directory and run `$ git init`. Create a `.gitignore`, and a create / set up (link the upstream remote, etc) a new repo on your favorite version control platform. With operations involving the parent `shallow-backup` repo, `shallow-backup` will prompt you interactively to update the nested submodule. After that is taken care of, `shallow-backup` will move on to updating the parent. The `dotfiles` repo will be tracked as a submodule.
 
-Here's a `bash` script that I wrote to [automate my dotfile backup workflow](https://github.com/alichtman/scripts/blob/master/backup-and-update-dotfiles.sh). You can use this by placing it in your `$PATH`, making it executable, and running it.
+**How do I synchronize dotfiles on multiple computers?**
+
+Run `shallow-backup --backup-dots` on the first computer. Make a commit and push to the remote. Then pull these changes down on the second computer. Run `shallow-backup --backup-dots` on the second computer, and resolve the merge conflicts. Once you have a final version you're happy with, make a commit, push it, and run `shallow-backup --reinstall-dots`. On the first computer, pull the changes and run `shallow-backup --reinstall-dots`. Your changes are now sync'd across both computers and the remote repository.
 
 ### What can I back up?
 ---
