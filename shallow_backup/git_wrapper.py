@@ -13,13 +13,13 @@ from .utils import safe_mkdir
 # GLOBALS
 #########
 
-COMMIT_MSG = {
-    "all": "Back up everything.",
-    "configs": "Back up configs.",
-    "dotfiles": "Back up dotfiles.",
-    "fonts": "Back up fonts.",
-    "full_backup": "Full back up.",
-    "packages": "Back up packages.",
+DEFAULT_COMMIT_MSG = {
+    "all": "[shallow-backup] Back up everything",
+    "configs": "[shallow-backup] Back up configs",
+    "dotfiles": "[shallow-backup] Back up dotfiles",
+    "fonts": "[shallow-backup] Back up fonts",
+    "full_backup": "[shallow-backup] Full back up",
+    "packages": "[shallow-backup] Back up packages",
 }
 
 ###########
@@ -102,7 +102,9 @@ def handle_separate_git_dir_in_dotfiles(dotfiles_path: Path, dry_run: bool = Fal
             ):
                 print_green_bold("Okay, switching into dotfiles subrepo...")
                 git_add_all_commit_push(
-                    dotfiles_repo, message="dotfiles", dry_run=dry_run
+                    dotfiles_repo,
+                    message=DEFAULT_COMMIT_MSG["dotfiles"],
+                    dry_run=dry_run,
                 )
                 print_green_bold("Switching back to parent shallow-backup repo...")
         else:
@@ -179,11 +181,9 @@ def git_add_all_commit_push(repo: git.Repo, message: str, dry_run: bool = False)
             print_yellow_bold("Dry run: Would have made a commit!")
             return
         print_yellow_bold("Making new commit...")
+        message = prompt_for_custom_git_commit_message(message)
         try:
-            stdout = subprocess.run(
-                ["git", "commit", "-m", f"{COMMIT_MSG[message]}"], cwd=repo.working_dir
-            ).stdout
-            print(stdout)
+            subprocess.run(["git", "commit", "-m", message], cwd=repo.working_dir)
             if prompt_yes_no(
                 "Does the trufflehog output contain any secrets? If so, please exit and remove them.",
                 Fore.YELLOW,
@@ -237,3 +237,21 @@ def move_git_repo(source_path, dest_path):
         print_blue_bold("Moving git repo to new location.")
     except FileNotFoundError:
         pass
+
+
+def prompt_for_custom_git_commit_message(default_message: str) -> str:
+    """
+    Ask user if they'd like to set a custom git commit message.
+    If yes, return the message. If no, return the default message.
+    """
+    if prompt_yes_no(
+        f"Custom commit message? If not, `{default_message}` will be used",
+        Fore.GREEN,
+        invert=True,
+    ):
+        custom_message = input(
+            Fore.GREEN + Style.BRIGHT + "Custom message: " + Fore.RESET
+        )
+        if custom_message:
+            return custom_message
+    return default_message
