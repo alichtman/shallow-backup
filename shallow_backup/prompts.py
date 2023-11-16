@@ -184,7 +184,7 @@ def main_menu_prompt():
                 " Reinstall packages",
                 " Add path to config",
                 " Remove path from config",
-                " Show config",
+                " Edit config",
                 " Destroy backup",
             ],
         ),
@@ -193,7 +193,8 @@ def main_menu_prompt():
     answers = inquirer.prompt(questions)
 
     if answers:
-        return answers.get("choice").strip().lower()
-    else:
-        # KeyboardInterrupts
-        sys.exit(1)
+        choice = answers.get("choice")
+        if choice:
+            return choice.strip().lower()
+
+    raise Exception("ERR: Invalid choice.")
