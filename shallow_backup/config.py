@@ -7,6 +7,7 @@ from .printing import *
 from .compatibility import *
 from .utils import safe_mkdir, strip_home
 from .constants import ProjInfo
+from functools import lru_cache
 
 
 def get_xdg_config_path() -> str:
@@ -14,6 +15,7 @@ def get_xdg_config_path() -> str:
     return environ.get("XDG_CONFIG_HOME") or path.join(path.expanduser("~"), ".config")
 
 
+@lru_cache(maxsize=1)
 def get_config_path() -> str:
     """
     Detects if in testing or prod env, and returns the right config path.
@@ -140,37 +142,10 @@ def add_dot_path_to_config(backup_config: dict, file_path: str) -> dict:
     return backup_config
 
 
-def show_config():
+def edit_config():
     """
-    Print the config. Colorize section titles and indent contents.
+    Open the config in the default editor
     """
-    print_section_header("SHALLOW BACKUP CONFIG", Fore.RED)
-    for section, contents in get_config().items():
-        # Print backup path on same line
-        if section == "backup_path":
-            print_path_red("Backup Path:", contents)
-        elif section == "config_mapping":
-            print_red_bold("\nConfigs:")
-            for config_path, dest in contents.items():
-                print(f"	{config_path} -> {dest}")
-        # Print section header and contents. (Dotfiles)
-        elif section == "dotfiles":
-            print_path_red(
-                "\nDotfiles:",
-                "(Backup and Reinstall conditions will be shown if they exist)",
-            )
-            for dotfile, options in contents.items():
-                backup_condition = options.get("backup_condition", "")
-                reinstall_condition = options.get("reinstall_condition", "")
-                if backup_condition or reinstall_condition:
-                    print(f"	{dotfile} ->")
-                    print(f'\t\tbackup_condition: "{backup_condition}"')
-                    print(f'\t\treinstall_condition: "{reinstall_condition}"')
-                else:
-                    print(f"	{dotfile}")
-        elif section == "lowest_supported_version":
-            print_path_red(f"{section.replace('_', ' ').capitalize()}:", contents)
-        else:
-            print_red_bold(f"\n{section.replace('-', ' ').capitalize()}: ")
-            for item in contents:
-                print(f"	{item}")
+    config_path = get_config_path()
+    editor = os.environ.get("EDITOR", "vim")
+    os.system(f"{editor} {config_path}")

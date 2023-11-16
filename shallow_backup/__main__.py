@@ -88,7 +88,9 @@ from .upgrade import check_if_config_upgrade_needed
     "--reinstall-packages", is_flag=True, default=False, help="Reinstall packages."
 )
 @click.option("--remote", default=None, help="Set remote URL for the git repo.")
-@click.option("--show", is_flag=True, default=False, help="Display config file.")
+@click.option(
+    "--edit", is_flag=True, default=False, help="Open config file in $EDITOR."
+)
 @click.option(
     "--version",
     "-v",
@@ -115,7 +117,7 @@ def cli(
     reinstall_fonts,
     reinstall_packages,
     remote,
-    show,
+    edit,
     version,
 ):
     """
@@ -130,7 +132,7 @@ def cli(
     check_insecure_config_permissions()
 
     # Process CLI args
-    admin_action = any([add_dot, delete_config, destroy_backup, show, version])
+    admin_action = any([add_dot, delete_config, destroy_backup, edit, version])
     has_cli_arg = any(
         [
             no_new_backup_path_prompt,
@@ -171,8 +173,8 @@ def cli(
         elif destroy_backup:
             backup_home_path = expand_to_abs_path(get_config()["backup_path"])
             destroy_backup_dir(backup_home_path)
-        elif show:
-            show_config()
+        elif edit:
+            edit_config()
         elif add_dot:
             new_config = add_dot_path_to_config(backup_config, add_dot)
             write_config(new_config)
@@ -297,8 +299,8 @@ def cli(
             elif target == "all":
                 reinstall_all_sb(dotfiles_path, packages_path, fonts_path, configs_path)
         elif target == "config":
-            if action.startswith("show"):
-                show_config()
+            if action.startswith("edit"):
+                edit_config()
             elif action.startswith("add"):
                 add_to_config_prompt()
             elif action.startswith("remove"):
