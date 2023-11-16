@@ -241,27 +241,29 @@ def cli(
                 dry_run=dry_run,
                 skip=True,
             )
-            if not dry_run:
-                git_add_all_commit_push(repo, "full_backup")
+            git_add_all_commit_push(
+                repo, DEFAULT_COMMIT_MSG["full_backup"], dry_run=dry_run
+            )
         elif backup_dots_flag:
             backup_dotfiles(dotfiles_path, dry_run=dry_run, skip=True)
             # The reason that dotfiles/.git is special cased, and none of the others are is because maintaining a separate git repo for dotfiles is a common use case.
             handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run)
-            if not dry_run:
-                git_add_all_commit_push(repo, "dotfiles")
+            msg = DEFAULT_COMMIT_MSG["dotfiles"]
+            git_add_all_commit_push(repo, msg, dry_run=dry_run)
         elif backup_configs_flag:
             backup_configs(configs_path, dry_run=dry_run, skip=True)
-            if not dry_run:
-                git_add_all_commit_push(repo, "configs")
+            git_add_all_commit_push(
+                repo, DEFAULT_COMMIT_MSG["configs"], dry_run=dry_run
+            )
         elif backup_packages_flag:
             backup_packages(packages_path, dry_run=dry_run, skip=True)
-            if not dry_run:
-                git_add_all_commit_push(repo, "packages")
+            git_add_all_commit_push(
+                repo, DEFAULT_COMMIT_MSG["packages"], dry_run=dry_run
+            )
         elif backup_fonts_flag:
             backup_fonts(fonts_path, dry_run=dry_run, skip=True)
-            if not dry_run:
-                git_add_all_commit_push(repo, "fonts")
-    # No CL options, show action menu and process selected option.
+            git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG["fonts"], dry_run=dry_run)
+    # No command line options, show action menu and process selected option.
     else:
         selection = main_menu_prompt()
         action, _, target = selection.rpartition(" ")
@@ -269,20 +271,20 @@ def cli(
             if target == "all":
                 backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
                 handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run=dry_run)
-                git_add_all_commit_push(repo, target)
+                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
             elif target == "dotfiles":
                 backup_dotfiles(dotfiles_path)
                 handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run)
-                git_add_all_commit_push(repo, target)
+                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
             elif target == "configs":
                 backup_configs(configs_path)
-                git_add_all_commit_push(repo, target)
+                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
             elif target == "packages":
                 backup_packages(packages_path)
-                git_add_all_commit_push(repo, target)
+                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
             elif target == "fonts":
                 backup_fonts(fonts_path)
-                git_add_all_commit_push(repo, target)
+                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
         elif action == "reinstall":
             if target == "packages":
                 reinstall_packages_sb(packages_path)
