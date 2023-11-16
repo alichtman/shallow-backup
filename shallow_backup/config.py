@@ -22,10 +22,14 @@ def get_config_path() -> str:
     :return: Path to config.
     """
     test_config_path = environ.get("SHALLOW_BACKUP_TEST_CONFIG_PATH", None)
+    legacy_config = path.join(get_xdg_config_path(), "shallow-backup.conf")
+    new_config_path = path.join(get_xdg_config_path(), "shallow-backup.json")
     if test_config_path:
         return test_config_path
+    elif path.exists(legacy_config):
+        return legacy_config
     else:
-        return path.join(get_xdg_config_path(), "shallow-backup.conf")
+        return new_config_path
 
 
 def get_config() -> dict:
