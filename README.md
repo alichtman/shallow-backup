@@ -14,15 +14,27 @@ I use it to manage [my dotfiles](https://github.com/alichtman/dotfiles).
 Contents
 ========
 
- * [Why?](#why)
- * [Installation](#installation)
- * [Usage](#usage)
- * [Git Integration](#git-integration)
- * [What can I back up?](#what-can-i-back-up)
- * [Configuration](#configuration)
- * [Output Structure](#output-structure)
- * [Reinstalling Dotfiles](#reinstalling-dotfiles)
- * [Want to contribute?](#want-to-contribute)
+
+* [Why?](#why)
+* [Installation](#installation)
+  * [Method 1: <a href="https://pypi.org/project/shallow-backup/" rel="nofollow">pipx</a>](#method-1-pipx)
+  * [Method 2: Install From Source](#method-2-install-from-source)
+* [Dependencies](#dependencies)
+* [Usage](#usage)
+* [Recipes](#recipes)
+  * [Maintain a separate repo for your dotfiles](#maintain-a-separate-repo-for-your-dotfiles)
+  * [Synchronize dotfiles on multiple computers](#synchronize-dotfiles-on-multiple-computers)
+  * [Reinstall dotfiles from a backup](#reinstall-dotfiles-from-a-backup)
+* [What can I back up?](#what-can-i-back-up)
+* [Configuration](#configuration)
+  * [Conditional Backup and Reinstallation](#conditional-backup-and-reinstallation)
+* [Git Integration](#git-integration)
+  * [A Word of Caution](#a-word-of-caution)
+  * [.gitignore](#gitignore)
+* [Output Structure](#output-structure)
+* [Want to Contribute?](#want-to-contribute)
+
+
 
 ### Why?
 
@@ -34,10 +46,9 @@ I wanted a tool that allows you to:
 + Backup and reinstall files conditionally, so you can easily manage dotfiles across multiple systems.
 + Copy files on installation and backup, as opposed to symlinking them.
 + Backup package installations in a highly compressed manner
++ Not worry about accidentally doing something dangerous / destructive (is user-protective)
 
-And is incredibly fault tolerant and user-protective.
-
-`shallow-backup` is the only tool that checks all of those boxes.
+`shallow-backup` checks all of those boxes.
 
 ### Installation
 ---
@@ -70,7 +81,8 @@ If you are missing the dependencies, you will be guided to install them.
 ### Usage
 ---
 
-To start the interactive program, simply run `$ shallow-backup`.
+- To start the interactive program, run `$ shallow-backup`.
+- To backup your dotfiles, run `$ shallow-backup --backup-dots`.
 
 `shallow-backup` was built with scripting in mind. Every feature that's supported in the interactive program is supported with command line arguments.
 
@@ -110,28 +122,27 @@ Options:
   -h, -help, --help            Show this message and exit.
 ```
 
-### `zsh` Completions
 
-Available in [`zsh-users/zsh-completions`](https://github.com/zsh-users/zsh-completions/blob/master/src/_shallow-backup). Follow the [installation instructions here](https://github.com/zsh-users/zsh-completions/tree/master#using-zsh-frameworks).
-
-### Git Integration
+### Recipes
 ---
 
-**A Word of Caution**
-
-This backup tool is git-integrated, meaning that you can easily store your backups remotely (on GitHub, for example.) Dotfiles and configuration files may contain sensitive information like API keys and ssh keys, and you don't want to make those public. To make sure no sensitive files are uploaded accidentally, `shallow-backup` creates a `.gitignore` file if it can't find one in the directory. It excludes `.ssh/` and `.pypirc` by default. It's safe to remove these restrictions if you're pushing to a remote private repository, or you're only backing up locally. To do this, you should clear the `.gitignore` file without deleting it.
-
-_If you choose to back up to a public repository, look at every file you're backing up to make sure you want it to be public._
-
-NOTE: As of `v6.2`, `trufflehog` is run as a required precommit hook and will detect secrets.
-
-**How can I maintain a separate repo for my dotfiles?**
+#### Maintain a separate repo for your dotfiles
 
 `shallow-backup` makes this easy! After making your first backup, `cd` into the `dotfiles/` directory and run `$ git init`. Create a `.gitignore`, and a create / set up (link the upstream remote, etc) a new repo on your favorite version control platform. With operations involving the parent `shallow-backup` repo, `shallow-backup` will prompt you interactively to update the nested submodule. After that is taken care of, `shallow-backup` will move on to updating the parent. The `dotfiles` repo will be tracked as a submodule.
 
-**How do I synchronize dotfiles on multiple computers?**
+#### Synchronize dotfiles on multiple computers
 
 Run `shallow-backup --backup-dots` on the first computer. Make a commit and push to the remote. Then pull these changes down on the second computer. Run `shallow-backup --backup-dots` on the second computer, and resolve the merge conflicts. Once you have a final version you're happy with, make a commit, push it, and run `shallow-backup --reinstall-dots`. On the first computer, pull the changes and run `shallow-backup --reinstall-dots`. Your changes are now sync'd across both computers and the remote repository.
+
+#### Reinstall dotfiles from a backup
+
+To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.conf` or `$XDG_CONFIG_HOME/.shallow_backup.conf`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup --reinstall-dots`.
+
+When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and `README.md` files and directories are ignored.
+
+### `zsh` Completions
+
+Available in [`zsh-users/zsh-completions`](https://github.com/zsh-users/zsh-completions/blob/master/src/_shallow-backup). Follow the [installation instructions here](https://github.com/zsh-users/zsh-completions/tree/master#using-zsh-frameworks).
 
 ### What can I back up?
 ---
@@ -247,15 +258,27 @@ Here's an example config based on my [dotfiles](https://www.github.com/alichtman
 }
 ```
 
+### Git Integration
+---
+
+#### A Word of Caution
+
+This backup tool is git-integrated, meaning that you can easily store your backups remotely (on GitHub, for example.) Dotfiles and configuration files may contain sensitive information like API keys and ssh keys, and you don't want to make those public. To make sure no sensitive files are uploaded accidentally, `shallow-backup` creates a `.gitignore` file if it can't find one in the directory. It excludes `.ssh/` and `.pypirc` by default. It's safe to remove these restrictions if you're pushing to a remote private repository, or you're only backing up locally. To do this, you should clear the `.gitignore` file without deleting it.
+
+_If you choose to back up to a public repository, look at every file you're backing up to make sure you want it to be public._
+
+> [!NOTE]  
+> As of `v6.2`, `trufflehog` is run as a required precommit hook and will detect secrets.
+
 #### .gitignore
 
 As of `v4.0`, any `.gitignore` changes should be made in the `shallow-backup` config file. `.gitignore` changes that are meant to apply to all directories should be under the `root-gitignore` key. Dotfile specific gitignores should be placed under the `dotfiles-gitignore` key. The original `default-gitignore` key in the config is still supported for backwards compatibility, however, converting to the new config format is strongly encouraged.
 
-#### Output Structure
+### Output Structure
 ---
 
 ```shell
-backup_dir/
+shallow_backup/
 ├── configs
 │   ├── plist
 │   │   └── com.apple.Terminal.plist
@@ -292,12 +315,6 @@ backup_dir/
     └── sublime3_list.txt
 ```
 
-### Reinstalling Dotfiles
-----
-
-To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.conf` or `$XDG_CONFIG_HOME/.shallow_backup.conf`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall-dots`.
-
-When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and `README.md` files and directories are ignored.
 
 ### Want to Contribute?
 ---
