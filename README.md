@@ -7,6 +7,8 @@
 
 `shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles, and automatically push them to a remote Git repository.
 
+I use it to manage [my dotfiles](https://github.com/alichtman/dotfiles).
+
 ![Shallow Backup GIF Demo](img/shallow-backup-demo.gif)
 
 Contents
