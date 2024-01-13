@@ -3,6 +3,7 @@ from pathlib import Path
 import subprocess
 import sys
 import git
+import readline
 from git import GitCommandError
 from shutil import move, which
 from .printing import *

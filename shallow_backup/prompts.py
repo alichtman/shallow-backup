@@ -1,6 +1,7 @@
 import os
 import sys
 import inquirer
+import readline
 from .utils import *
 from .printing import *
 from .config import *
