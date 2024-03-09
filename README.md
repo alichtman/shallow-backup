@@ -215,7 +215,7 @@ Here's an example config based on my [dotfiles](https://www.github.com/alichtman
 	"dotfiles": {
 		".config/agignore": {
 			"backup_condition": "uname -a | grep Darwin",
-			"reinstall_conditon": "uname -a | grep Darwin"
+			"reinstall_condition": "uname -a | grep Darwin"
 		},
 		".config/git/gitignore_global": { },
 		".config/jrnl/jrnl.yaml": { },

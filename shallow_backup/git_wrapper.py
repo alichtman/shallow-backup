@@ -69,7 +69,7 @@ def create_gitignore(dir_path, key):
 
 def safe_git_init(dir_path) -> (git.Repo, bool):
     """
-    If there is no git repo inside the dir_path, intialize one.
+    If there is no git repo inside the dir_path, initialize one.
     Returns tuple of (git.Repo, bool new_git_repo_created)
     """
     if not os.path.isdir(os.path.join(dir_path, ".git")):
