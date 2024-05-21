@@ -179,22 +179,13 @@ def destroy_backup_dir(backup_path):
 
 def get_abs_path_subfiles(directory: str) -> list:
     """Returns list of absolute paths of files and folders contained in a directory,
-    excluding the .git directory, .gitignore, img/ and README.md in the root dir.
     :param directory: Absolute path to directory to search
     """
-    invalid = []
-    for x in [".git", ".gitignore", "img", "README.md"]:
-        invalid.append(os.path.join(directory, x))
-
     file_paths = []
     for path, _, files in os.walk(directory):
         for name in files:
             full_path = os.path.join(path, name)
-
-            if full_path in invalid:
-                print_path_red("Excluded:", full_path)
-            else:
-                file_paths.append(full_path)
+            file_paths.append(full_path)
     return file_paths
 
 
