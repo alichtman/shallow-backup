@@ -73,11 +73,11 @@ def evaluate_condition(
         )
         condition_success = run_cmd_return_bool(condition)
         if not condition_success:
-            print_blue(f"SKIPPING {backup_or_reinstall.lower()} based on <{condition}>")
+            print_blue(f"SKIPPING {backup_or_reinstall.lower()} b/c this is false: $ {condition}")
             return False
         else:
             print_blue(
-                f"NOT skipping {backup_or_reinstall.lower()} based on <{condition}>"
+                f"NOT skipping {backup_or_reinstall.lower()} b/c this is true: $ {condition}"
             )
             return True
     else:
