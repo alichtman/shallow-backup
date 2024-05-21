@@ -154,7 +154,7 @@ By default, `shallow-backup` backs these up.
     * `.bash_profile`
     * `.gitconfig`
     * `.pypirc`
-    * `.config/shallow-backup.conf`
+    * `.config/shallow-backup.json`
     * `.ssh/`
     * `.vim/`
     * `.zshrc`
@@ -181,7 +181,7 @@ By default, `shallow-backup` backs these up.
 
 ### Configuration
 
-If you'd like to modify which files are backed up, you have to edit the `JSON` config file, located at `~/.config/shallow-backup.conf`. There are two ways to do this.
+If you'd like to modify which files are backed up, you have to edit the `JSON` config file, located at `~/.config/shallow-backup.json`. There are two ways to do this.
 
 1. Select the appropriate option in the CLI and follow the prompts.
 2. Open the file in a text editor and make your changes.
@@ -292,7 +292,7 @@ shallow_backup/
 │   ├── .gitconfig
 │   ├── .pypirc
 │   ├── ...
-│   ├── .shallow-backup
+│   ├── shallow-backup.json
 │   ├── .ssh/
 │   │   └── known_hosts
 │   ├── .vim/
@@ -315,6 +315,12 @@ shallow_backup/
     └── sublime3_list.txt
 ```
 
+### Reinstalling Dotfiles
+----
+
+To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.json` or `$XDG_CONFIG_HOME/.shallow_backup.json`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall-dots`.
+
+When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and `README.md` files and directories are ignored.
 
 ### Want to Contribute?
 ---
