@@ -8,6 +8,7 @@ from .utils import (
     evaluate_condition,
 )
 from .printing import *
+from colorama import Fore, Style
 from .compatibility import *
 from .config import get_config
 from pathlib import Path
@@ -48,6 +49,7 @@ def reinstall_dots_sb(
             subfiles_to_add = get_abs_path_subfiles(real_path_dotfile)
             dotfiles_to_reinstall.extend(subfiles_to_add)
 
+    reinstallation_error_count = 0
     # Create list of tuples containing source and dest paths for dotfile reinstallation
     # The absolute file paths prepended with ':' are converted back to valid paths
     # Format: [(source, dest), ... ]
@@ -68,6 +70,16 @@ def reinstall_dots_sb(
             continue
 
         # Create dest parent dir if it doesn't exist
+        # One case that this can fail is if dot_dest.parent is a FILE. We will try-catch this case specifically.
+        # https://github.com/alichtman/shallow-backup/issues/343#issuecomment-2120024456
+        parent_dir = dot_dest.parent
+        if os.path.isfile(parent_dir):
+            print(
+                f"{Fore.RED}{Style.BRIGHT}ERROR: {Style.NORMAL}{parent_dir}{Style.BRIGHT} is a file, however, this reinstallation process attempts to create {Style.NORMAL}{dot_dest}{Style.BRIGHT}, which would use that path as a directory. You will have to manually remediate this issue (likely by renaming or moving {Style.NORMAL}{dot_dest.parent}{Style.BRIGHT}){Style.NORMAL}{Style.RESET_ALL}"
+            )
+            reinstallation_error_count += 1
+            continue
+
         safe_mkdir(dot_dest.parent)
         try:
             copy(dot_source, dot_dest)
@@ -75,6 +87,9 @@ def reinstall_dots_sb(
             print_red_bold(f"ERROR: {err}")
         except FileNotFoundError as err:
             print_red_bold(f"ERROR: {err}")
+
+    if reinstallation_error_count != 0:
+        print_red_bold(f"\n\nSome errors which require manual resolution detected.")
 
     print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
 
