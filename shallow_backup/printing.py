@@ -3,7 +3,7 @@ import sys
 import inquirer
 from colorama import Fore, Style
 from .constants import ProjInfo
-
+from typing import List, Set, Union
 
 def print_blue(text):
     print(Fore.BLUE + text + Style.RESET_ALL)
@@ -51,6 +51,13 @@ def print_path_yellow(text, path):
 
 def print_path_green(text, path):
     print(Fore.GREEN + Style.BRIGHT + text, Style.NORMAL + path + Style.RESET_ALL)
+
+
+def print_list_pretty(items_to_print: Union[Set, List], style=Style.BRIGHT, color=Fore.RED):
+    print(f"{style}{color}")
+    for x in items_to_print:
+        print(f" - {x}")
+    print(Style.RESET_ALL)
 
 
 def print_dry_run_copy_info(source, dest):

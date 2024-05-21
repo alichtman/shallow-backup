@@ -5,13 +5,13 @@ from .utils import (
     get_abs_path_subfiles,
     exit_if_dir_is_empty,
     safe_mkdir,
-    evaluate_condition,
+    evaluate_condition, find_path_for_permission_error_reporting,
 )
 from .printing import *
 from colorama import Fore, Style
 from .compatibility import *
 from .config import get_config
-from pathlib import Path
+from pathlib import Path, PurePath
 from shutil import copytree, copyfile, copy
 
 # NOTE: Naming convention is like this since the CLI flags would otherwise
@@ -67,6 +67,7 @@ def reinstall_dots_sb(
             dest = source.replace(dots_path, home_path + "/")
         full_path_dotfiles_to_reinstall.append((Path(source), Path(dest)))
 
+    files_with_permission_errors = set()
     # Copy files from backup to system
     for dot_source, dot_dest in full_path_dotfiles_to_reinstall:
         if dry_run:
@@ -88,12 +89,17 @@ def reinstall_dots_sb(
         try:
             copy(dot_source, dot_dest)
         except PermissionError as err:
-            print_red_bold(f"ERROR: {err}")
+            files_with_permission_errors.add(find_path_for_permission_error_reporting(err.filename))
         except FileNotFoundError as err:
             print_red_bold(f"ERROR: {err}")
 
     if reinstallation_error_count != 0:
-        print_red_bold(f"\n\nSome errors which require manual resolution detected.")
+        print_red_bold(f"\nSome errors which require manual resolution detected.")
+
+    num_permission_errors = len(files_with_permission_errors)
+    if num_permission_errors != 0:
+        print_red_bold(f"\n{num_permission_errors} permission errors detected. Most of the time, this is not a problem.\nGit repos will have some read-only files, and will prevent you from writing to them without using sudo.\nAdditionally, some package managers (like zcomet, etc) make their install files read-only.\nYou should update these files using the respective tools that created them.\nThe following paths were problematic:")
+        print_list_pretty(sorted(files_with_permission_errors))
 
     print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
 

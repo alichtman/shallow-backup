@@ -3,7 +3,8 @@ import subprocess as sp
 from shlex import split
 import shutil
 from shutil import rmtree, copytree, copyfile
-from typing import List, Union
+from pathlib import Path
+from re import fullmatch
 from .printing import *
 
 
@@ -240,3 +241,21 @@ def strip_home(full_path):
         return full_path.replace(home_path + "/", "")
     else:
         return full_path
+
+
+def find_path_for_permission_error_reporting(path_maybe_containing_git_dir: str):
+    """Given a path containing a git directory, return the path to the git dir.
+    This will be used to create a set of git dirs we ran into errors while reinstalling.
+    ~/.config/zsh/.zinit/plugins/changyuheng---zsh-interactive-cd/.git/objects/62/5373abf600839f2fdcd5c6d13184a1fe6dc708
+   will turn into
+   ~/.config/zsh/.zinit/plugins/changyuheng---zsh-interactive-cd/.git"""
+
+    if not fullmatch(".*/.git/(.*/)?objects/.*", path_maybe_containing_git_dir):
+        return path_maybe_containing_git_dir
+
+    candidate_for_git_repo_home = Path(path_maybe_containing_git_dir).parent
+    while candidate_for_git_repo_home.name != ".git":
+        candidate_for_git_repo_home = candidate_for_git_repo_home.parent
+
+    return str(candidate_for_git_repo_home)
+
