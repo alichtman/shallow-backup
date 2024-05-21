@@ -42,6 +42,9 @@ def reinstall_dots_sb(
         if not condition_success:
             continue
 
+        if dotfile_path_from_config.startswith("/"):
+            dotfile_path_from_config = ":" + dotfile_path_from_config[1:]
+
         real_path_dotfile = os.path.join(dots_path, dotfile_path_from_config)
         if os.path.isfile(real_path_dotfile):
             dotfiles_to_reinstall.append(real_path_dotfile)
@@ -56,8 +59,9 @@ def reinstall_dots_sb(
     full_path_dotfiles_to_reinstall = []
     for source in dotfiles_to_reinstall:
         # If it's an absolute path, dest is the corrected path
-        if source.startswith(":"):
-            dest = "/" + source[1:]
+        abs_path_start = os.path.join(dots_path, ":")
+        if source.startswith(abs_path_start):
+            dest = "/" + source[len(abs_path_start):]
         else:
             # Otherwise, it should go in a path relative to the home path
             dest = source.replace(dots_path, home_path + "/")
