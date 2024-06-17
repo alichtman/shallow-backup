@@ -73,7 +73,9 @@ def evaluate_condition(
         )
         condition_success = run_cmd_return_bool(condition)
         if not condition_success:
-            print_blue(f"SKIPPING {backup_or_reinstall.lower()} b/c this is false: $ {condition}")
+            print_blue(
+                f"SKIPPING {backup_or_reinstall.lower()} b/c this is false: $ {condition}"
+            )
             return False
         else:
             print_blue(
@@ -245,10 +247,10 @@ def strip_home(full_path):
 
 def find_path_for_permission_error_reporting(path_maybe_containing_git_dir: str):
     """Given a path containing a git directory, return the path to the git dir.
-    This will be used to create a set of git dirs we ran into errors while reinstalling.
-    ~/.config/zsh/.zinit/plugins/changyuheng---zsh-interactive-cd/.git/objects/62/5373abf600839f2fdcd5c6d13184a1fe6dc708
-   will turn into
-   ~/.config/zsh/.zinit/plugins/changyuheng---zsh-interactive-cd/.git"""
+     This will be used to create a set of git dirs we ran into errors while reinstalling.
+     ~/.config/zsh/.zinit/plugins/changyuheng---zsh-interactive-cd/.git/objects/62/5373abf600839f2fdcd5c6d13184a1fe6dc708
+    will turn into
+    ~/.config/zsh/.zinit/plugins/changyuheng---zsh-interactive-cd/.git"""
 
     if not fullmatch(".*/.git/(.*/)?objects/.*", path_maybe_containing_git_dir):
         return path_maybe_containing_git_dir
@@ -258,4 +260,3 @@ def find_path_for_permission_error_reporting(path_maybe_containing_git_dir: str)
         candidate_for_git_repo_home = candidate_for_git_repo_home.parent
 
     return str(candidate_for_git_repo_home)
-

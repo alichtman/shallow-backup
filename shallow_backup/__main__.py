@@ -1,16 +1,55 @@
+import os
+import sys
+from colorama import Fore
 import click
-from .backup import *
-from .prompts import *
-from .reinstall import *
-from .git_wrapper import *
+from .backup import (
+    backup_all,
+    backup_dotfiles,
+    backup_configs,
+    backup_packages,
+    backup_fonts,
+)
+from .prompts import (
+    splash_screen,
+    path_update_prompt,
+    main_menu_prompt,
+    add_to_config_prompt,
+    remove_from_config_prompt,
+    git_url_prompt,
+    edit_config,
+    prompt_yes_no,
+)
+from .reinstall import (
+    reinstall_all_sb,
+    reinstall_configs_sb,
+    reinstall_dots_sb,
+    reinstall_fonts_sb,
+    reinstall_packages_sb,
+)
+from .git_wrapper import (
+    safe_git_init,
+    git_add_all_commit_push,
+    handle_separate_git_dir_in_dotfiles,
+    git_set_remote,
+    create_gitignore,
+    DEFAULT_COMMIT_MSG,
+)
 from .utils import (
     mkdir_warn_overwrite,
     destroy_backup_dir,
     expand_to_abs_path,
     check_if_path_is_valid_dir,
 )
-from .config import *
+from .config import (
+    safe_create_config,
+    get_config,
+    write_config,
+    add_dot_path_to_config,
+    delete_config_file,
+    check_insecure_config_permissions,
+)
 from .upgrade import check_if_config_upgrade_needed
+from .printing import print_version_info, print_path_blue, print_red_bold
 
 
 # custom help options

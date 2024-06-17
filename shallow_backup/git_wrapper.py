@@ -16,6 +16,7 @@ from .printing import (
     print_red_bold,
     print_blue_bold,
     prompt_yes_no,
+    print_error_report_github_issue_and_exit,
 )
 from .config import get_config
 from .utils import safe_mkdir
@@ -54,7 +55,7 @@ def git_set_remote(repo, remote_url):
         origin.fetch()
 
 
-def create_gitignore(dir_path, key):
+def create_gitignore(dir_path, key: str):
     """
     Creates a .gitignore file that ignores all files listed in config.
     Handles backwards compatibility for the default-gitignore -> root-gitignore
@@ -72,6 +73,10 @@ def create_gitignore(dir_path, key):
             files_to_ignore = get_config()["default-gitignore"]
         elif key == "dotfiles-gitignore":
             files_to_ignore = []
+        else:
+            print_error_report_github_issue_and_exit()
+            # This next line will never be hit, but it is here to silence the lint about files_to_ignore possibly being unset.
+            sys.exit(1)
     with open(os.path.join(dir_path, ".gitignore"), "w+") as f:
         for ignore in files_to_ignore:
             f.write("{}\n".format(ignore))
