@@ -1,12 +1,22 @@
 import os
+from colorama import Fore, Style
 from pathlib import Path
 import subprocess
 import sys
 import git
-import readline
+import readline  # Imported to support arrow key navigation during input
 from git import GitCommandError
 from shutil import move, which
-from .printing import *
+from .printing import (
+    print_green_bold,
+    print_path_yellow,
+    print_yellow,
+    print_yellow_bold,
+    print_path_red,
+    print_red_bold,
+    print_blue_bold,
+    prompt_yes_no,
+)
 from .config import get_config
 from .utils import safe_mkdir
 
@@ -67,7 +77,7 @@ def create_gitignore(dir_path, key):
             f.write("{}\n".format(ignore))
 
 
-def safe_git_init(dir_path) -> (git.Repo, bool):
+def safe_git_init(dir_path) -> tuple[git.Repo, bool]:
     """
     If there is no git repo inside the dir_path, initialize one.
     Returns tuple of (git.Repo, bool new_git_repo_created)
