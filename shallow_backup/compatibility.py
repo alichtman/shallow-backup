@@ -30,7 +30,6 @@ def get_config_paths():
         vscode_path_3 = os.path.join(
             get_home(), "Library/Application Support/Code/User/keybindings.json"
         )
-        atom_path = os.path.join(get_home(), ".atom")
         terminal_path = os.path.join(
             get_home(), "Library/Preferences/com.apple.Terminal.plist"
         )
@@ -41,7 +40,6 @@ def get_config_paths():
             vscode_path_1: "vscode/settings",
             vscode_path_2: "vscode/Snippets",
             vscode_path_3: "vscode/keybindings",
-            atom_path: "atom",
             terminal_path: "terminal_plist",
         }
     else:  # Linux paths
@@ -50,7 +48,6 @@ def get_config_paths():
         vscode_path_1 = "/.config/Code/User/settings.json"
         vscode_path_2 = "/.config/Code/User/Snippets"
         vscode_path_3 = "/.config/Code/User/keybindings.json"
-        atom_path = os.path.join(get_home(), ".atom")
         return {
             # TODO: Double check these paths. Not sure these are right.
             sublime2_path: "sublime2",
@@ -58,7 +55,6 @@ def get_config_paths():
             vscode_path_1: "vscode/settings",
             vscode_path_2: "vscode/Snippets",
             vscode_path_3: "vscode/keybindings",
-            atom_path: "atom",
         }
 
 
