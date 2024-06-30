@@ -1,11 +1,21 @@
 import os
+import sys
+from colorama import Fore
 import subprocess as sp
 from shlex import split
 import shutil
 from shutil import rmtree, copytree, copyfile
 from pathlib import Path
 from re import fullmatch
-from .printing import *
+from typing import Union, List
+from .printing import (
+    print_path_red,
+    print_red_bold,
+    print_path_blue,
+    print_red,
+    print_blue,
+    prompt_yes_no,
+)
 
 
 def run_cmd(command: Union[str, List]):
@@ -195,7 +205,7 @@ def get_abs_path_subfiles(directory: str) -> list:
 def copyfile_with_exception_handler(src, dst):
     try:
         copyfile(src, dst)
-    except Exception as e:
+    except Exception:
         print_path_red("Error copying:", src)
         print_red(" -> This may mean you have an error in your config.")
 
