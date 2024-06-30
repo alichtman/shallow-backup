@@ -1,23 +1,41 @@
 import os
 import sys
-from colorama import Fore
+
 import click
+from colorama import Fore
+
 from .backup import (
     backup_all,
-    backup_dotfiles,
     backup_configs,
-    backup_packages,
+    backup_dotfiles,
     backup_fonts,
+    backup_packages,
 )
+from .config import (
+    add_dot_path_to_config,
+    check_insecure_config_permissions,
+    delete_config_file,
+    get_config,
+    safe_create_config,
+    write_config,
+)
+from .git_wrapper import (
+    create_gitignore,
+    git_add_all_commit_push,
+    git_set_remote,
+    handle_separate_git_dir_in_dotfiles,
+    safe_git_init,
+)
+from .printing import print_path_blue, print_red_bold, print_version_info
 from .prompts import (
-    splash_screen,
-    path_update_prompt,
-    main_menu_prompt,
     add_to_config_prompt,
-    remove_from_config_prompt,
-    git_url_prompt,
     edit_config,
+    git_url_prompt,
+    main_menu_prompt,
+    path_update_prompt,
     prompt_yes_no,
+    remove_from_config_prompt,
+    splash_screen,
 )
 from .reinstall import (
     reinstall_all_sb,
@@ -26,30 +44,13 @@ from .reinstall import (
     reinstall_fonts_sb,
     reinstall_packages_sb,
 )
-from .git_wrapper import (
-    safe_git_init,
-    git_add_all_commit_push,
-    handle_separate_git_dir_in_dotfiles,
-    git_set_remote,
-    create_gitignore,
-    DEFAULT_COMMIT_MSG,
-)
+from .upgrade import check_if_config_upgrade_needed
 from .utils import (
-    mkdir_warn_overwrite,
+    check_if_path_is_valid_dir,
     destroy_backup_dir,
     expand_to_abs_path,
-    check_if_path_is_valid_dir,
+    mkdir_warn_overwrite,
 )
-from .config import (
-    safe_create_config,
-    get_config,
-    write_config,
-    add_dot_path_to_config,
-    delete_config_file,
-    check_insecure_config_permissions,
-)
-from .upgrade import check_if_config_upgrade_needed
-from .printing import print_version_info, print_path_blue, print_red_bold
 
 
 # custom help options
@@ -282,28 +283,21 @@ def cli(
                 dry_run=dry_run,
                 skip=True,
             )
-            git_add_all_commit_push(
-                repo, DEFAULT_COMMIT_MSG["full_backup"], dry_run=dry_run
-            )
+            git_add_all_commit_push(repo, dry_run=dry_run)
         elif backup_dots_flag:
             backup_dotfiles(dotfiles_path, dry_run=dry_run, skip=True)
             # The reason that dotfiles/.git is special cased, and none of the others are is because maintaining a separate git repo for dotfiles is a common use case.
             handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run)
-            msg = DEFAULT_COMMIT_MSG["dotfiles"]
-            git_add_all_commit_push(repo, msg, dry_run=dry_run)
+            git_add_all_commit_push(repo, dry_run=dry_run)
         elif backup_configs_flag:
             backup_configs(configs_path, dry_run=dry_run, skip=True)
-            git_add_all_commit_push(
-                repo, DEFAULT_COMMIT_MSG["configs"], dry_run=dry_run
-            )
+            git_add_all_commit_push(repo, dry_run=dry_run)
         elif backup_packages_flag:
             backup_packages(packages_path, dry_run=dry_run, skip=True)
-            git_add_all_commit_push(
-                repo, DEFAULT_COMMIT_MSG["packages"], dry_run=dry_run
-            )
+            git_add_all_commit_push(repo, dry_run=dry_run)
         elif backup_fonts_flag:
             backup_fonts(fonts_path, dry_run=dry_run, skip=True)
-            git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG["fonts"], dry_run=dry_run)
+            git_add_all_commit_push(repo, dry_run=dry_run)
     # No command line options, show action menu and process selected option.
     else:
         selection = main_menu_prompt()
@@ -312,20 +306,20 @@ def cli(
             if target == "all":
                 backup_all(dotfiles_path, packages_path, fonts_path, configs_path)
                 handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run=dry_run)
-                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
+                git_add_all_commit_push(repo)
             elif target == "dotfiles":
                 backup_dotfiles(dotfiles_path)
                 handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run)
-                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
+                git_add_all_commit_push(repo)
             elif target == "configs":
                 backup_configs(configs_path)
-                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
+                git_add_all_commit_push(repo)
             elif target == "packages":
                 backup_packages(packages_path)
-                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
+                git_add_all_commit_push(repo)
             elif target == "fonts":
                 backup_fonts(fonts_path)
-                git_add_all_commit_push(repo, DEFAULT_COMMIT_MSG[target])
+                git_add_all_commit_push(repo)
         elif action == "reinstall":
             if target == "packages":
                 reinstall_packages_sb(packages_path)
