@@ -1,9 +1,11 @@
 import os
 import sys
+from typing import List, Set, Union
+
 import inquirer
 from colorama import Fore, Style
+
 from .constants import ProjInfo
-from typing import List, Set, Union
 
 
 def print_blue(text):
@@ -158,7 +160,7 @@ def print_pkg_mgr_reinstall(mgr):
 
 
 # TODO: BUG: Why does moving this to prompts.py cause circular imports?
-def prompt_yes_no(message, color, invert=False):
+def prompt_yes_no(message, color, invert=False) -> bool:
     """
     Print question and return True or False depending on user selection from list.
     """
