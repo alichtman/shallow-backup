@@ -3,6 +3,7 @@ from colorama import Fore, Style
 from pathlib import Path
 import subprocess
 import sys
+from difflib import unified_diff
 import git
 import readline  # Imported to support arrow key navigation during input
 from git import GitCommandError
@@ -37,6 +38,19 @@ DEFAULT_COMMIT_MSG = {
 ###########
 # FUNCTIONS
 ###########
+
+
+def color_diff(diff):
+    """Colorizes the diff output. https://chezsoi.org/lucas/blog/colored-diff-output-with-python.html"""
+    for line in diff:
+        if line.startswith("+"):
+            yield Fore.GREEN + line + Fore.RESET
+        elif line.startswith("-"):
+            yield Fore.RED + line + Fore.RESET
+        elif line.startswith("^"):
+            yield Fore.BLUE + line + Fore.RESET
+        else:
+            yield line
 
 
 def git_set_remote(repo, remote_url):
@@ -146,6 +160,24 @@ def install_trufflehog_git_hook(repo: git.Repo):
     """
     Make sure trufflehog and pre-commit are installed and on the PATH. Then register a pre-commit hook for the repo.
     """
+
+    trufflehog_hook_text = """repos:
+  - repo: local
+    hooks:
+      - id: trufflehog
+        name: TruffleHog
+        description: Detect secrets in your data.
+        entry: bash -c 'trufflehog git file://. --since-commit HEAD --fail'
+        language: system
+        stages: ["commit", "push"]
+"""
+
+    def update_precommit_file():
+        with open(precommit_file, "w+") as f:
+            f.write(trufflehog_hook_text)
+
+        pass
+
     if not which("trufflehog"):
         print_red_bold(
             "trufflehog (https://github.com/trufflesecurity/trufflehog) is not installed. Please install it to continue."
@@ -160,18 +192,32 @@ def install_trufflehog_git_hook(repo: git.Repo):
     precommit_file = Path(repo.working_dir) / ".pre-commit-config.yaml"
     if not precommit_file.exists():
         print_yellow_bold("Adding pre-commit config file...")
-        with open(precommit_file, "w+") as f:
-            f.write(
-                """repos:
-- repo: local
-  hooks:
-    - id: trufflehog
-      name: TruffleHog
-      description: Detect secrets in your data.
-      entry: bash -c 'trufflehog git file://.'
-      language: system
-      stages: ["commit", "push"]"""
+        update_precommit_file()
+    else:
+        # TODO: Add an update check opt out config option
+        current_precommit_file_contents = precommit_file.read_text()
+        if current_precommit_file_contents != trufflehog_hook_text:
+            diff = unified_diff(
+                current_precommit_file_contents.splitlines(),
+                trufflehog_hook_text.splitlines(),
+                lineterm="",
             )
+
+            colored_diff = "\n".join(color_diff(diff))
+            if colored_diff.strip() == "":
+                print_yellow_bold(
+                    "Your pre-commit config file is not up to date, but the only difference is whitespace. Updating automatically."
+                )
+                update_precommit_file()
+            else:
+                print_yellow_bold(
+                    "Your pre-commit config file is not up to date. Here is the diff:"
+                )
+                print(colored_diff)
+
+                if prompt_yes_no("Apply update?", Fore.YELLOW):
+                    print_yellow_bold("Updating pre-commit config file...")
+                    update_precommit_file()
 
     # Safe to run every time
     subprocess.call("pre-commit install", cwd=repo.working_dir, shell=True)
