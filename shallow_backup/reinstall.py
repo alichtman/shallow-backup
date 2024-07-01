@@ -5,7 +5,8 @@ from .utils import (
     get_abs_path_subfiles,
     exit_if_dir_is_empty,
     safe_mkdir,
-    evaluate_condition, find_path_for_permission_error_reporting,
+    evaluate_condition,
+    find_path_for_permission_error_reporting,
 )
 from .printing import *
 from colorama import Fore, Style
@@ -61,7 +62,7 @@ def reinstall_dots_sb(
         # If it's an absolute path, dest is the corrected path
         abs_path_start = os.path.join(dots_path, ":")
         if source.startswith(abs_path_start):
-            dest = "/" + source[len(abs_path_start):]
+            dest = "/" + source[len(abs_path_start) :]
         else:
             # Otherwise, it should go in a path relative to the home path
             dest = source.replace(dots_path, home_path + "/")
@@ -89,7 +90,9 @@ def reinstall_dots_sb(
         try:
             copy(dot_source, dot_dest)
         except PermissionError as err:
-            files_with_permission_errors.add(find_path_for_permission_error_reporting(err.filename))
+            files_with_permission_errors.add(
+                find_path_for_permission_error_reporting(err.filename)
+            )
         except FileNotFoundError as err:
             print_red_bold(f"ERROR: {err}")
 
@@ -98,7 +101,9 @@ def reinstall_dots_sb(
 
     num_permission_errors = len(files_with_permission_errors)
     if num_permission_errors != 0:
-        print_red_bold(f"\n{num_permission_errors} permission errors detected. Most of the time, this is not a problem.\nGit repos will have some read-only files, and will prevent you from writing to them without using sudo.\nAdditionally, some package managers (like zcomet, etc) make their install files read-only.\nYou should update these files using the respective tools that created them.\nThe following paths were problematic:")
+        print_red_bold(
+            f"\n{num_permission_errors} permission errors detected. Most of the time, this is not a problem.\nGit repos will have some read-only files, and will prevent you from writing to them without using sudo.\nAdditionally, some package managers (like zcomet, etc) make their install files read-only.\nYou should update these files using the respective tools that created them.\nThe following paths were problematic:"
+        )
         print_list_pretty(sorted(files_with_permission_errors))
 
     print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
