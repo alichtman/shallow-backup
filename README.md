@@ -2,7 +2,8 @@
 
 [![Downloads](http://pepy.tech/badge/shallow-backup)](http://pepy.tech/count/shallow-backup)
 [![Build Status](https://travis-ci.com/alichtman/shallow-backup.svg?branch=master)](https://travis-ci.com/alichtman/shallow-backup)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1719da4d7df5455d8dbb4340c428f851)](https://www.codacy.com/app/alichtman/shallow-backup?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=alichtman/shallow-backup&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1719da4d7df5455d8dbb4340c428f851)](https://www.codacy.com/app/alichtman/shallow-backup?utm_source=github.com&utm_medium=referral&utm_content=alichtman/shallow-backup&utm_campaign=Badge_Grade)
+
 <!-- [![Coverage Status](https://coveralls.io/repos/github/alichtman/shallow-backup/badge.svg?branch=master)](https://coveralls.io/github/alichtman/shallow-backup?branch=master) -->
 
 `shallow-backup` lets you easily create lightweight backups of installed packages, applications, fonts and dotfiles, and automatically push them to a remote Git repository.
@@ -11,46 +12,43 @@ I use it to manage [my dotfiles](https://github.com/alichtman/dotfiles).
 
 ![Shallow Backup GIF Demo](img/shallow-backup-demo.gif)
 
-Contents
-========
+# Contents
 
-
-* [Why?](#why)
-* [Installation](#installation)
-  * [Method 1: <a href="https://pypi.org/project/shallow-backup/" rel="nofollow">pipx</a>](#method-1-pipx)
-  * [Method 2: Install From Source](#method-2-install-from-source)
-* [Dependencies](#dependencies)
-* [Usage](#usage)
-* [Recipes](#recipes)
-  * [Maintain a separate repo for your dotfiles](#maintain-a-separate-repo-for-your-dotfiles)
-  * [Synchronize dotfiles on multiple computers](#synchronize-dotfiles-on-multiple-computers)
-  * [Reinstall dotfiles from a backup](#reinstall-dotfiles-from-a-backup)
-* [What can I back up?](#what-can-i-back-up)
-* [Configuration](#configuration)
-  * [Conditional Backup and Reinstallation](#conditional-backup-and-reinstallation)
-* [Git Integration](#git-integration)
-  * [A Word of Caution](#a-word-of-caution)
-  * [.gitignore](#gitignore)
-* [Output Structure](#output-structure)
-* [Want to Contribute?](#want-to-contribute)
-
-
+- [Why?](#why)
+- [Installation](#installation)
+  - [Method 1: <a href="https://pypi.org/project/shallow-backup/" rel="nofollow">pipx</a>](#method-1-pipx)
+  - [Method 2: Install From Source](#method-2-install-from-source)
+- [Dependencies](#dependencies)
+- [Usage](#usage)
+- [Recipes](#recipes)
+  - [Maintain a separate repo for your dotfiles](#maintain-a-separate-repo-for-your-dotfiles)
+  - [Synchronize dotfiles on multiple computers](#synchronize-dotfiles-on-multiple-computers)
+  - [Reinstall dotfiles from a backup](#reinstall-dotfiles-from-a-backup)
+- [What can I back up?](#what-can-i-back-up)
+- [Configuration](#configuration)
+  - [Conditional Backup and Reinstallation](#conditional-backup-and-reinstallation)
+- [Git Integration](#git-integration)
+  - [A Word of Caution](#a-word-of-caution)
+  - [.gitignore](#gitignore)
+- [Output Structure](#output-structure)
+- [Want to Contribute?](#want-to-contribute)
 
 ### Why?
 
 I wanted a tool that allows you to:
 
-+ Back up dotfiles _from where they live on the system_.
-+ Back up files from _any_ path on the system, not just `$HOME`.
-+ Reinstall them from the backup directory idempotently.
-+ Backup and reinstall files conditionally, so you can easily manage dotfiles across multiple systems.
-+ Copy files on installation and backup, as opposed to symlinking them.
-+ Backup package installations in a highly compressed manner
-+ Not worry about accidentally doing something dangerous / destructive (is user-protective)
+- Back up dotfiles _from where they live on the system_.
+- Back up files from _any_ path on the system, not just `$HOME`.
+- Reinstall them from the backup directory idempotently.
+- Backup and reinstall files conditionally, so you can easily manage dotfiles across multiple systems.
+- Copy files on installation and backup, as opposed to symlinking them.
+- Backup package installations in a highly compressed manner
+- Not worry about accidentally doing something dangerous / destructive (is user-protective)
 
 `shallow-backup` checks all of those boxes.
 
 ### Installation
+
 ---
 
 > **Warning**
@@ -71,6 +69,7 @@ $ pip3 install .
 ```
 
 ### Dependencies
+
 ---
 
 - `pre-commit`
@@ -79,6 +78,7 @@ $ pip3 install .
 If you are missing the dependencies, you will be guided to install them.
 
 ### Usage
+
 ---
 
 - To start the interactive program, run `$ shallow-backup`.
@@ -122,8 +122,8 @@ Options:
   -h, -help, --help            Show this message and exit.
 ```
 
-
 ### Recipes
+
 ---
 
 #### Maintain a separate repo for your dotfiles
@@ -145,37 +145,40 @@ When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and
 Available in [`zsh-users/zsh-completions`](https://github.com/zsh-users/zsh-completions/blob/master/src/_shallow-backup). Follow the [installation instructions here](https://github.com/zsh-users/zsh-completions/tree/master#using-zsh-frameworks).
 
 ### What can I back up?
+
 ---
 
 By default, `shallow-backup` backs these up.
 
 1. Dotfiles and dotfolders
-    * `.bashrc`
-    * `.bash_profile`
-    * `.gitconfig`
-    * `.pypirc`
-    * `.config/shallow-backup.json`
-    * `.ssh/`
-    * `.vim/`
-    * `.zshrc`
+
+   - `.bashrc`
+   - `.bash_profile`
+   - `.gitconfig`
+   - `.pypirc`
+   - `.config/shallow-backup.json`
+   - `.ssh/`
+   - `.vim/`
+   - `.zshrc`
 
 2. App Config Files
-    * Atom
-    * VSCode
-    * Sublime Text 2/3
-    * Terminal.app
+
+   - VSCode
+   - Sublime Text 2/3
+   - Terminal.app
 
 3. Installed Packages
-    * `brew` and `cask`
-    * `cargo`
-    * `gem`
-    * `pip`
-    * `pip3`
-    * `npm`
-    * `macports`
-    * `VSCode` Extensions
-    * `Sublime Text 2/3` Packages
-    * System Applications
+
+   - `brew` and `cask`
+   - `cargo`
+   - `gem`
+   - `pip`
+   - `pip3`
+   - `npm`
+   - `macports`
+   - `VSCode` Extensions
+   - `Sublime Text 2/3` Packages
+   - System Applications
 
 4. User installed `fonts`.
 
@@ -252,13 +255,13 @@ Here's an example config based on my [dotfiles](https://www.github.com/alichtman
 		"/Users/alichtman/Library/Application Support/Code/User/settings.json": "vscode/settings",
 		"/Users/alichtman/Library/Application Support/Code/User/Snippets": "vscode/Snippets",
 		"/Users/alichtman/Library/Application Support/Code/User/keybindings.json": "vscode/keybindings",
-		"/Users/alichtman/.atom": "atom",
 		"/Users/alichtman/Library/Preferences/com.apple.Terminal.plist": "terminal_plist"
 	}
 }
 ```
 
 ### Git Integration
+
 ---
 
 #### A Word of Caution
@@ -267,7 +270,7 @@ This backup tool is git-integrated, meaning that you can easily store your backu
 
 _If you choose to back up to a public repository, look at every file you're backing up to make sure you want it to be public._
 
-> [!NOTE]  
+> [!NOTE]
 > As of `v6.2`, `trufflehog` is run as a required precommit hook and will detect secrets.
 
 #### .gitignore
@@ -275,6 +278,7 @@ _If you choose to back up to a public repository, look at every file you're back
 As of `v4.0`, any `.gitignore` changes should be made in the `shallow-backup` config file. `.gitignore` changes that are meant to apply to all directories should be under the `root-gitignore` key. Dotfile specific gitignores should be placed under the `dotfiles-gitignore` key. The original `default-gitignore` key in the config is still supported for backwards compatibility, however, converting to the new config format is strongly encouraged.
 
 ### Output Structure
+
 ---
 
 ```shell
@@ -316,13 +320,15 @@ shallow_backup/
 ```
 
 ### Reinstalling Dotfiles
-----
+
+---
 
 To reinstall your dotfiles, clone your dotfiles repo and make sure your shallow-backup config path can be found at either `~/.config/shallow-backup.json` or `$XDG_CONFIG_HOME/.shallow_backup.json`. Set the `backup-path` key in the config to the path of your cloned dotfiles. Then run `$ shallow-backup -reinstall-dots`.
 
 When reinstalling your dotfiles, the top level `.git/`, `.gitignore`, `img/` and `README.md` files and directories are ignored.
 
 ### Want to Contribute?
+
 ---
 
 Check out `CONTRIBUTING.md` and the `docs` directory.
