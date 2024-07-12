@@ -1,5 +1,33 @@
 # Changelog
 
+## [v6.4](https://github.com/alichtman/shallow-backup/tree/v6.4) (2024-07-12)
+
+[Full Changelog](https://github.com/alichtman/shallow-backup/compare/v6.2...v6.4)
+
+**Fixed bugs:**
+
+- Reap atom config stuff [\#210](https://github.com/alichtman/shallow-backup/issues/210)
+
+**Closed issues:**
+
+- Reinstallation for absolute paths is broken [\#345](https://github.com/alichtman/shallow-backup/issues/345)
+- Change config file path to `shallow-backup.json` instead of `.conf` [\#344](https://github.com/alichtman/shallow-backup/issues/344)
+- Crash on dotfile reinstallation: `FileExistsError` [\#343](https://github.com/alichtman/shallow-backup/issues/343)
+- Add support for arrow keys in "Custom commit message?" prompt \(and all other prompts, also\) [\#341](https://github.com/alichtman/shallow-backup/issues/341)
+- Improve `git commit` experience [\#340](https://github.com/alichtman/shallow-backup/issues/340)
+- Replace `--show` with `--edit` [\#336](https://github.com/alichtman/shallow-backup/issues/336)
+- Add interactive commit messages for --backup-dots [\#335](https://github.com/alichtman/shallow-backup/issues/335)
+- Successful commit reported when no commit happened [\#332](https://github.com/alichtman/shallow-backup/issues/332)
+- Add tab-completion for zsh [\#324](https://github.com/alichtman/shallow-backup/issues/324)
+-  Move from pipenv to poetry for dependency management [\#241](https://github.com/alichtman/shallow-backup/issues/241)
+
+**Merged pull requests:**
+
+- Fix typos, bump action workflow [\#342](https://github.com/alichtman/shallow-backup/pull/342) ([deining](https://github.com/deining))
+- Add --edit argument [\#338](https://github.com/alichtman/shallow-backup/pull/338) ([alichtman](https://github.com/alichtman))
+- Allow custom commit messages [\#337](https://github.com/alichtman/shallow-backup/pull/337) ([alichtman](https://github.com/alichtman))
+- Update README.md [\#334](https://github.com/alichtman/shallow-backup/pull/334) ([alichtman](https://github.com/alichtman))
+
 ## [v6.2](https://github.com/alichtman/shallow-backup/tree/v6.2) (2023-10-11)
 
 [Full Changelog](https://github.com/alichtman/shallow-backup/compare/v6.1...v6.2)
