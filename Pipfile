@@ -16,6 +16,7 @@ pytest = ">=5.4.1"
 pytest-cov = ">=2.8.1"
 twine = "*"
 black = "*"
+setuptools = "*"
 
 [requires]
 python_version = "3.12"
