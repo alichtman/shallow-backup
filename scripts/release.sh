@@ -9,6 +9,12 @@ if [[ ! -d ".git" ]]; then
   exit 1;
 fi
 
+# Check if inside the pipenv virtual environment
+if [[ "$PIPENV_ACTIVE" != "1" ]]; then
+  echo 'Must be inside the pipenv virtual environment!';
+  exit 1;
+fi
+
 # Check if on main
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 if [[ "$BRANCH" != "main" ]]; then
