@@ -117,7 +117,7 @@ Options:
   --reinstall-packages         Reinstall packages.
   --remote TEXT                Set remote URL for the git repo.
 
-  --show                       Display config file.
+  --edit                       Open config file in $EDITOR.
   -v, --version                Display version and author info.
   -h, -help, --help            Show this message and exit.
 ```
