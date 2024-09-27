@@ -42,8 +42,8 @@ I wanted a tool that allows you to:
 - Reinstall them from the backup directory idempotently.
 - Backup and reinstall files conditionally, so you can easily manage dotfiles across multiple systems.
 - Copy files on installation and backup, as opposed to symlinking them.
-- Backup package installations in a highly compressed manner
-- Not worry about accidentally doing something dangerous / destructive (is user-protective)
+- Backup package installations in a highly compressed manner.
+- Not worry about accidentally doing something dangerous / destructive (is user-protective).
 
 `shallow-backup` checks all of those boxes.
 
