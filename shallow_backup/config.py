@@ -12,7 +12,7 @@ from functools import lru_cache
 
 def get_xdg_config_path() -> str:
     """Returns path to $XDG_CONFIG_HOME, or ~/.config, if it doesn't exist."""
-    return environ.get("XDG_CONFIG_HOME") or path.join(path.expanduser("~"), ".config")
+    return environ.get("SHALLOW_BACKUP_HOME") or environ.get("XDG_CONFIG_HOME") or path.join(path.expanduser("~"), ".config")
 
 
 @lru_cache(maxsize=1)
