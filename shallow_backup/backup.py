@@ -43,7 +43,7 @@ def backup_dotfiles(
             continue
 
         # If a file path in the config starts with /, it's a full path like /etc/ssh/
-        if dotfile_path_from_config.startswith("/"):
+        if dotfile_path_from_config.startswith("/") or dotfile_path_from_config.startswith("~"):
             installed_dotfile_path = dotfile_path_from_config
             installed_dotfile_path = quote(":" + installed_dotfile_path[1:])
             backup_dotfile_path = quote(
