@@ -184,12 +184,11 @@ By default, `shallow-backup` backs these up.
 
 ### Configuration
 
-If you'd like to modify which files are backed up, you have to edit the `JSON` config file, located at `~/.config/shallow-backup.json`. There are two ways to do this.
+If you'd like to modify which files are backed up, you can edit the `JSON` config file. This file is looked for in the following locations, in this order:
 
-1. Select the appropriate option in the CLI and follow the prompts.
-2. Open the file in a text editor and make your changes.
-
-Editing the file in a text editor will give you more control and be faster.
+1. `$SHALLOW_BACKUP_CONFIG_DIR/shallow-backup.json`
+2. `$XDG_CONFIG_HOME/shallow-backup.json`
+3. `~/.config/shallow-backup.json`
 
 #### Conditional Backup and Reinstallation
 
