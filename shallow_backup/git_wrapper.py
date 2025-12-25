@@ -243,8 +243,14 @@ def git_add_all_commit_push(repo: git.Repo, dry_run: bool = False):
                     "Pushing to remote:",
                     f"{repo.remotes.origin.url}[origin/{repo.active_branch.name}]...",
                 )
-                repo.git.fetch()
-                repo.git.push("--set-upstream", "origin", "HEAD")
+                try:
+                    repo.git.fetch()
+                    repo.git.push("--set-upstream", "origin", "HEAD")
+                except GitCommandError:
+                    print_red_bold(
+                        "ERROR: Failed to push to remote. Check your internet connection, credentials, and repository permissions."
+                    )
+                    sys.exit(1)
     else:
         print_yellow_bold("No changes to commit...")
 
