@@ -20,5 +20,5 @@ jobs:
           pip install pipenv
           pipenv install --dev --python 3.12
 
-      - name: Run tests
-        run: pipenv run pytest
+      - name: Run tests with coverage
+        run: pipenv run pytest --cov
