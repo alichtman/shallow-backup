@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+import tempfile
 
 sys.path.insert(0, "../shallow_backup")
 from shallow_backup.config import safe_create_config
@@ -50,11 +51,9 @@ def clean_up_dirs_and_env_vars():
     unset_env_vars()
 
 
-# TODO: Update to tempfile and tempdir because testing in the home directory is so stupid.
-
 # These globals must remain at the bottom of this file for some reason
 # This global is required to be set for the setup_env_vars call to work properly.
-BASE_TEST_DIR = os.path.expanduser("~") + "/SHALLOW-BACKUP-TEST-DIRECTORY"
+BASE_TEST_DIR = tempfile.mkdtemp(prefix="shallow-backup-test-")
 setup_env_vars()
 BACKUP_DEST_DIR = os.environ.get("SHALLOW_BACKUP_TEST_BACKUP_DIR")
 FAKE_HOME_DIR = os.environ.get("SHALLOW_BACKUP_TEST_HOME_DIR")
