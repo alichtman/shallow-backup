@@ -2,6 +2,7 @@ import os
 import readline  # Imported to support arrow key navigation during input
 import subprocess
 import sys
+import traceback
 from difflib import unified_diff
 from pathlib import Path
 from shutil import move, which
@@ -244,7 +245,17 @@ def git_add_all_commit_push(repo: git.Repo, dry_run: bool = False):
                     f"{repo.remotes.origin.url}[origin/{repo.active_branch.name}]...",
                 )
                 repo.git.fetch()
-                repo.git.push("--set-upstream", "origin", "HEAD")
+                try:
+                    repo.git.push("--set-upstream", "origin", "HEAD")
+                except GitCommandError as e:
+                    if "non-fast-forward" in str(e):
+                        print_red_bold(
+                            "git push failed! The remote has commits that your local branch doesn't have yet.\n"
+                            "Run 'git pull' in your backup repo to integrate the remote changes, then try again."
+                        )
+                    else:
+                        print_red_bold("git push failed!")
+                    print_red_bold("Exception:\n" + traceback.format_exc())
     else:
         print_yellow_bold("No changes to commit...")
 
