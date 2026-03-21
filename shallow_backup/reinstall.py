@@ -187,7 +187,7 @@ def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
     for pm in package_mgrs:
         if pm == "brew":
             print_pkg_mgr_reinstall(pm)
-            cmd = f"brew bundle install --no-lock --file {packages_path}/brew_list.txt"
+            cmd = f"brew bundle install --file {packages_path}/brew_list.txt"
             run_cmd_if_no_dry_run(cmd, dry_run)
         elif pm == "npm":
             print_pkg_mgr_reinstall(pm)
