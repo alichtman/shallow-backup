@@ -1,0 +1,21 @@
+changelog:
+  exclude:
+    labels:
+      - wontfix
+      - low-priority
+  categories:
+    - title: Bug Fixes
+      labels:
+        - bug
+    - title: New Features
+      labels:
+        - feature
+    - title: Documentation
+      labels:
+        - documentation
+    - title: Dependencies
+      labels:
+        - dependencies
+    - title: Other Changes
+      labels:
+        - "*"

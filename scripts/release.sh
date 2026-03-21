@@ -43,12 +43,10 @@ case "$response" in
 esac
 
 git checkout main && git pull
-git tag -a "$SB_VERSION" -m "shallow-backup $SB_VERSION" && git push
-github_changelog_generator --user alichtman --project shallow-backup
-git add CHANGELOG.md && git commit -m "Add CHANGELOG for $SB_VERSION" && git push
+git tag -a "$SB_VERSION" -m "shallow-backup $SB_VERSION" && git push --tags
 echo "Generating distribution files..."
 rm -rf dist/* && python3 setup.py sdist
-echo "Creating GH release for $SB_VERSION..."
-gh release create "$SB_VERSION" dist/shallow_backup-$SB_VERSION_NO_V.tar.gz -F CHANGELOG.md
+echo "Creating GH release for $SB_VERSION with auto-generated notes..."
+gh release create "$SB_VERSION" dist/shallow_backup-$SB_VERSION_NO_V.tar.gz --generate-notes
 echo "Uploading to pypi..."
 twine upload --repository pypi dist/*
