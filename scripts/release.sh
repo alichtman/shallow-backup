@@ -9,9 +9,9 @@ if [[ ! -d ".git" ]]; then
   exit 1;
 fi
 
-# Check if inside the pipenv virtual environment
-if [[ "$PIPENV_ACTIVE" != "1" ]]; then
-  echo 'Must be inside the pipenv virtual environment!';
+# Check if inside a virtual environment
+if [[ -z "$VIRTUAL_ENV" ]]; then
+  echo 'Must be inside the pipenv virtual environment! Run: pipenv run scripts/release.sh';
   exit 1;
 fi
 
@@ -43,6 +43,22 @@ case "$response" in
 esac
 
 git checkout main && git pull
+
+if git rev-parse "$SB_VERSION" >/dev/null 2>&1; then
+  echo "Tag $SB_VERSION already exists."
+  read -r -p "Delete and re-tag at HEAD? [y/N] " retag_response
+  case "$retag_response" in
+    [yY][eE][sS]|[yY])
+      git tag -d "$SB_VERSION"
+      git push origin ":refs/tags/$SB_VERSION"
+      ;;
+    *)
+      echo "Aborting."
+      exit 1;
+      ;;
+  esac
+fi
+
 git tag -a "$SB_VERSION" -m "shallow-backup $SB_VERSION" && git push --tags
 echo "Generating distribution files..."
 rm -rf dist/* && python3 setup.py sdist
