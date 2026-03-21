@@ -20,7 +20,10 @@ from shutil import copytree, copyfile, copy
 
 
 def reinstall_dots_sb(
-    dots_path: str, home_path: str = os.path.expanduser("~"), dry_run: bool = False, verbose: bool = False
+    dots_path: str,
+    home_path: str = os.path.expanduser("~"),
+    dry_run: bool = False,
+    verbose: bool = False,
 ):
     """Reinstall all dotfiles and folders by copying them from dots_path
     to a path relative to home_path, or to an absolute path."""
@@ -127,7 +130,9 @@ def reinstall_fonts_sb(fonts_path: str, dry_run: bool = False, verbose: bool = F
     print_section_header("FONT REINSTALLATION COMPLETED", Fore.BLUE)
 
 
-def reinstall_configs_sb(configs_path: str, dry_run: bool = False, verbose: bool = False):
+def reinstall_configs_sb(
+    configs_path: str, dry_run: bool = False, verbose: bool = False
+):
     """Reinstall all configs from the backup."""
     exit_if_dir_is_empty(configs_path, "config")
     print_section_header("REINSTALLING CONFIG FILES", Fore.BLUE)
@@ -150,7 +155,9 @@ def reinstall_configs_sb(configs_path: str, dry_run: bool = False, verbose: bool
     print_section_header("CONFIG REINSTALLATION COMPLETED", Fore.BLUE)
 
 
-def reinstall_packages_sb(packages_path: str, dry_run: bool = False, verbose: bool = False):
+def reinstall_packages_sb(
+    packages_path: str, dry_run: bool = False, verbose: bool = False
+):
     """Reinstall all packages from the files in backup/installs."""
 
     def run_cmd_if_no_dry_run(command, dry_run) -> int:

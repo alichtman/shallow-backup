@@ -12,7 +12,11 @@ from .config import get_config
 
 
 def backup_dotfiles(
-    backup_dest_path, dry_run=False, verbose=False, home_path=os.path.expanduser("~"), skip=False
+    backup_dest_path,
+    dry_run=False,
+    verbose=False,
+    home_path=os.path.expanduser("~"),
+    skip=False,
 ):
     """
     Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
@@ -114,7 +118,9 @@ def backup_dotfiles(
             p.join()
 
 
-def backup_configs(backup_path, dry_run: bool = False, verbose: bool = False, skip=False):
+def backup_configs(
+    backup_path, dry_run: bool = False, verbose: bool = False, skip=False
+):
     """
     Creates `configs` directory and places config backups there.
     Configs are application settings, generally. .plist files count.
@@ -147,7 +153,9 @@ def backup_configs(backup_path, dry_run: bool = False, verbose: bool = False, sk
             copyfile(config_path, quoted_dest)
 
 
-def backup_packages(backup_path, dry_run: bool = False, verbose: bool = False, skip=False):
+def backup_packages(
+    backup_path, dry_run: bool = False, verbose: bool = False, skip=False
+):
     """
     Creates `packages` directory and places install list text files there.
     """
@@ -235,7 +243,9 @@ def backup_packages(backup_path, dry_run: bool = False, verbose: bool = False, s
     run_cmd_if_no_dry_run(command, dest, dry_run)
 
 
-def backup_fonts(backup_path: str, dry_run: bool = False, verbose: bool = False, skip: bool = False):
+def backup_fonts(
+    backup_path: str, dry_run: bool = False, verbose: bool = False, skip: bool = False
+):
     """Copies all .ttf and .otf files in the  to backup/fonts/"""
     print_section_header("FONTS", Fore.BLUE)
     if not dry_run:
@@ -261,7 +271,13 @@ def backup_fonts(backup_path: str, dry_run: bool = False, verbose: bool = False,
 
 
 def backup_all(
-    dotfiles_path, packages_path, fonts_path, configs_path, dry_run=False, verbose=False, skip=False
+    dotfiles_path,
+    packages_path,
+    fonts_path,
+    configs_path,
+    dry_run=False,
+    verbose=False,
+    skip=False,
 ):
     """Complete backup procedure."""
     backup_dotfiles(dotfiles_path, dry_run=dry_run, verbose=verbose, skip=skip)

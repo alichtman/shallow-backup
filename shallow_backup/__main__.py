@@ -129,7 +129,10 @@ from .utils import (
 )
 @click.option("--remote", default=None, help="Set remote URL for the git repo.")
 @click.option(
-    "--verbose", is_flag=True, default=False, help="Print files being backed up or reinstalled."
+    "--verbose",
+    is_flag=True,
+    default=False,
+    help="Print files being backed up or reinstalled.",
 )
 @click.option(
     "--edit", is_flag=True, default=False, help="Open config file in $EDITOR."
@@ -279,7 +282,12 @@ def cli(
             reinstall_dots_sb(dotfiles_path, dry_run=dry_run, verbose=verbose)
         elif reinstall_all:
             reinstall_all_sb(
-                dotfiles_path, packages_path, fonts_path, configs_path, dry_run=dry_run, verbose=verbose
+                dotfiles_path,
+                packages_path,
+                fonts_path,
+                configs_path,
+                dry_run=dry_run,
+                verbose=verbose,
             )
         elif backup_all_flag:
             backup_all(
