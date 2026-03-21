@@ -12,7 +12,11 @@ from .config import get_config
 
 
 def backup_dotfiles(
-    backup_dest_path, dry_run=False, home_path=os.path.expanduser("~"), skip=False
+    backup_dest_path,
+    dry_run=False,
+    verbose=False,
+    home_path=os.path.expanduser("~"),
+    skip=False,
 ):
     """
     Create `dotfiles` dir and makes copies of dotfiles and dotfolders.
@@ -70,8 +74,8 @@ def backup_dotfiles(
         else:
             dotfiles_mp_in.append(path_pair)
 
-    # Print source -> dest and skip the copying step
-    if dry_run:
+    # Print source -> dest info
+    if verbose:
         print_yellow_bold("Dotfiles:")
         for source, dest in dotfiles_mp_in:
             print_dry_run_copy_info(source, dest)
@@ -80,7 +84,8 @@ def backup_dotfiles(
         for source, dest in dotfolders_mp_in:
             print_dry_run_copy_info(source, dest)
 
-        return
+        if dry_run:
+            return
 
     # Fix https://github.com/alichtman/shallow-backup/issues/230
     for dest_path in [path_pair[1] for path_pair in dotfiles_mp_in + dotfolders_mp_in]:
@@ -113,7 +118,9 @@ def backup_dotfiles(
             p.join()
 
 
-def backup_configs(backup_path, dry_run: bool = False, skip=False):
+def backup_configs(
+    backup_path, dry_run: bool = False, verbose: bool = False, skip=False
+):
     """
     Creates `configs` directory and places config backups there.
     Configs are application settings, generally. .plist files count.
@@ -132,9 +139,10 @@ def backup_configs(backup_path, dry_run: bool = False, skip=False):
     for config_path, target in config["config_mapping"].items():
         dest = os.path.join(backup_path, target)
 
-        if dry_run:
+        if verbose:
             print_dry_run_copy_info(config_path, dest)
-            continue
+            if dry_run:
+                continue
 
         quoted_dest = quote(dest)
         if os.path.isdir(config_path):
@@ -145,18 +153,20 @@ def backup_configs(backup_path, dry_run: bool = False, skip=False):
             copyfile(config_path, quoted_dest)
 
 
-def backup_packages(backup_path, dry_run: bool = False, skip=False):
+def backup_packages(
+    backup_path, dry_run: bool = False, verbose: bool = False, skip=False
+):
     """
     Creates `packages` directory and places install list text files there.
     """
 
     def run_cmd_if_no_dry_run(command, dest, dry_run) -> int:
-        if dry_run:
+        if verbose:
             print_dry_run_copy_info(f"$ {command}", dest)
+        if dry_run:
             # Return -1 for any processes depending on chained successful commands (npm)
             return -1
-        else:
-            return run_cmd_write_stdout(command, dest)
+        return run_cmd_write_stdout(command, dest)
 
     print_section_header("PACKAGES", Fore.BLUE)
     if not dry_run:
@@ -233,7 +243,9 @@ def backup_packages(backup_path, dry_run: bool = False, skip=False):
     run_cmd_if_no_dry_run(command, dest, dry_run)
 
 
-def backup_fonts(backup_path: str, dry_run: bool = False, skip: bool = False):
+def backup_fonts(
+    backup_path: str, dry_run: bool = False, verbose: bool = False, skip: bool = False
+):
     """Copies all .ttf and .otf files in the  to backup/fonts/"""
     print_section_header("FONTS", Fore.BLUE)
     if not dry_run:
@@ -250,22 +262,28 @@ def backup_fonts(backup_path: str, dry_run: bool = False, skip: bool = False):
         for font in fonts:
             dest = os.path.join(backup_path, font.split("/")[-1])
             if os.path.exists(font):
-                if dry_run:
+                if verbose:
                     print_dry_run_copy_info(font, dest)
-                else:
+                if not dry_run:
                     copyfile(font, dest)
     else:
         print_red("Skipping fonts backup. No fonts directory found.")
 
 
 def backup_all(
-    dotfiles_path, packages_path, fonts_path, configs_path, dry_run=False, skip=False
+    dotfiles_path,
+    packages_path,
+    fonts_path,
+    configs_path,
+    dry_run=False,
+    verbose=False,
+    skip=False,
 ):
     """Complete backup procedure."""
-    backup_dotfiles(dotfiles_path, dry_run=dry_run, skip=skip)
-    backup_packages(packages_path, dry_run=dry_run, skip=skip)
-    backup_fonts(fonts_path, dry_run=dry_run, skip=skip)
-    backup_configs(configs_path, dry_run=dry_run, skip=skip)
+    backup_dotfiles(dotfiles_path, dry_run=dry_run, verbose=verbose, skip=skip)
+    backup_packages(packages_path, dry_run=dry_run, verbose=verbose, skip=skip)
+    backup_fonts(fonts_path, dry_run=dry_run, verbose=verbose, skip=skip)
+    backup_configs(configs_path, dry_run=dry_run, verbose=verbose, skip=skip)
 
 
 # vim: autoindent noexpandtab tabstop=4 shiftwidth=4

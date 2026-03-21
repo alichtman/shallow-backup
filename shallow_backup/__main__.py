@@ -129,6 +129,12 @@ from .utils import (
 )
 @click.option("--remote", default=None, help="Set remote URL for the git repo.")
 @click.option(
+    "--verbose",
+    is_flag=True,
+    default=False,
+    help="Print files being backed up or reinstalled.",
+)
+@click.option(
     "--edit", is_flag=True, default=False, help="Open config file in $EDITOR."
 )
 @click.option(
@@ -157,6 +163,7 @@ def cli(
     reinstall_fonts,
     reinstall_packages,
     remote,
+    verbose,
     edit,
     version,
 ):
@@ -170,6 +177,9 @@ def cli(
     safe_create_config()
     check_if_config_upgrade_needed()
     check_insecure_config_permissions()
+
+    # dry_run implies verbose
+    verbose = verbose or dry_run
 
     # Process CLI args
     admin_action = any([add_dot, delete_config, destroy_backup, edit, version])
@@ -263,16 +273,21 @@ def cli(
     # Command line options
     if skip_prompt:
         if reinstall_packages:
-            reinstall_packages_sb(packages_path, dry_run=dry_run)
+            reinstall_packages_sb(packages_path, dry_run=dry_run, verbose=verbose)
         elif reinstall_configs:
-            reinstall_configs_sb(configs_path, dry_run=dry_run)
+            reinstall_configs_sb(configs_path, dry_run=dry_run, verbose=verbose)
         elif reinstall_fonts:
-            reinstall_fonts_sb(fonts_path, dry_run=dry_run)
+            reinstall_fonts_sb(fonts_path, dry_run=dry_run, verbose=verbose)
         elif reinstall_dots:
-            reinstall_dots_sb(dotfiles_path, dry_run=dry_run)
+            reinstall_dots_sb(dotfiles_path, dry_run=dry_run, verbose=verbose)
         elif reinstall_all:
             reinstall_all_sb(
-                dotfiles_path, packages_path, fonts_path, configs_path, dry_run=dry_run
+                dotfiles_path,
+                packages_path,
+                fonts_path,
+                configs_path,
+                dry_run=dry_run,
+                verbose=verbose,
             )
         elif backup_all_flag:
             backup_all(
@@ -281,22 +296,23 @@ def cli(
                 fonts_path,
                 configs_path,
                 dry_run=dry_run,
+                verbose=verbose,
                 skip=True,
             )
             git_add_all_commit_push(repo, dry_run=dry_run)
         elif backup_dots_flag:
-            backup_dotfiles(dotfiles_path, dry_run=dry_run, skip=True)
+            backup_dotfiles(dotfiles_path, dry_run=dry_run, verbose=verbose, skip=True)
             # The reason that dotfiles/.git is special cased, and none of the others are is because maintaining a separate git repo for dotfiles is a common use case.
             handle_separate_git_dir_in_dotfiles(dotfiles_path, dry_run)
             git_add_all_commit_push(repo, dry_run=dry_run)
         elif backup_configs_flag:
-            backup_configs(configs_path, dry_run=dry_run, skip=True)
+            backup_configs(configs_path, dry_run=dry_run, verbose=verbose, skip=True)
             git_add_all_commit_push(repo, dry_run=dry_run)
         elif backup_packages_flag:
-            backup_packages(packages_path, dry_run=dry_run, skip=True)
+            backup_packages(packages_path, dry_run=dry_run, verbose=verbose, skip=True)
             git_add_all_commit_push(repo, dry_run=dry_run)
         elif backup_fonts_flag:
-            backup_fonts(fonts_path, dry_run=dry_run, skip=True)
+            backup_fonts(fonts_path, dry_run=dry_run, verbose=verbose, skip=True)
             git_add_all_commit_push(repo, dry_run=dry_run)
     # No command line options, show action menu and process selected option.
     else:

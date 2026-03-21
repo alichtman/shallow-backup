@@ -20,7 +20,10 @@ from shutil import copytree, copyfile, copy
 
 
 def reinstall_dots_sb(
-    dots_path: str, home_path: str = os.path.expanduser("~"), dry_run: bool = False
+    dots_path: str,
+    home_path: str = os.path.expanduser("~"),
+    dry_run: bool = False,
+    verbose: bool = False,
 ):
     """Reinstall all dotfiles and folders by copying them from dots_path
     to a path relative to home_path, or to an absolute path."""
@@ -71,9 +74,10 @@ def reinstall_dots_sb(
     files_with_permission_errors = set()
     # Copy files from backup to system
     for dot_source, dot_dest in full_path_dotfiles_to_reinstall:
-        if dry_run:
+        if verbose:
             print_dry_run_copy_info(dot_source, dot_dest)
-            continue
+            if dry_run:
+                continue
 
         # Create dest parent dir if it doesn't exist
         # One case that this can fail is if dot_dest.parent is a FILE. We will try-catch this case specifically.
@@ -109,7 +113,7 @@ def reinstall_dots_sb(
     print_section_header("DOTFILE REINSTALLATION COMPLETED", Fore.BLUE)
 
 
-def reinstall_fonts_sb(fonts_path: str, dry_run: bool = False):
+def reinstall_fonts_sb(fonts_path: str, dry_run: bool = False, verbose: bool = False):
     """Reinstall all fonts."""
     exit_if_dir_is_empty(fonts_path, "font")
     print_section_header("REINSTALLING FONTS", Fore.BLUE)
@@ -118,14 +122,17 @@ def reinstall_fonts_sb(fonts_path: str, dry_run: bool = False):
     for font in get_abs_path_subfiles(fonts_path):
         fonts_dir = get_fonts_dir()
         dest_path = quote(os.path.join(fonts_dir, font.split("/")[-1]))
-        if dry_run:
+        if verbose:
             print_dry_run_copy_info(font, dest_path)
-            continue
+            if dry_run:
+                continue
         copyfile(quote(font), quote(dest_path))
     print_section_header("FONT REINSTALLATION COMPLETED", Fore.BLUE)
 
 
-def reinstall_configs_sb(configs_path: str, dry_run: bool = False):
+def reinstall_configs_sb(
+    configs_path: str, dry_run: bool = False, verbose: bool = False
+):
     """Reinstall all configs from the backup."""
     exit_if_dir_is_empty(configs_path, "config")
     print_section_header("REINSTALLING CONFIG FILES", Fore.BLUE)
@@ -135,9 +142,10 @@ def reinstall_configs_sb(configs_path: str, dry_run: bool = False):
         dest_path = quote(dest_path)
         source_path = quote(os.path.join(configs_path, backup_loc))
 
-        if dry_run:
+        if verbose:
             print_dry_run_copy_info(source_path, dest_path)
-            continue
+            if dry_run:
+                continue
 
         if os.path.isdir(source_path):
             copytree(source_path, dest_path)
@@ -147,16 +155,18 @@ def reinstall_configs_sb(configs_path: str, dry_run: bool = False):
     print_section_header("CONFIG REINSTALLATION COMPLETED", Fore.BLUE)
 
 
-def reinstall_packages_sb(packages_path: str, dry_run: bool = False):
+def reinstall_packages_sb(
+    packages_path: str, dry_run: bool = False, verbose: bool = False
+):
     """Reinstall all packages from the files in backup/installs."""
 
     def run_cmd_if_no_dry_run(command, dry_run) -> int:
-        if dry_run:
+        if verbose:
             print_yellow_bold(f"$ {command}")
+        if dry_run:
             # Return 0 for any processes depending on chained successful commands
             return 0
-        else:
-            return run_cmd(command)
+        return run_cmd(command)
 
     exit_if_dir_is_empty(packages_path, "package")
     print_section_header("REINSTALLING PACKAGES", Fore.BLUE)
@@ -227,9 +237,10 @@ def reinstall_all_sb(
     fonts_path: str,
     configs_path: str,
     dry_run: bool = False,
+    verbose: bool = False,
 ):
     """Call all reinstallation methods."""
-    reinstall_dots_sb(dotfiles_path, dry_run=dry_run)
-    reinstall_packages_sb(packages_path, dry_run=dry_run)
-    reinstall_fonts_sb(fonts_path, dry_run=dry_run)
-    reinstall_configs_sb(configs_path, dry_run=dry_run)
+    reinstall_dots_sb(dotfiles_path, dry_run=dry_run, verbose=verbose)
+    reinstall_packages_sb(packages_path, dry_run=dry_run, verbose=verbose)
+    reinstall_fonts_sb(fonts_path, dry_run=dry_run, verbose=verbose)
+    reinstall_configs_sb(configs_path, dry_run=dry_run, verbose=verbose)
