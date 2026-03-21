@@ -151,7 +151,7 @@ def install_trufflehog_git_hook(repo: git.Repo):
         description: Detect secrets in your data.
         entry: bash -c 'trufflehog git file://. --since-commit HEAD --fail --only-verified --no-update'
         language: system
-        stages: ["commit", "push"]
+        stages: ["pre-commit", "pre-push"]
 """
 
     def update_precommit_file():
