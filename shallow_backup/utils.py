@@ -42,7 +42,11 @@ def run_cmd(command: Union[str, List]):
             stdin=output.stdout if output else None,
             stderr=sp.DEVNULL,
         )
-    except FileNotFoundError:  # If package manager is missing
+    except (FileNotFoundError, NotADirectoryError):
+        # If package manager is missing
+        # Both indicate the command is not a valid executable.
+        # NotADirectoryError (ENOTDIR) can occur when the OS encounters
+        # a non-directory path component while resolving the command.
         return None
 
 
