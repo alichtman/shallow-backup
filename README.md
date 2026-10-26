@@ -1,6 +1,6 @@
 # shallow-backup
 
-[![Downloads](http://pepy.tech/badge/shallow-backup)](http://pepy.tech/count/shallow-backup)
+[![Downloads](http://pepy.tech/badge/shallow-backup)](https://pepy.tech/projects/shallow-backup)
 [![Build Status](https://travis-ci.com/alichtman/shallow-backup.svg?branch=master)](https://travis-ci.com/alichtman/shallow-backup)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/1719da4d7df5455d8dbb4340c428f851)](https://www.codacy.com/app/alichtman/shallow-backup?utm_source=github.com&utm_medium=referral&utm_content=alichtman/shallow-backup&utm_campaign=Badge_Grade)
 
