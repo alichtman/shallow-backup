@@ -1,8 +1,12 @@
+import os
+
+import pytest
+
 from unittest.mock import MagicMock, patch, call
 
 from git import GitCommandError
 
-from shallow_backup.git_wrapper import git_add_all_commit_push
+from shallow_backup.git_wrapper import git_add_all_commit_push, safe_git_init
 
 
 def _make_mock_repo():
@@ -72,3 +76,15 @@ def test_push_success_no_error(
     git_add_all_commit_push(mock_repo, dry_run=False)
 
     mock_print_red.assert_not_called()
+
+
+@patch("shallow_backup.git_wrapper.print_red_bold")
+def test_corrupt_git_dir_exits_cleanly(mock_print_red, tmp_path):
+    """A .git dir that is not a valid repo exits 1 with a message, not a traceback."""
+    os.makedirs(tmp_path / ".git" / "objects")
+
+    with pytest.raises(SystemExit) as excinfo:
+        safe_git_init(str(tmp_path))
+
+    assert excinfo.value.code == 1
+    mock_print_red.assert_called_once()
