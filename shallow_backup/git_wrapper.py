@@ -9,7 +9,7 @@ from shutil import move, which
 
 import git
 from colorama import Fore
-from git import GitCommandError
+from git import GitCommandError, InvalidGitRepositoryError, NoSuchPathError
 
 from .config import get_config
 from .printing import (
@@ -103,7 +103,14 @@ def safe_git_init(dir_path) -> tuple[git.Repo, bool]:
             sys.exit(1)
     else:
         print_yellow_bold("Detected git repo.")
-        repo = git.Repo(dir_path)
+        try:
+            repo = git.Repo(dir_path)
+        except (InvalidGitRepositoryError, NoSuchPathError):
+            print_red_bold(
+                "ERROR: Found a .git directory that is not a valid git repo. "
+                "Delete it or fix it, then try again."
+            )
+            sys.exit(1)
         return repo, False
 
 
