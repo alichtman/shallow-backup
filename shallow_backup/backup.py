@@ -1,6 +1,5 @@
 import os
 import json
-from shlex import quote
 from colorama import Fore
 import multiprocessing as mp
 from pathlib import Path
@@ -49,18 +48,14 @@ def backup_dotfiles(
         # If a file path in the config starts with /, it's a full path like /etc/ssh/
         if dotfile_path_from_config.startswith("/"):
             installed_dotfile_path = dotfile_path_from_config
-            installed_dotfile_path = quote(":" + installed_dotfile_path[1:])
-            backup_dotfile_path = quote(
-                os.path.join(backup_dest_path, installed_dotfile_path)
-            )
+            installed_dotfile_path = ":" + installed_dotfile_path[1:]
+            backup_dotfile_path = os.path.join(backup_dest_path, installed_dotfile_path)
             dot_path_pairs.append((dotfile_path_from_config, backup_dotfile_path))
 
         else:  # Dotfile living in $HOME
-            installed_dotfile_path = quote(
-                os.path.join(home_path, dotfile_path_from_config)
-            )
-            backup_dotfile_path = quote(
-                os.path.join(backup_dest_path, dotfile_path_from_config)
+            installed_dotfile_path = os.path.join(home_path, dotfile_path_from_config)
+            backup_dotfile_path = os.path.join(
+                backup_dest_path, dotfile_path_from_config
             )
             dot_path_pairs.append((installed_dotfile_path, backup_dotfile_path))
 
@@ -144,13 +139,12 @@ def backup_configs(
             if dry_run:
                 continue
 
-        quoted_dest = quote(dest)
         if os.path.isdir(config_path):
-            copytree(config_path, quoted_dest, symlinks=True)
+            copytree(config_path, dest, symlinks=True)
         elif os.path.isfile(config_path):
             parent_dir = Path(dest).parent
             safe_mkdir(parent_dir)
-            copyfile(config_path, quoted_dest)
+            copyfile(config_path, dest)
 
 
 def backup_packages(
@@ -254,7 +248,7 @@ def backup_fonts(
     fonts_path = get_fonts_dir()
     if os.path.isdir(fonts_path):
         fonts = [
-            quote(os.path.join(fonts_path, font))
+            os.path.join(fonts_path, font)
             for font in os.listdir(fonts_path)
             if font.endswith(".otf") or font.endswith(".ttf")
         ]

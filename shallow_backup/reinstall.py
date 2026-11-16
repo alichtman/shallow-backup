@@ -1,5 +1,4 @@
 import os
-from shlex import quote
 from .utils import (
     run_cmd,
     get_abs_path_subfiles,
@@ -121,12 +120,12 @@ def reinstall_fonts_sb(fonts_path: str, dry_run: bool = False, verbose: bool = F
     # Copy every file in fonts_path to ~/Library/Fonts
     for font in get_abs_path_subfiles(fonts_path):
         fonts_dir = get_fonts_dir()
-        dest_path = quote(os.path.join(fonts_dir, font.split("/")[-1]))
+        dest_path = os.path.join(fonts_dir, font.split("/")[-1])
         if verbose:
             print_dry_run_copy_info(font, dest_path)
             if dry_run:
                 continue
-        copyfile(quote(font), quote(dest_path))
+        copyfile(font, dest_path)
     print_section_header("FONT REINSTALLATION COMPLETED", Fore.BLUE)
 
 
@@ -139,8 +138,7 @@ def reinstall_configs_sb(
 
     config = get_config()
     for dest_path, backup_loc in config["config_mapping"].items():
-        dest_path = quote(dest_path)
-        source_path = quote(os.path.join(configs_path, backup_loc))
+        source_path = os.path.join(configs_path, backup_loc)
 
         if verbose:
             print_dry_run_copy_info(source_path, dest_path)

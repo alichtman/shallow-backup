@@ -63,6 +63,29 @@ class TestBackupMethods:
             print(f"Backed up dot: {backed_up_dot}\n")
             assert os.path.isfile(backed_up_dot) or os.path.isdir(backed_up_dot)
 
+    def test_backup_dotfiles_with_spaces(self):
+        """Test backing up a dotfile and a dotfolder with spaces in their names."""
+        config = get_config()
+        config["dotfiles"][".my file"] = {}
+        config["dotfiles"][".config/My App"] = {}
+        write_config(config)
+        with open(os.path.join(FAKE_HOME_DIR, ".my file"), "w+") as f:
+            f.write(TEST_TEXT_CONTENT)
+        safe_mkdir(os.path.join(FAKE_HOME_DIR, ".config/My App"))
+        with open(
+            os.path.join(FAKE_HOME_DIR, ".config/My App/settings.json"), "w+"
+        ) as f:
+            f.write(TEST_TEXT_CONTENT)
+
+        backup_dest_path = os.path.join(BACKUP_DEST_DIR, "dotfiles")
+        backup_dotfiles(
+            backup_dest_path, dry_run=False, home_path=FAKE_HOME_DIR, skip=True
+        )
+        assert os.path.isfile(os.path.join(backup_dest_path, ".my file"))
+        assert os.path.isfile(
+            os.path.join(backup_dest_path, ".config/My App/settings.json")
+        )
+
     def test_conditions(self):
         """Test backing up files based on conditions"""
         # Set false backup condition of all files.
